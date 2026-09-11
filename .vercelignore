@@ -1,0 +1,9 @@
+# Never upload anything personal to a public static site. Vercel serves every
+# file in this folder at a public URL — a passport scan included.
+*.jpg
+*.jpeg
+*.pdf
+*.heic
+*.png
+!icon-192.png
+!icon-512.png

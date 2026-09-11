@@ -1,0 +1,6 @@
+# Passport scans, tickets, insurance documents — not in the repo, not on Vercel.
+*.jpg
+*.jpeg
+*.pdf
+*.heic
+.DS_Store

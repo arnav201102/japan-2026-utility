@@ -20,12 +20,49 @@
   --card:#F4F4F0;
   --ink:#161C22;
   --ink-soft:#5A6470;
-  --ai:#27405E;
-  --momiji:#A3372A;
-  --moss:#5D6A4E;
   --sand:#D2D1C5;
+  --field:#fff;
+  --ai:#27405E;
+  --ai-bg:#27405E;
+  --momiji:#A3372A;
+  --momiji-bg:#A3372A;
+  --moss:#5D6A4E;
+  --moss-bg:#5D6A4E;
+  --on-bg:#EDEEE9;
   --gothic:"Zen Kaku Gothic New","Hiragino Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mincho:"Zen Old Mincho","Hiragino Mincho ProN","Yu Mincho",Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --washi:#12161A;
+    --card:#1A2026;
+    --ink:#E4E7E3;
+    --ink-soft:#98A2AC;
+    --sand:#2E363E;
+    --field:#0E1216;
+    --ai:#8FB3DE;
+    --ai-bg:#1F3550;
+    --momiji:#DF8D7C;
+    --momiji-bg:#8C2E23;
+    --moss:#9AAE84;
+    --moss-bg:#4C5940;
+    --on-bg:#EDEEE9;
+  }
+}
+:root[data-theme="dark"]{
+  --washi:#12161A;
+  --card:#1A2026;
+  --ink:#E4E7E3;
+  --ink-soft:#98A2AC;
+  --sand:#2E363E;
+  --field:#0E1216;
+  --ai:#8FB3DE;
+  --ai-bg:#1F3550;
+  --momiji:#DF8D7C;
+  --momiji-bg:#8C2E23;
+  --moss:#9AAE84;
+  --moss-bg:#4C5940;
+  --on-bg:#EDEEE9;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
@@ -56,7 +93,7 @@ h2.sec:first-child{margin-top:0}
 p.note{font-size:14px;color:var(--ink-soft);margin-bottom:14px}
 
 /* hero status */
-.status{background:var(--ai);color:#EDEEE9;border-radius:3px;padding:22px 20px 20px;margin-bottom:20px}
+.status{background:var(--ai-bg);color:var(--on-bg);border-radius:3px;padding:22px 20px 20px;margin-bottom:20px}
 .status .big{font-family:var(--mincho);font-weight:700;font-size:66px;line-height:.9;letter-spacing:-.02em;display:block}
 .status .cap{font-size:14px;opacity:.82;margin-top:8px}
 .status .where{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.22);font-size:15px}
@@ -66,6 +103,22 @@ p.note{font-size:14px;color:var(--ink-soft);margin-bottom:14px}
 .alert .k{font-size:13px;color:var(--momiji);font-weight:700}
 .alert .v{font-size:15px;margin-top:2px}
 .alert .d{font-size:13px;color:var(--ink-soft);margin-top:4px}
+
+/* weather */
+.wx{background:var(--card);border-radius:3px;padding:16px 18px;margin-bottom:20px;font-size:15px}
+.wx .hd{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px}
+.wx .hd b{font-size:15px}
+.wx .hd .dy{font-size:13px;color:var(--ink-soft);white-space:nowrap}
+.wx .verdict{font-family:var(--mincho);font-weight:700;font-size:22px;line-height:1.2;margin:6px 0 4px}
+.wx .verdict.go{color:var(--moss)}
+.wx .verdict.no{color:var(--momiji)}
+.wx .verdict.mid{color:var(--ink)}
+.wx .nums{font-size:14px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.wx .why{font-size:14px;color:var(--ink-soft);margin-top:6px;line-height:1.5}
+.wx .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--sand)}
+.wx .acts a,.wx .acts button{font:500 14px var(--gothic);border-radius:3px;padding:8px 13px;text-decoration:none;cursor:pointer;border:1px solid var(--sand);background:none;color:var(--ink)}
+.wx .acts .primary{background:var(--ai-bg);color:#fff;border-color:var(--ai-bg)}
+.wx.swapped{border-left:4px solid var(--momiji)}
 
 /* day list */
 .day{border-left:2px solid var(--sand);padding:0 0 0 16px;position:relative}
@@ -82,9 +135,16 @@ p.note{font-size:14px;color:var(--ink-soft);margin-bottom:14px}
 .stay{background:var(--card);padding:12px 14px;border-radius:3px;font-size:14px;line-height:1.5}
 .stay .nm{font-weight:700;font-size:15px}
 .stay .ad{color:var(--ink-soft);margin:3px 0 8px}
-a.tel{display:inline-block;background:var(--ai);color:#fff;text-decoration:none;padding:7px 13px;border-radius:3px;font-size:14px;font-weight:500;margin-right:8px;margin-top:4px}
-a.tel.g{background:var(--moss)}
+a.tel,button.tel{display:inline-block;background:var(--ai-bg);color:#fff;text-decoration:none;border:0;padding:7px 13px;border-radius:3px;font:500 14px var(--gothic);margin-right:8px;margin-top:4px;cursor:pointer}
+a.tel.g,button.tel.g{background:var(--moss-bg)}
 .ref{font-size:12px;color:var(--ink-soft);margin-top:8px}
+
+/* map chips and last train */
+.spots{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 12px}
+.spots a{display:inline-block;border:1px solid var(--sand);border-radius:3px;padding:6px 10px;font-size:13px;color:var(--ai);text-decoration:none;background:var(--card)}
+.spots a::before{content:"⌖ ";opacity:.6}
+.last{font-size:13.5px;color:var(--ink-soft);border-left:3px solid var(--sand);padding:2px 0 2px 10px;margin:0 0 12px;line-height:1.5}
+.last b{color:var(--ink);font-weight:700}
 
 /* money */
 .conv{background:var(--card);border-radius:3px;padding:18px;margin-bottom:16px}
@@ -101,32 +161,47 @@ a.tel.g{background:var(--moss)}
 .rate-warn{font-size:13px;color:var(--ink-soft);margin-top:6px;padding-top:6px;border-top:1px solid var(--sand)}
 .credit{font-size:12px;color:var(--ink-soft);margin:-10px 0 20px}
 .credit a{color:var(--ink-soft)}
-.rate input{width:72px;font:500 14px var(--gothic);font-variant-numeric:tabular-nums;border:1px solid var(--sand);border-radius:3px;padding:4px 6px;background:#fff;color:var(--ink)}
+.rate input{width:72px;font:500 14px var(--gothic);font-variant-numeric:tabular-nums;border:1px solid var(--sand);border-radius:3px;padding:4px 6px;background:var(--field);color:var(--ink)}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
 .chip{background:none;border:1px solid var(--sand);border-radius:3px;padding:7px 11px;font:500 14px/1 var(--gothic);font-variant-numeric:tabular-nums;color:var(--ink);cursor:pointer}
 .chip b{color:var(--ai)}
 
 /* splitter */
 .addrow{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-.addrow input,.addrow select{font:400 15px var(--gothic);border:1px solid var(--sand);border-radius:3px;padding:9px 10px;background:#fff;color:var(--ink);min-width:0}
+.addrow input,.addrow select{font:400 15px var(--gothic);border:1px solid var(--sand);border-radius:3px;padding:9px 10px;background:var(--field);color:var(--ink);min-width:0}
 .addrow input.desc{flex:1 1 100%}
 .addrow input.amt{flex:1 1 90px;font-variant-numeric:tabular-nums}
 .addrow select{flex:1 1 110px}
-.btn{background:var(--ai);color:#fff;border:0;border-radius:3px;padding:9px 16px;font:500 15px var(--gothic);cursor:pointer}
+.btn{background:var(--ai-bg);color:#fff;border:0;border-radius:3px;padding:9px 16px;font:500 15px var(--gothic);cursor:pointer}
 .btn.ghost{background:none;color:var(--ink-soft);border:1px solid var(--sand)}
 .exp{display:flex;align-items:baseline;gap:10px;padding:9px 0;border-bottom:1px solid var(--sand);font-size:15px}
 .exp .who{font-size:13px;color:var(--ink-soft)}
 .exp .amt{margin-left:auto;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.exp .dd{font-size:12px;color:var(--ink-soft);white-space:nowrap}
 .exp button{background:none;border:0;color:var(--sand);font-size:18px;cursor:pointer;line-height:1;padding:0 2px}
 .exp button:hover{color:var(--momiji)}
 .settle{background:var(--card);border-radius:3px;padding:14px 16px;margin-top:14px;font-size:15px}
 .settle div{padding:3px 0;font-variant-numeric:tabular-nums}
 .settle .ttl{font-weight:700;border-bottom:1px solid var(--sand);padding-bottom:7px;margin-bottom:6px}
 
+/* segmented control */
+.seg{display:inline-flex;border:1px solid var(--sand);border-radius:3px;overflow:hidden;margin-bottom:12px}
+.seg button{background:none;border:0;border-right:1px solid var(--sand);padding:7px 13px;font:500 14px var(--gothic);color:var(--ink-soft);cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ai-bg);color:#fff}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.toolbar button{font:500 14px var(--gothic);border:1px solid var(--sand);background:none;color:var(--ink);border-radius:3px;padding:8px 13px;cursor:pointer}
+.toolbar button.btn{background:var(--ai-bg);color:#fff;border-color:var(--ai-bg)}
+.io{display:none;margin-top:12px}
+.io.on{display:block}
+.io textarea{width:100%;height:120px;font:400 12px ui-monospace,SFMono-Regular,Menlo,monospace;border:1px solid var(--sand);border-radius:3px;padding:10px;background:var(--field);color:var(--ink);resize:vertical}
+.io p{font-size:13px;color:var(--ink-soft);margin:8px 0}
+.flash{font-size:13px;color:var(--moss);margin-top:8px;min-height:18px}
+
 /* checklist */
 .chk{display:flex;gap:11px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--sand);cursor:pointer}
-.chk input{appearance:none;-webkit-appearance:none;width:19px;height:19px;flex:none;margin-top:2px;border:2px solid var(--ai);border-radius:2px;background:#fff;cursor:pointer;position:relative}
-.chk input:checked{background:var(--moss);border-color:var(--moss)}
+.chk input{appearance:none;-webkit-appearance:none;width:19px;height:19px;flex:none;margin-top:2px;border:2px solid var(--ai);border-radius:2px;background:var(--field);cursor:pointer;position:relative}
+.chk input:checked{background:var(--moss-bg);border-color:var(--moss-bg)}
 .chk input:checked::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(43deg)}
 .chk input:focus-visible{outline:2px solid var(--momiji);outline-offset:2px}
 .chk .txt{font-size:15px;line-height:1.45}
@@ -136,30 +211,99 @@ a.tel.g{background:var(--moss)}
 .chk input:checked+.txt .when{color:var(--ink-soft);text-decoration:none}
 .prog{font-size:13px;color:var(--ink-soft);margin:2px 0 12px;font-variant-numeric:tabular-nums}
 
+/* bookings, with deadlines */
+.bk{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--sand)}
+.bk input{appearance:none;-webkit-appearance:none;width:19px;height:19px;flex:none;margin-top:3px;border:2px solid var(--ai);border-radius:2px;background:var(--field);cursor:pointer;position:relative}
+.bk input:checked{background:var(--moss-bg);border-color:var(--moss-bg)}
+.bk input:checked::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(43deg)}
+.bk input:focus-visible{outline:2px solid var(--momiji);outline-offset:2px}
+.bk .txt{flex:1;font-size:15px;line-height:1.45;cursor:pointer}
+.bk .when{display:block;font-size:12.5px;color:var(--ink-soft);margin-top:1px}
+.bk.done .txt{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:var(--sand)}
+.bk.done .when{text-decoration:none}
+.bk .side{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.bk .due{font-size:12px;font-weight:700;white-space:nowrap;border-radius:3px;padding:3px 7px;background:var(--card);color:var(--ink-soft)}
+.bk .due.soon{background:var(--momiji-bg);color:#fff}
+.bk .due.near{color:var(--momiji)}
+.bk .due.over{color:var(--momiji);border:1px solid var(--momiji)}
+.bk .cal{background:none;border:1px solid var(--sand);border-radius:3px;color:var(--ink-soft);font:500 11.5px var(--gothic);padding:3px 7px;cursor:pointer;white-space:nowrap}
+.bk .cal:hover{color:var(--ai);border-color:var(--ai)}
+.bk.done .side{opacity:.45}
+
+/* running tab */
+.tab-total{background:var(--ai-bg);color:var(--on-bg);border-radius:3px;padding:16px 18px;margin-bottom:18px}
+.tab-total .big{font-family:var(--mincho);font-weight:700;font-size:36px;line-height:1;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.tab-total .sub{font-size:14px;opacity:.82;margin-top:6px;font-variant-numeric:tabular-nums}
+.tab-total .rest{margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.22);font-size:14px;font-variant-numeric:tabular-nums}
+.tab-total .rest span{display:block}
+.tab-total .bud{margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.22);font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tab-total .bud input{width:80px;font:500 14px var(--gothic);font-variant-numeric:tabular-nums;border:1px solid rgba(255,255,255,.32);border-radius:3px;padding:4px 7px;background:rgba(255,255,255,.09);color:#fff}
+.tab-total .bud input:focus{outline:none;border-color:#fff}
+.tab-total .bud .tag{opacity:.82}
+.buy{display:flex;gap:11px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--sand);font-size:15px}
+.buy input[type=checkbox]{appearance:none;-webkit-appearance:none;width:19px;height:19px;flex:none;align-self:flex-start;margin-top:3px;border:2px solid var(--ai);border-radius:2px;background:var(--field);cursor:pointer;position:relative}
+.buy input[type=checkbox]:checked{background:var(--moss-bg);border-color:var(--moss-bg)}
+.buy input[type=checkbox]:checked::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(43deg)}
+.buy .txt{flex:1;line-height:1.45}
+.buy.got .txt{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:var(--sand)}
+.buy .amt{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.buy .amt small{display:block;font-weight:400;font-size:12px;color:var(--ink-soft);text-align:right}
+.buy .x{background:none;border:0;color:var(--sand);font-size:18px;cursor:pointer;line-height:1;padding:0 2px}
+.buy .x:hover{color:var(--momiji)}
+.tip{background:var(--card);border-left:4px solid var(--moss);padding:13px 15px;margin:14px 0 20px;font-size:14px;line-height:1.55}
+.tip b{display:block;font-size:13px;color:var(--moss);margin-bottom:3px}
+
 /* info */
 .row{display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--sand);font-size:15px;align-items:baseline}
 .row .l{color:var(--ink-soft);flex:none;width:122px;font-size:14px}
 .row .r{flex:1}
 .row .r a{color:var(--ai)}
 .sos{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
-.sos a{display:block;background:var(--momiji);color:#fff;text-decoration:none;border-radius:3px;padding:14px;text-align:center}
+.sos a{display:block;background:var(--momiji-bg);color:#fff;text-decoration:none;border-radius:3px;padding:14px;text-align:center}
 .sos a .n{font-family:var(--mincho);font-weight:700;font-size:30px;display:block;line-height:1}
 .sos a .l{font-size:13px;opacity:.9;margin-top:3px}
-.ph{padding:10px 0;border-bottom:1px solid var(--sand)}
+.ph{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--sand);padding:11px 0;font:inherit;color:inherit;cursor:pointer}
+.ph .tx{flex:1}
 .ph .jp{font-size:17px;font-weight:500}
-.ph .en{font-size:14px;color:var(--ink-soft)}
+.ph .en{font-size:14px;color:var(--ink-soft);line-height:1.45}
+.ph .zoom{flex:none;font-size:15px;color:var(--ai);border:1px solid var(--sand);border-radius:3px;padding:5px 9px}
 .links a{display:block;padding:10px 0;border-bottom:1px solid var(--sand);color:var(--ai);text-decoration:none;font-size:15px}
 .links a span{display:block;font-size:13px;color:var(--ink-soft)}
 
+/* documents kept on the phone */
+.docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin:4px 0 10px}
+.doc{position:relative;border:1px solid var(--sand);border-radius:3px;overflow:hidden;background:var(--card)}
+.doc .open{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer}
+.doc img{display:block;width:100%;height:104px;object-fit:cover}
+.doc .pdf{height:104px;display:flex;align-items:center;justify-content:center;font-family:var(--mincho);font-weight:700;font-size:20px;color:var(--ai)}
+.doc .cap{font-size:11.5px;padding:5px 7px;color:var(--ink-soft);line-height:1.3;word-break:break-word}
+.doc .rm{position:absolute;top:4px;right:4px;width:24px;height:24px;line-height:1;background:rgba(0,0,0,.62);color:#fff;border:0;border-radius:3px;font-size:15px;cursor:pointer;padding:0}
+.docview{position:fixed;inset:0;z-index:70;background:#0B0D10;display:none;align-items:center;justify-content:center;overflow:auto;padding:20px}
+.docview.on{display:flex}
+.docview .hold{max-width:100%;text-align:center}
+.docview img{max-width:100%;height:auto;border-radius:2px}
+
+/* show-a-stranger overlay */
+.show{position:fixed;inset:0;z-index:60;background:var(--washi);display:none;flex-direction:column;padding:22px 20px calc(22px + env(safe-area-inset-bottom));overflow:auto}
+.show.on{display:flex}
+.show .inner{margin:auto 0;width:100%;max-width:600px;margin-left:auto;margin-right:auto}
+.show .kicker{font-size:13px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.09em;margin-bottom:14px}
+.show .jp{font-family:var(--mincho);font-weight:700;font-size:34px;line-height:1.35;letter-spacing:.01em;white-space:pre-line}
+.show .romaji{font-size:17px;color:var(--ink-soft);margin-top:14px}
+.show .en{font-size:16px;margin-top:10px;line-height:1.5}
+.show .foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--sand);font-size:14px;color:var(--ink-soft)}
+.show .close{position:fixed;top:calc(14px + env(safe-area-inset-top));right:16px;background:var(--card);border:1px solid var(--sand);color:var(--ink);border-radius:3px;font:500 15px var(--gothic);padding:8px 15px;cursor:pointer;z-index:61}
+
 /* tab bar */
-nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--ai);padding-bottom:env(safe-area-inset-bottom);z-index:20}
-nav.tabs .in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
-nav.tabs button{background:none;border:0;color:rgba(237,238,233,.6);padding:13px 4px 15px;font:500 12.5px var(--gothic);cursor:pointer;border-top:3px solid transparent}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--ai-bg);padding-bottom:env(safe-area-inset-bottom);z-index:20}
+nav.tabs .in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
+nav.tabs button{background:none;border:0;color:rgba(237,238,233,.6);padding:13px 2px 15px;font:500 12px var(--gothic);cursor:pointer;border-top:3px solid transparent}
 nav.tabs button .g{display:block;font-family:var(--mincho);font-size:17px;line-height:1.15;margin-bottom:2px}
 nav.tabs button[aria-selected="true"]{color:#fff;border-top-color:var(--momiji)}
 nav.tabs button:focus-visible{outline:2px solid #fff;outline-offset:-4px}
 
 footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.5}
+.offline{font-size:12.5px;color:var(--ink-soft);padding-top:14px;border-top:1px solid var(--sand);margin-top:22px;line-height:1.5}
 @media (prefers-reduced-motion:no-preference){
   .status .big{animation:rise .5s ease-out both}
   @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -185,6 +329,8 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
     <div class="where" id="whereNow"></div>
   </div>
   <div id="nextUp"></div>
+  <div id="wxToday"></div>
+  <div id="fujiCard"></div>
 
   <h2 class="sec" id="todayHead">Today</h2>
   <div id="todayCard"></div>
@@ -215,6 +361,9 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
   <div class="chips" id="chips"></div>
   <p class="credit">Rates from the <a href="https://frankfurter.dev" target="_blank" rel="noopener">European Central Bank via Frankfurter</a> and <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">ExchangeRate-API</a>.</p>
 
+  <h2 class="sec">Spending</h2>
+  <div class="tab-total" id="pace"></div>
+
   <h2 class="sec">Split the bill</h2>
   <p class="note">Everyone pays their own way, so this just tracks who covered what and evens it out at the end. Stored on this phone only.</p>
   <div class="addrow">
@@ -223,8 +372,23 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
     <select id="ePayer" aria-label="Who paid"><option>Arnav</option><option>Ayush</option><option>Manan</option></select>
     <button class="btn" id="eAdd">Add</button>
   </div>
+  <div class="seg" id="expFilter" role="group" aria-label="Filter by who paid"></div>
   <div id="expList"></div>
   <div class="settle" id="settle"></div>
+  <div class="toolbar">
+    <button id="expCopy">Copy summary</button>
+    <button id="expShare">Send to the others</button>
+    <button id="expIO">Export / import</button>
+  </div>
+  <div class="flash" id="expFlash"></div>
+  <div class="io" id="ioPanel">
+    <p>This is every expense on this phone. Copy it into WhatsApp and whoever pastes it back in gets the same list. Importing <b>replaces</b> what is on this phone.</p>
+    <textarea id="ioText" spellcheck="false" aria-label="Expense data"></textarea>
+    <div class="toolbar">
+      <button id="ioCopy">Copy the code</button>
+      <button id="ioLoad">Import what is in the box</button>
+    </div>
+  </div>
 </section>
 
 <!-- ============ CHECKLIST ============ -->
@@ -246,6 +410,38 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
   <p style="margin-top:24px"><button class="btn ghost" id="resetAll">Clear all ticks</button></p>
 </section>
 
+<!-- ============ BUY ============ -->
+<section class="panel" id="p-buy" role="tabpanel" aria-labelledby="t-buy">
+  <h2 class="sec">Your tab</h2>
+  <p class="note">Add anything you mean to buy, tick it when you have. Ticked items count as spent. Yours only, on this phone.</p>
+  <div class="tab-total" id="buyTotal"></div>
+  <div class="addrow">
+    <input class="desc" id="bDesc" placeholder="What are you buying?" aria-label="Item">
+    <input class="amt num" id="bAmt" type="text" inputmode="decimal" placeholder="¥ guess" aria-label="Rough price in yen">
+    <button class="btn" id="bAdd">Add</button>
+  </div>
+  <div id="buyList"></div>
+
+  <h2 class="sec">Before you fly</h2>
+  <p class="note">Bought here, in rupees, while you still have time to return it. Prices are rough for September 2026.</p>
+  <div class="prog" id="prog-before"></div>
+  <div id="list-before"></div>
+
+  <h2 class="sec">Get these early</h2>
+  <p class="note">Cheap, and the trip is worse without them. Most of it is a konbini or Don Quijote run on the first night in Shinjuku.</p>
+  <div class="prog" id="prog-need"></div>
+  <div id="list-need"></div>
+
+  <h2 class="sec">Taking things home</h2>
+  <p class="note">Prices are rough and from September 2026. Don Quijote beats the airport on almost everything except alcohol.</p>
+  <div class="prog" id="prog-gift"></div>
+  <div id="list-gift"></div>
+
+  <div class="tip"><b>Tax free</b>Show your passport at the till and you skip the 10% consumption tax on ¥5,000+ spent in one shop on one day. Japan has been moving this to a refund-you-collect-at-the-airport system, possibly from November 2026 — ask at the first big shop you hit how it works now, and if it is the new system, keep receipts and leave 30 extra minutes at KIX.</div>
+
+  <div class="tip"><b>Before the big purchases</b>Check what your ANA fare actually allows in checked baggage, and weigh the case on the 5th, not at the airport. Knives, scissors and liquids over 100ml go in checked bags only. Whisky and sake are easier bought airside at KIX than carried from Osaka.</div>
+</section>
+
 <!-- ============ INFO ============ -->
 <section class="panel" id="p-info" role="tabpanel" aria-labelledby="t-info">
   <h2 class="sec">Emergency</h2>
@@ -257,6 +453,21 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
   <div class="row"><div class="l">Embassy, Tokyo</div><div class="r"><a href="tel:+81332622391">+81 3-3262-2391</a><br>2-2-11 Kudan-Minami, Chiyoda-ku</div></div>
   <div class="row"><div class="l">Consulate, Osaka</div><div class="r"><a href="tel:+81662617299">+81 6-6261-7299</a><br>Kyutaromachi, Chuo-ku — 1 min from Sakaisuji-Hommachi</div></div>
   <div class="row"><div class="l">Lost something</div><div class="r">Ask any station office for 忘れ物 (wasuremono). Japan's lost-and-found actually works — things get handed in.</div></div>
+
+  <h2 class="sec">Your documents</h2>
+  <p class="note">Photograph your passport, visa and insurance and keep them here. They stay in this browser on this phone — they are never uploaded, never sent to the others, and they open with no signal.</p>
+  <div id="docList"></div>
+  <div class="toolbar">
+    <button class="btn" id="docAdd">Add a photo</button>
+    <button id="docWhy">Where does this go?</button>
+  </div>
+  <input type="file" id="docFile" accept="image/*,application/pdf" multiple hidden>
+  <div class="flash" id="docFlash"></div>
+  <div class="io" id="docNote">
+    <p><b>Nothing leaves the phone.</b> The image is shrunk and saved in this browser's own storage. There is no server in this app and nothing to upload to. The other two see nothing.</p>
+    <p><b>It is not a backup.</b> Clearing your browser data, or deleting the site from your home screen, deletes these too. Keep the originals in your photos or a password manager as well.</p>
+    <p><b>Don't put them in the project folder.</b> Anything sitting next to index.html gets published at a public, guessable web address when this deploys. That is the one place a passport scan must never be.</p>
+  </div>
 
   <h2 class="sec">Flights</h2>
   <div class="row"><div class="l">24 Nov</div><div class="r">NH838 · Delhi 18:55 → Haneda 05:55 (+1)</div></div>
@@ -272,12 +483,12 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
   <div class="row"><div class="l">Cash</div><div class="r">Keep ¥10,000 on you. Small restaurants, shrine entries and the Ine sea taxi are often cash only. 7-Eleven ATMs take Indian cards.</div></div>
 
   <h2 class="sec">Worth saying out loud</h2>
-  <div class="ph"><div class="jp">すみません — Sumimasen</div><div class="en">Excuse me, and also sorry, and also thank you. Does most of the work.</div></div>
-  <div class="ph"><div class="jp">これをください — Kore o kudasai</div><div class="en">This one, please. Point at it.</div></div>
-  <div class="ph"><div class="jp">英語のメニューはありますか — Eigo no menyū wa arimasu ka</div><div class="en">Is there an English menu?</div></div>
-  <div class="ph"><div class="jp">肉は入っていますか — Niku wa haitte imasu ka</div><div class="en">Does this contain meat? Note that dashi (fish stock) is in almost everything.</div></div>
-  <div class="ph"><div class="jp">お会計お願いします — Okaikei onegaishimasu</div><div class="en">The bill, please. Usually you pay at the front counter, not the table.</div></div>
-  <div class="ph"><div class="jp">駅はどこですか — Eki wa doko desu ka</div><div class="en">Where is the station?</div></div>
+  <p class="note">Tap any line to blow it up big enough to hold in front of someone.</p>
+  <div id="phraseList"></div>
+
+  <h2 class="sec">Show a driver</h2>
+  <p class="note">Japanese address, large. Taxi drivers rarely read romaji, and the satnav wants the phone number anyway.</p>
+  <div id="driverList"></div>
 
   <h2 class="sec">Book and check here</h2>
   <div class="links">
@@ -292,10 +503,31 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
     <a href="https://www.jma.go.jp/bosai/forecast/" target="_blank" rel="noopener">Japan Meteorological Agency<span>The forecast that decides your Fuji day</span></a>
   </div>
 
+  <h2 class="sec">This app</h2>
+  <div class="row"><div class="l">Appearance</div><div class="r"><div class="seg" id="themeSeg" role="group" aria-label="Appearance"><button data-t="auto">Auto</button><button data-t="light">Light</button><button data-t="dark">Dark</button></div></div></div>
+  <div class="row"><div class="l">Offline</div><div class="r" id="swState">Checking…</div></div>
+  <p class="offline">Everything here works with the phone in aeroplane mode once it has loaded on your wifi once. The exchange rate and the weather are the only parts that need a connection, and both keep showing the last thing they got.</p>
+
   <footer>Built for Arnav, Ayush and Manan. Everything you tick or type is saved on your own phone and shared with nobody. Check fares and opening hours against the official sites before you rely on them.</footer>
 </section>
 
 </main>
+
+<div class="show" id="showBig" role="dialog" aria-modal="true" aria-label="Enlarged">
+  <button class="close" id="showClose" type="button">Close</button>
+  <div class="inner">
+    <div class="kicker" id="showKicker"></div>
+    <div class="jp" id="showJp"></div>
+    <div class="romaji" id="showRomaji"></div>
+    <div class="en" id="showEn"></div>
+    <div class="foot" id="showFoot"></div>
+  </div>
+</div>
+
+<div class="docview" id="docView" role="dialog" aria-modal="true" aria-label="Document">
+  <button class="close" id="docClose" type="button">Close</button>
+  <div class="hold" id="docHold"></div>
+</div>
 
 <nav class="tabs" role="tablist" aria-label="Sections">
   <div class="in">
@@ -303,6 +535,7 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
     <button role="tab" id="t-days"  aria-selected="false" aria-controls="p-days"  data-p="days"><span class="g">程</span>Days</button>
     <button role="tab" id="t-money" aria-selected="false" aria-controls="p-money" data-p="money"><span class="g">¥</span>Money</button>
     <button role="tab" id="t-list"  aria-selected="false" aria-controls="p-list"  data-p="list"><span class="g">要</span>To do</button>
+    <button role="tab" id="t-buy"   aria-selected="false" aria-controls="p-buy"   data-p="buy"><span class="g">買</span>Buy</button>
     <button role="tab" id="t-info"  aria-selected="false" aria-controls="p-info"  data-p="info"><span class="g">報</span>Info</button>
   </div>
 </nav>
@@ -318,57 +551,105 @@ var S={
 
 /* ---------- trip data ---------- */
 var STAY={
-  tok:{nm:"Yu's Apartment, Shinjuku",ad:"2-19-12 Kabukichō, Shinjuku City, Tokyo 160-0021",host:"Yu",tel:"+818037956221",telShow:"+81 80-3795-6221",ref:"HMP29YNARR · in 25 Nov 16:00, out 30 Nov 11:00"},
-  kyo:{nm:"Private Room B, Kyoto",ad:"Kyoto, Kyoto Prefecture 600-8195",host:"Kizuna",tel:"+819039753891",telShow:"+81 90-3975-3891",ref:"HMSWQDSNFB · in 30 Nov 16:00, out 3 Dec 11:00"},
-  osa:{nm:"Apartment, Nipponbashihigashi",ad:"Nipponbashihigashi, Naniwa Ward, Osaka 556-0006",host:"Ayaka (絢香)",tel:"+815017210241",telShow:"+81 50-1721-0241",ref:"HMP2X3PCJF · in 3 Dec 16:00, out 5 Dec 10:00"},
-  hon:{nm:"Far East Village Hotel Osaka, Honmachi",ad:"中央区久太郎町3-3-6, Chuo-ku, Osaka 541-0056",host:"Front desk",tel:"+814523244476",telShow:"+81 45 232 4476",ref:"Booking.com 5665.397.455 · in 5 Dec 15:00, out 6 Dec 11:00 · 2 rooms"}
+  tok:{nm:"Yu's Apartment, Shinjuku",ad:"2-19-12 Kabukich\u014d, Shinjuku City, Tokyo 160-0021",
+       jp:"\u3012160-0021 \u6771\u4eac\u90fd\u65b0\u5bbf\u533a\u6b4c\u821e\u4f0e\u753a2-19-12",
+       host:"Yu",tel:"+818037956221",telShow:"+81 80-3795-6221",ref:"HMP29YNARR \u00b7 in 25 Nov 16:00, out 30 Nov 11:00"},
+  kyo:{nm:"Private Room B, Kyoto",ad:"Kyoto, Kyoto Prefecture 600-8195",
+       jp:"\u3012600-8195 \u4eac\u90fd\u5e9c\u4eac\u90fd\u5e02\u4e0b\u4eac\u533a",
+       jpNote:"The postcode gets a driver to the block. The exact door is in Kizuna's message \u2014 screenshot it before you land.",
+       host:"Kizuna",tel:"+819039753891",telShow:"+81 90-3975-3891",ref:"HMSWQDSNFB \u00b7 in 30 Nov 16:00, out 3 Dec 11:00"},
+  osa:{nm:"Apartment, Nipponbashihigashi",ad:"Nipponbashihigashi, Naniwa Ward, Osaka 556-0006",
+       jp:"\u3012556-0006 \u5927\u962a\u5e9c\u5927\u962a\u5e02\u6d6a\u901f\u533a\u65e5\u672c\u6a4b\u6771",
+       jpNote:"Ayaka's message has the building and room number. Keep it open when you get in the taxi.",
+       host:"Ayaka (\u7dbe\u9999)",tel:"+815017210241",telShow:"+81 50-1721-0241",ref:"HMP2X3PCJF \u00b7 in 3 Dec 16:00, out 5 Dec 10:00"},
+  hon:{nm:"Far East Village Hotel Osaka, Honmachi",ad:"\u4e2d\u592e\u533a\u4e45\u592a\u90ce\u753a3-3-6, Chuo-ku, Osaka 541-0056",
+       jp:"\u3012541-0056 \u5927\u962a\u5e9c\u5927\u962a\u5e02\u4e2d\u592e\u533a\u4e45\u592a\u90ce\u753a3-3-6\n\u30d5\u30a1\u30fc\u30a4\u30fc\u30b9\u30c8\u30f4\u30a3\u30ec\u30c3\u30b8\u30db\u30c6\u30eb\u5927\u962a\u672c\u753a",
+       host:"Front desk",tel:"+814523244476",telShow:"+81 45 232 4476",ref:"Booking.com 5665.397.455 \u00b7 in 5 Dec 15:00, out 6 Dec 11:00 \u00b7 2 rooms"}
 };
 
 var DAYS=[
- {d:"2026-11-24",dow:"Tue",city:"In transit",t:"Delhi → Tokyo",
-  p:["Reach T3 by 15:30 — it's a 12-day trip, don't cut it fine.","NH838 departs 18:55. Sleep on this one; you land at dawn and the day starts immediately."],stay:null},
+ {d:"2026-11-24",dow:"Tue",city:"In transit",t:"Delhi \u2192 Tokyo",
+  p:["Reach T3 by 15:30 \u2014 it's a 12-day trip, don't cut it fine.","NH838 departs 18:55. Sleep on this one; you land at dawn and the day starts immediately."],
+  stay:null,ll:null,spots:["Indira Gandhi International Airport Terminal 3"],
+  last:"Boarding closes 40 minutes before 18:55. The gate is a long walk from security at T3."},
  {d:"2026-11-25",dow:"Wed",city:"Tokyo",t:"Shinjuku, Harajuku",
-  p:["Land 05:55. Immigration, then the limousine bus or Asakusa line to Shinjuku.","Drop bags at the apartment before check-in, then Kabukicho and Omoide Yokocho.","Afternoon: Meiji Jingu and Takeshita Street.","Buy the 72-hour Tokyo Subway ticket at Haneda arrivals. Set up Suica before you leave the airport."],stay:"tok"},
+  p:["Land 05:55. Immigration, then the limousine bus or Asakusa line to Shinjuku.","Drop bags at the apartment before check-in, then Kabukicho and Omoide Yokocho.","Afternoon: Meiji Jingu and Takeshita Street.","Buy the 72-hour Tokyo Subway ticket at Haneda arrivals. Set up Suica before you leave the airport."],
+  stay:"tok",ll:[35.694,139.703],
+  spots:["Shinjuku Station","Omoide Yokocho","Meiji Jingu","Takeshita Street Harajuku"],
+  last:"Tokyo's last trains go around 00:20\u201300:40. After 22:00 let Google Maps tell you the real one \u2014 a taxi across Tokyo is \u00a55,000 and up."},
  {d:"2026-11-26",dow:"Thu",city:"Mt. Fuji",t:"Kawaguchiko",
-  p:["Check the webcam before you leave. If the mountain is socked in, swap this with the Kamakura day — you have the flexibility.","Chureito Pagoda, Oshino Hakkai, Lake Kawaguchi. Red Line bus day pass at the station, about ¥1,500.","Last direct train back leaves Kawaguchiko around 17:41. Buses run later."],stay:"tok"},
+  p:["Check the webcam before you leave. If the mountain is socked in, swap this with the Kamakura day \u2014 you have the flexibility.","Chureito Pagoda, Oshino Hakkai, Lake Kawaguchi. Red Line bus day pass at the station, about \u00a51,500.","Last direct train back leaves Kawaguchiko around 17:41. Buses run later."],
+  stay:"tok",ll:[35.499,138.756],
+  spots:["Chureito Pagoda","Oshino Hakkai","Lake Kawaguchi","Kawaguchiko Station"],
+  last:"Last direct Fuji Excursion back is around 17:41. Miss it and it's the Fujikyu line to Otsuki and a change, or a highway bus to Shinjuku \u2014 those run later but need a seat."},
  {d:"2026-11-27",dow:"Fri",city:"Kamakura",t:"Temples and the coast",
-  p:["JR Yokosuka line from Tokyo, about an hour. Nothing here needs booking.","Kotoku-in for the Great Buddha, Hase-dera, Hokoku-ji bamboo.","Ride the Enoden to Kamakurakoko-mae for the level crossing by the sea.","Your subway pass doesn't cover JR today."],stay:"tok"},
+  p:["JR Yokosuka line from Tokyo, about an hour. Nothing here needs booking.","Kotoku-in for the Great Buddha, Hase-dera, Hokoku-ji bamboo.","Ride the Enoden to Kamakurakoko-mae for the level crossing by the sea.","Your subway pass doesn't cover JR today."],
+  stay:"tok",ll:[35.319,139.550],
+  spots:["Kotoku-in Great Buddha Kamakura","Hase-dera Kamakura","Hokoku-ji Kamakura","Kamakurakokomae Station"],
+  last:"Temples shut at 16:30 in winter \u2014 that, not the trains, is the deadline. JR back to Tokyo runs late into the evening."},
  {d:"2026-11-28",dow:"Sat",city:"Tokyo",t:"Asakusa, Skytree, teamLab",
-  p:["teamLab Planets first, earliest slot — it gets chaotic and you'll be wading through water, so wear shorts or trousers you can roll up.","Senso-ji and Nakamise, then Skytree mid-afternoon on the booked slot.","Saturday, so everything is busier than it looks on paper. Move early."],stay:"tok"},
+  p:["teamLab Planets first, earliest slot \u2014 it gets chaotic and you'll be wading through water, so wear shorts or trousers you can roll up.","Senso-ji and Nakamise, then Skytree mid-afternoon on the booked slot.","Saturday, so everything is busier than it looks on paper. Move early."],
+  stay:"tok",ll:[35.712,139.797],
+  spots:["teamLab Planets TOKYO","Senso-ji","Tokyo Skytree","Nakamise-dori"],
+  last:"Skytree's last entry is 21:00 and your slot is fixed \u2014 being late is the same as not going."},
  {d:"2026-11-29",dow:"Sun",city:"Tokyo",t:"Tokyo Tower, Akihabara, Ginza",
-  p:["Tokyo Tower is walk-up.","Akihabara for the arcades and Super Potato, then Ginza.","Shibuya Sky at sunset, around 16:30 — book the slot 40 minutes before.","Good evening for the drift tour if you moved it here.","Repack tonight. You're on a Shinkansen tomorrow."],stay:"tok"},
+  p:["Tokyo Tower is walk-up.","Akihabara for the arcades and Super Potato, then Ginza.","Shibuya Sky at sunset, around 16:30 \u2014 book the slot 40 minutes before.","Good evening for the drift tour if you moved it here.","Repack tonight. You're on a Shinkansen tomorrow."],
+  stay:"tok",ll:[35.659,139.701],
+  spots:["Tokyo Tower","Super Potato Akihabara","Shibuya Sky","Ginza"],
+  last:"Shibuya Sky's last entry is 22:20. Last trains around 00:30. Repack before you go out, not after."},
  {d:"2026-11-30",dow:"Mon",city:"Kyoto",t:"Shinkansen, Gion, Kiyomizu-dera",
-  p:["Out by 11:00. Nozomi around midday, seats D or E on the right for Fuji about 40 minutes in.","Drop bags in Kyoto, then Sannenzaka and Ninenzaka up to Kiyomizu-dera.","Tonight is the last night of the Kiyomizu-dera autumn illumination for 2026. Evening entry from 17:30, last entry 21:00, separate ticket at the gate. Don't drift — go."],stay:"kyo"},
+  p:["Out by 11:00. Nozomi around midday, seats D or E on the right for Fuji about 40 minutes in.","Drop bags in Kyoto, then Sannenzaka and Ninenzaka up to Kiyomizu-dera.","Tonight is the last night of the Kiyomizu-dera autumn illumination for 2026. Evening entry from 17:30, last entry 21:00, separate ticket at the gate. Don't drift \u2014 go."],
+  stay:"kyo",ll:[34.985,135.758],
+  spots:["Kiyomizu-dera","Sannenzaka","Gion Kyoto","Kyoto Station"],
+  last:"Last entry to the illumination is 21:00 and it does not run again this year. Kyoto buses stop around 22:30."},
  {d:"2026-12-01",dow:"Tue",city:"Amanohashidate",t:"Ine and the coast",
-  p:["Long day. Limited Express Hashidate from Kyoto, roughly two hours each way.","Activate the Kansai WIDE pass this morning — it runs through the 5th.","Ine Bay cruise, the funaya boathouses, then the Amanohashidate chairlift and the view from Kasamatsu Park.","Carry cash. The sea taxi is often cash only."],stay:"kyo"},
+  p:["Long day. Limited Express Hashidate from Kyoto, roughly two hours each way.","Activate the Kansai WIDE pass this morning \u2014 it runs through the 5th.","Ine Bay cruise, the funaya boathouses, then the Amanohashidate chairlift and the view from Kasamatsu Park.","Carry cash. The sea taxi is often cash only."],
+  stay:"kyo",ll:[35.566,135.194],
+  spots:["Amanohashidate View Land","Kasamatsu Park Amanohashidate","Ine Funaya","Amanohashidate Station"],
+  last:"The one that matters all trip. Write down the last Hashidate back to Kyoto when you reserve the seats \u2014 miss it and you are sleeping in Miyazu."},
  {d:"2026-12-02",dow:"Wed",city:"Kyoto",t:"Fushimi Inari, Arashiyama",
-  p:["Fushimi Inari at first light. By 09:00 the lower gates are shoulder to shoulder, and it's free and open all night.","Arashiyama: bamboo grove, Tenryu-ji, the Sagano Romantic Train if it's running today.","Nishiki Market late afternoon.","Trains, not buses. Kyoto buses barely move in foliage season."],stay:"kyo"},
+  p:["Fushimi Inari at first light. By 09:00 the lower gates are shoulder to shoulder, and it's free and open all night.","Arashiyama: bamboo grove, Tenryu-ji, the Sagano Romantic Train if it's running today.","Nishiki Market late afternoon.","Trains, not buses. Kyoto buses barely move in foliage season."],
+  stay:"kyo",ll:[34.967,135.772],
+  spots:["Fushimi Inari Taisha","Arashiyama Bamboo Grove","Tenryu-ji","Nishiki Market"],
+  last:"Sagano trains stop mid-afternoon in winter and Tenryu-ji shuts at 17:00. Fushimi Inari is the one place that never closes."},
  {d:"2026-12-03",dow:"Thu",city:"Osaka",t:"Namba, Dotonbori",
-  p:["Out by 11:00. JR Kyoto Line to Osaka, covered by the pass, about 30 minutes.","Kuromon Market for lunch, Dotonbori and Shinsaibashi in the evening.","Den Den Town is a few minutes' walk from the apartment.","Register your USJ Studio Pass in the official app tonight — you'll need it at the gate tomorrow."],stay:"osa"},
+  p:["Out by 11:00. JR Kyoto Line to Osaka, covered by the pass, about 30 minutes.","Kuromon Market for lunch, Dotonbori and Shinsaibashi in the evening.","Den Den Town is a few minutes' walk from the apartment.","Register your USJ Studio Pass in the official app tonight \u2014 you'll need it at the gate tomorrow."],
+  stay:"osa",ll:[34.665,135.501],
+  spots:["Kuromon Ichiba Market","Dotonbori","Shinsaibashi","Den Den Town Osaka"],
+  last:"Kuromon stalls start shutting at 17:00. Osaka subway runs to about midnight, and Dotonbori is walkable from the flat anyway."},
  {d:"2026-12-04",dow:"Fri",city:"Universal",t:"Universal Studios Japan",
-  p:["Be at the gate before opening, not at opening.","If you don't have Express Pass Nintendo World access, pull an Area Timed Entry Ticket in the app the moment gates open. Distribution can end early.","JR Yumesaki Line to Universal City, covered by the pass.","Long day on your feet. Wear the shoes that already fit."],stay:"osa"},
+  p:["Be at the gate before opening, not at opening.","If you don't have Express Pass Nintendo World access, pull an Area Timed Entry Ticket in the app the moment gates open. Distribution can end early.","JR Yumesaki Line to Universal City, covered by the pass.","Long day on your feet. Wear the shoes that already fit."],
+  stay:"osa",ll:[34.665,135.432],
+  spots:["Universal Studios Japan","Universal City Station"],
+  last:"USJ's closing time moves daily \u2014 check it in the app that morning. The Yumesaki line is crushed for an hour after close; wait it out with a coffee."},
  {d:"2026-12-05",dow:"Sat",city:"Osaka",t:"Castle, Umeda, last shopping",
-  p:["Check out by 10:00 and leave bags in storage.","Activate the Osaka Amazing Pass this morning. Umeda Sky Building first — it's only free before 15:00.","Osaka Castle, Tombori River Cruise, Shinsaibashi for whatever's left on the list.","Collect bags and check into Honmachi from 15:00.","Confirm the airport taxi with the front desk tonight. Pack tonight, not at 3am.","Set two alarms."],stay:"hon"},
- {d:"2026-12-06",dow:"Sun",city:"Going home",t:"Kansai → Delhi",
-  p:["Taxi 04:15 from the hotel, at KIX by about 05:05.","Check-in closes 60 minutes before NH990 at 06:45, so be at the counter by 05:45.","Connect at Haneda, NH837 at 10:35, Delhi 17:25.","Last chance for KitKats is airside at KIX."],stay:null}
+  p:["Check out by 10:00 and leave bags in storage.","Activate the Osaka Amazing Pass this morning. Umeda Sky Building first \u2014 it's only free before 15:00.","Osaka Castle, Tombori River Cruise, Shinsaibashi for whatever's left on the list.","Collect bags and check into Honmachi from 15:00.","Confirm the airport taxi with the front desk tonight. Pack tonight, not at 3am.","Set two alarms."],
+  stay:"hon",ll:[34.687,135.526],
+  spots:["Umeda Sky Building","Osaka Castle","Shinsaibashi","Far East Village Hotel Osaka Honmachi"],
+  last:"Umeda Sky is only free on the pass before 15:00. Bags out of storage before the desk shuts. In the room by 22:00, packed, two alarms set."},
+ {d:"2026-12-06",dow:"Sun",city:"Going home",t:"Kansai \u2192 Delhi",
+  p:["Taxi 04:15 from the hotel, at KIX by about 05:05.","Check-in closes 60 minutes before NH990 at 06:45, so be at the counter by 05:45.","Connect at Haneda, NH837 at 10:35, Delhi 17:25.","Last chance for KitKats is airside at KIX."],
+  stay:null,ll:[34.434,135.244],
+  spots:["Kansai International Airport","Far East Village Hotel Osaka Honmachi"],
+  last:"Nothing runs at 04:15 \u2014 that is exactly why it is a taxi, confirmed the night before. Counter by 05:45, no argument."}
 ];
 
 var BOOKINGS=[
- {t:"Smart EX: Shinkansen Tokyo → Kyoto, 30 Nov",w:"book now, opens a year ahead"},
- {t:"teamLab Planets, 28 Nov, earliest slot",w:"book now"},
- {t:"Kansai WIDE Area Pass ×3, from JR West directly",w:"book now, ¥12,000 each"},
- {t:"Drift experience",w:"book now, small groups sell out"},
- {t:"Mt. Fuji: pick train, bus or guided tour",w:"decide now, book tour if guided"},
- {t:"Nintendo Museum December lottery entry",w:"by 30 Sep — window won't reopen",u:true},
- {t:"Nintendo Museum: pay if you win",w:"1–7 Oct"},
- {t:"USJ 4 Dec: Studio Pass + Express Pass with Nintendo World",w:"4 Oct, 21:30 IST — set an alarm",u:true},
- {t:"Fuji Excursion reserved seats, 26 Nov",w:"26 Oct, 06:30 IST"},
- {t:"Tokyo Skytree, 28 Nov, mid-afternoon",w:"28 Oct, 20:30 IST"},
- {t:"Ltd Exp Hashidate seats, 1 Dec",w:"31 Oct, 06:30 IST — free with the pass"},
- {t:"Sagano Romantic Train, 2 Dec",w:"1 Nov, 20:30 IST — check Wednesday running first"},
- {t:"Shibuya Sky, 29 Nov, sunset slot",w:"14 Nov, 20:30 IST"},
- {t:"KIX airport taxi for 6 Dec",w:"around 15 Nov"},
- {t:"Visit Japan Web for all three",w:"around 20 Nov"}
+ {t:"Smart EX: Shinkansen Tokyo \u2192 Kyoto, 30 Nov",w:"book now, opens a year ahead",when:null},
+ {t:"teamLab Planets, 28 Nov, earliest slot",w:"book now",when:null},
+ {t:"Kansai WIDE Area Pass \u00d73, from JR West directly",w:"book now, \u00a512,000 each",when:null},
+ {t:"Drift experience",w:"book now, small groups sell out",when:null},
+ {t:"Mt. Fuji: pick train, bus or guided tour",w:"decide now, book tour if guided",when:null},
+ {t:"Nintendo Museum December lottery entry",w:"by 30 Sep \u2014 window won't reopen",when:"2026-09-30T21:00",u:true},
+ {t:"Nintendo Museum: pay if you win",w:"1\u20137 Oct",when:"2026-10-07T21:00"},
+ {t:"USJ 4 Dec: Studio Pass + Express Pass with Nintendo World",w:"4 Oct, 21:30 IST \u2014 set an alarm",when:"2026-10-04T21:30",u:true},
+ {t:"Fuji Excursion reserved seats, 26 Nov",w:"26 Oct, 06:30 IST",when:"2026-10-26T06:30"},
+ {t:"Tokyo Skytree, 28 Nov, mid-afternoon",w:"28 Oct, 20:30 IST",when:"2026-10-28T20:30"},
+ {t:"Ltd Exp Hashidate seats, 1 Dec",w:"31 Oct, 06:30 IST \u2014 free with the pass",when:"2026-10-31T06:30"},
+ {t:"Sagano Romantic Train, 2 Dec",w:"1 Nov, 20:30 IST \u2014 check Wednesday running first",when:"2026-11-01T20:30"},
+ {t:"Shibuya Sky, 29 Nov, sunset slot",w:"14 Nov, 20:30 IST",when:"2026-11-14T20:30"},
+ {t:"KIX airport taxi for 6 Dec",w:"around 15 Nov",when:"2026-11-15T10:00"},
+ {t:"Visit Japan Web for all three",w:"around 20 Nov",when:"2026-11-20T10:00"}
 ];
 var DOCS=[
  {t:"Passport valid well past 6 Dec"},{t:"Visa stamped and photographed"},
@@ -384,7 +665,7 @@ var PACK=[
  {t:"One properly warm jacket"},{t:"Walking shoes you've already broken in"},
  {t:"Socks with no holes — you'll take your shoes off more than you expect"},
  {t:"Slip-on shoes for temples"},{t:"Compact umbrella"},
- {t:"Type A plug, 100V. Indian chargers mostly work, check the brick"},
+ {t:"Travel adapters \u2014 Japan is flat two-pin Type A, your round-pin plugs do not fit. Most chargers handle the 100V fine; a 230V-only trimmer or dryer will not"},
  {t:"Power bank — in cabin baggage only, never checked"},
  {t:"Small daypack, and a foldable bag for the shopping"},
  {t:"Any regular medicines in original packaging, with the prescription"},
@@ -398,6 +679,71 @@ var DAILY=[
  {t:"Cash on you"},{t:"Today's tickets loaded and screenshotted"},{t:"Umbrella if it's grey"}
 ];
 
+var PHRASES=[
+ {jp:"\u3059\u307f\u307e\u305b\u3093",r:"Sumimasen",e:"Excuse me, and also sorry, and also thank you. Does most of the work."},
+ {jp:"\u3053\u308c\u3092\u304f\u3060\u3055\u3044",r:"Kore o kudasai",e:"This one, please. Point at it."},
+ {jp:"\u82f1\u8a9e\u306e\u30e1\u30cb\u30e5\u30fc\u306f\u3042\u308a\u307e\u3059\u304b\uff1f",r:"Eigo no meny\u016b wa arimasu ka",e:"Is there an English menu?"},
+ {jp:"\u8089\u306f\u5165\u3063\u3066\u3044\u307e\u3059\u304b\uff1f",r:"Niku wa haitte imasu ka",e:"Does this contain meat?",n:"Dashi, fish stock, is in almost everything \u2014 including things that look vegetarian."},
+ {jp:"\u30d9\u30b8\u30bf\u30ea\u30a2\u30f3\u3067\u3059\u3002\u8089\u3068\u9b5a\u304c\u98df\u3079\u3089\u308c\u307e\u305b\u3093\u3002",r:"Bejitarian desu. Niku to sakana ga taberaremasen.",e:"I'm vegetarian. I can't eat meat or fish.",n:"Hold this one up in a restaurant rather than trying to say it."},
+ {jp:"\u304a\u4f1a\u8a08\u304a\u9858\u3044\u3057\u307e\u3059",r:"Okaikei onegaishimasu",e:"The bill, please. Usually you pay at the front counter, not the table."},
+ {jp:"\u99c5\u306f\u3069\u3053\u3067\u3059\u304b\uff1f",r:"Eki wa doko desu ka",e:"Where is the station?"},
+ {jp:"\u3053\u3053\u307e\u3067\u304a\u9858\u3044\u3057\u307e\u3059\u3002",r:"Koko made onegaishimasu",e:"Take me here, please.",n:"Say it while showing the driver the address. That is the whole transaction."},
+ {jp:"\u5fd8\u308c\u7269\u3092\u3057\u307e\u3057\u305f\u3002",r:"Wasuremono o shimashita",e:"I've left something behind.",n:"Say this at any station office. Japan's lost-and-found genuinely works."},
+ {jp:"\u30ab\u30fc\u30c9\u3067\u652f\u6255\u3048\u307e\u3059\u304b\uff1f",r:"K\u0101do de shiharaemasu ka",e:"Can I pay by card?"},
+ {jp:"\u514d\u7a0e\u3067\u304a\u9858\u3044\u3057\u307e\u3059\u3002",r:"Menzei de onegaishimasu",e:"Tax free, please.",n:"Have your passport out when you say it."},
+ {jp:"\u52a9\u3051\u3066\u304f\u3060\u3055\u3044\uff01",r:"Tasukete kudasai",e:"Help, please. The one you hope not to need."}
+];
+
+/* things to buy — w is the where-and-roughly-what-it-costs line */
+var BEFORE=[
+ {t:"Walking shoes, and break them in",w:"the single most important thing on this list \u2014 buy them 3 weeks out and wear them daily. Twelve days, 20,000 steps a day",u:true},
+ {t:"Travel adapters, Type C \u2192 Type A, three of them",w:"\u20b9150\u2013400 each \u2014 Japan's sockets are flat two-pin. Your Indian round-pin plugs will not fit anything",u:true},
+ {t:"A suitcase that shuts without sitting on it",w:"check your ANA fare's allowance first, then buy to it. Leave a third of it empty for the way back"},
+ {t:"Luggage weighing scale",w:"\u20b9400\u2013700 \u2014 you weigh at home on the 5th, not at the KIX counter at 05:45"},
+ {t:"A proper warm jacket",w:"6\u201314\u00b0C and colder at Kawaguchiko. A Delhi winter jacket is about right"},
+ {t:"Thick socks, six pairs, no holes",w:"you take your shoes off at temples, restaurants and some shops"},
+ {t:"Power bank, 10,000mAh",w:"\u20b91,500\u20132,500 \u00b7 cabin baggage only, never checked. Maps and tickets will drain a phone by 16:00"},
+ {t:"A multi-port charger and spare cables",w:"one adapter, three phones \u2014 otherwise you are rationing a socket every night"},
+ {t:"Packing cubes",w:"\u20b9800\u20131,500 \u00b7 you change city three times, and this is the difference between unpacking and rummaging"},
+ {t:"A foldable duffel for the way home",w:"\u20b9800 \u00b7 cheaper than discovering you need a second suitcase in Osaka"},
+ {t:"A 20L daypack",w:"carries water, layers and shopping all day. A tote will wreck your shoulder by Kyoto"},
+ {t:"Compact umbrella",w:"\u20b9400 \u00b7 or \u00a5600 at any konbini there if you would rather not carry it"},
+ {t:"Medicines, in original packaging, with the prescription",w:"plus paracetamol, Imodium and rehydration salts. Japanese pharmacies are strict and everything is in Japanese"},
+ {t:"Forex card, loaded and activated for Japan",w:"plus one backup card with 3-D Secure on. Tell the bank you are travelling"},
+ {t:"eSIM or pocket wifi booked",w:"\u20b91,200\u20132,500 for the trip \u00b7 cheaper booked from India than at Haneda arrivals"},
+ {t:"Travel insurance",w:"save the policy number offline. A Japanese hospital without insurance is a bad afternoon"},
+ {t:"Skip: thermals",w:"buy Uniqlo Heattech there instead \u2014 better, about \u00a51,500, and it is on the Get these early list"}
+];
+var NEED=[
+ {t:"Uniqlo Heattech, two each",w:"~¥1,500 each · warmer than anything you packed. Shinjuku store is open till 21:00"},
+ {t:"Stick-on heat pads (カイロ)",w:"~¥500 for 10 · konbini or Don Quijote. Take these to Kawaguchiko on 26 Nov",u:true},
+ {t:"Welcome Suica or ICOCA at the airport",w:"as a backup if the phone one plays up · Haneda arrivals, before you leave"},
+ {t:"A tote or eco bag",w:"~¥100 · konbini bags cost ¥3–5 and nobody double-bags for you"},
+ {t:"Coin purse",w:"~¥300 at Daiso · you will be drowning in ¥1, ¥5 and ¥10 coins by day three"},
+ {t:"Folding umbrella",w:"~¥600 at any konbini, only if the forecast turns"},
+ {t:"Blister plasters",w:"~¥400 at a drugstore · 20,000 steps a day for twelve days"},
+ {t:"Laundry pods or a sachet of detergent",w:"~¥200 · coin laundry near the Kyoto and Osaka places"},
+ {t:"Pocket tissues and hand towel",w:"most public toilets have neither paper nor a dryer"},
+ {t:"Bottled tea or water for the Fuji day",w:"¥130–160 from any machine · buy before you get on the bus"},
+ {t:"Breakfast from the konbini the night before",w:"onigiri and an egg sando, ~¥500 · saves an hour every morning"}
+];
+var GIFTS=[
+ {t:"KitKats, the regional flavours",w:"Don Quijote, ~¥800 a box · airside at KIX is the same thing for more money"},
+ {t:"Daiso or Seria",w:"everything ¥110 · far and away the best value gifts on this trip"},
+ {t:"Don Quijote — skincare, cosmetics, snacks",w:"tax free counter upstairs, open very late"},
+ {t:"Royce, Shiroi Koibito, Tokyo Banana",w:"¥800–1,500 · the boxes people at home actually recognise"},
+ {t:"Pokémon Center or Nintendo Tokyo",w:"Shibuya Parco, and Daimaru Umeda in Osaka"},
+ {t:"Donguri Kyowakoku for the Ghibli things",w:"Skytree Solamachi, 28 Nov — you are already there"},
+ {t:"A real kitchen knife",w:"Kappabashi in Tokyo or Nishiki in Kyoto · ¥5,000 up, they will engrave a name. Checked bag only"},
+ {t:"Second-hand games, cameras, figures",w:"Super Potato and Nakano Broadway · 29 Nov is your Akihabara day"},
+ {t:"Uniqlo and GU, the Japan-only lines",w:"cheaper than India and the sizes are the honest ones"},
+ {t:"Stationery — Loft, Itoya Ginza",w:"washi tape, pens, notebooks · light, cheap, always a hit"},
+ {t:"Sneakers at ABC Mart",w:"often a third off what they cost at home"},
+ {t:"Omamori charms",w:"¥500–1,000 at Meiji Jingu, Fushimi Inari, Kiyomizu-dera"},
+ {t:"Whisky or sake",w:"buy it airside at KIX on the 6th · duty free and you do not carry it for a week"},
+ {t:"Matcha, from Uji not a souvenir shop",w:"1 Dec or 2 Dec · a good tin is ¥1,000–2,000"}
+];
+
 /* ---------- helpers ---------- */
 function $(s){return document.querySelector(s)}
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
@@ -407,9 +753,94 @@ function todayISO(){var d=new Date();return d.getFullYear()+"-"+String(d.getMont
 function dayDiff(a,b){return Math.round((new Date(b+"T12:00:00")-new Date(a+"T12:00:00"))/86400000)}
 function yen(n){return "¥"+Math.round(n).toLocaleString("en-US")}
 
+/* ---------- appearance ---------- */
+var THEME_BG={light:"#27405E",dark:"#12161A"};
+function applyTheme(t){
+  var r=document.documentElement;
+  if(t==="light"||t==="dark")r.setAttribute("data-theme",t);else r.removeAttribute("data-theme");
+  var dark=(t==="dark")||(t!=="light"&&window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches);
+  var m=document.querySelector('meta[name="theme-color"]');
+  if(m)m.setAttribute("content",dark?THEME_BG.dark:THEME_BG.light);
+  var seg=document.getElementById("themeSeg");
+  if(seg)Array.prototype.forEach.call(seg.querySelectorAll("button"),function(b){
+    b.setAttribute("aria-pressed",b.dataset.t===t?"true":"false");
+  });
+}
+function initTheme(){
+  var t=S.get("theme","auto");
+  var seg=$("#themeSeg");
+  if(seg)Array.prototype.forEach.call(seg.querySelectorAll("button"),function(b){
+    b.addEventListener("click",function(){S.set("theme",b.dataset.t);applyTheme(b.dataset.t)});
+  });
+  if(window.matchMedia){
+    var mq=window.matchMedia("(prefers-color-scheme:dark)");
+    var onch=function(){applyTheme(S.get("theme","auto"))};
+    if(mq.addEventListener)mq.addEventListener("change",onch);else if(mq.addListener)mq.addListener(onch);
+  }
+  applyTheme(t);
+}
+
+/* ---------- show something to a stranger, big ---------- */
+var showPrev=null;
+function openShow(o){
+  $("#showKicker").textContent=o.kicker||"";
+  $("#showJp").textContent=o.jp||"";
+  $("#showRomaji").textContent=o.romaji||"";
+  $("#showEn").textContent=o.en||"";
+  $("#showFoot").textContent=o.foot||"";
+  $("#showRomaji").style.display=o.romaji?"":"none";
+  $("#showEn").style.display=o.en?"":"none";
+  $("#showFoot").style.display=o.foot?"":"none";
+  showPrev=document.activeElement;
+  $("#showBig").classList.add("on");
+  $("#showClose").focus();
+}
+function closeShow(){
+  $("#showBig").classList.remove("on");
+  if(showPrev&&showPrev.focus)showPrev.focus();
+}
+function initShow(){
+  $("#showClose").addEventListener("click",closeShow);
+  $("#showBig").addEventListener("click",function(e){if(e.target===this)closeShow()});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")closeShow()});
+}
+
+/* ---------- clipboard, without assuming anything ---------- */
+function copyText(t,done){
+  function fallback(){
+    try{
+      var ta=document.createElement("textarea");
+      ta.value=t;ta.setAttribute("readonly","");
+      ta.style.position="fixed";ta.style.top="-1000px";
+      document.body.appendChild(ta);ta.select();
+      var ok=document.execCommand("copy");
+      document.body.removeChild(ta);done(ok);
+    }catch(e){done(false)}
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(function(){done(true)},fallback);
+  }else fallback();
+}
+function flash(sel,msg){
+  var e=$(sel); if(!e)return;
+  e.textContent=msg;
+  clearTimeout(e._t); e._t=setTimeout(function(){e.textContent=""},3500);
+}
+
 /* ---------- status ---------- */
 var today=todayISO();
 var idx=DAYS.findIndex(function(d){return d.d===today});
+
+/* the Fuji day and the Kamakura day are interchangeable; remember if they were swapped */
+var FUJI_I=2,KAMA_I=3;
+var fujiSwapped=S.get("fujiSwap",false);
+function doSwap(){
+  var a=DAYS[FUJI_I],b=DAYS[KAMA_I];
+  ["city","t","p","ll","spots","last"].forEach(function(k){var x=a[k];a[k]=b[k];b[k]=x});
+}
+if(fujiSwapped)doSwap();
+function fujiDay(){return DAYS[fujiSwapped?KAMA_I:FUJI_I]}
+
 function renderStatus(){
   var big=$("#bigNum"),cap=$("#bigCap"),wh=$("#whereNow");
   if(idx>=0){
@@ -426,27 +857,65 @@ function renderStatus(){
 
 function renderNext(){
   var done=S.get("ck_book",{});
-  var pending=BOOKINGS.filter(function(b,i){return !done["b"+i]});
+  var pending=sortedBookings().filter(function(b){return !done["b"+b.i]});
   var box=$("#nextUp");box.innerHTML="";
   if(!pending.length){
     var ok=el("div","alert");ok.appendChild(el("div","k","Bookings"));
     ok.appendChild(el("div","v","All ticked off. Nothing left to book."));box.appendChild(ok);return;
   }
-  var b=pending[0];
+  var over=pending.filter(function(x){return dueInfo(x).cls==="over"});
+  var b=pending[0],d=dueInfo(b);
   var a=el("div","alert");
   a.appendChild(el("div","k","Next to book"));
   a.appendChild(el("div","v",b.t));
-  a.appendChild(el("div","d",b.w+(pending.length>1?"  ·  "+(pending.length-1)+" more after this":"")));
+  a.appendChild(el("div","d",b.w+"  ·  "+d.label+(pending.length>1?"  ·  "+(pending.length-1)+" more after this":"")));
+  if(over.length){
+    var w=el("div","d",over.length===1
+      ? "One deadline has already gone: "+over[0].t+". Tick it off or sort it out."
+      : over.length+" deadlines have already gone. They are marked in the list below.");
+    w.style.color="var(--momiji)";w.style.fontWeight="700";
+    a.appendChild(w);
+  }
   box.appendChild(a);
 }
+
+function mapLink(q){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q)}
 
 function stayBlock(key){
   var s=STAY[key],w=el("div","stay");
   w.appendChild(el("div","nm",s.nm));
   w.appendChild(el("div","ad",s.ad));
   var t=document.createElement("a");t.className="tel";t.href="tel:"+s.tel;t.textContent="Call "+s.host;w.appendChild(t);
-  var m=document.createElement("a");m.className="tel g";m.href="https://maps.google.com/?q="+encodeURIComponent(s.ad);m.target="_blank";m.rel="noopener";m.textContent="Map";w.appendChild(m);
+  var m=document.createElement("a");m.className="tel g";m.href=mapLink(s.ad);m.target="_blank";m.rel="noopener";m.textContent="Map";w.appendChild(m);
+  if(s.jp){
+    var d=el("button","tel","Show a driver");d.type="button";
+    d.addEventListener("click",function(){showStay(key)});
+    w.appendChild(d);
+  }
   w.appendChild(el("div","ref",s.ref));
+  return w;
+}
+function showStay(key){
+  var s=STAY[key];
+  openShow({kicker:"Take me here, please",jp:s.jp,
+    romaji:"ここまでお願いします — Koko made onegaishimasu",
+    en:s.nm+"  ·  "+s.telShow,
+    foot:s.jpNote||"Show the screen rather than reading it out. Fares are metered and tips are not a thing."});
+}
+
+function spotsBlock(spots){
+  var w=el("div","spots");
+  spots.forEach(function(q){
+    var a=document.createElement("a");
+    a.href=mapLink(q);a.target="_blank";a.rel="noopener";a.textContent=q.replace(/ (Station|Kyoto|Osaka|Kamakura|Tokyo|Amanohashidate)$/,"");
+    w.appendChild(a);
+  });
+  return w;
+}
+function lastBlock(txt){
+  var w=el("div","last");
+  w.appendChild(el("b",null,"Don't miss: "));
+  w.appendChild(document.createTextNode(txt));
   return w;
 }
 
@@ -459,6 +928,8 @@ function renderToday(){
   h.style.fontWeight="700";h.style.marginBottom="8px";
   box.appendChild(h);
   d.p.forEach(function(p){var e=el("p",null,p);e.style.marginBottom="9px";e.style.fontSize="15px";box.appendChild(e)});
+  if(d.spots)box.appendChild(spotsBlock(d.spots));
+  if(d.last)box.appendChild(lastBlock(d.last));
   if(d.stay)box.appendChild(stayBlock(d.stay));
 }
 
@@ -473,6 +944,8 @@ function renderDays(){
     btn.appendChild(el("span","cty",d.city));
     var body=el("div","body");
     d.p.forEach(function(p){body.appendChild(el("p",null,p))});
+    if(d.spots)body.appendChild(spotsBlock(d.spots));
+    if(d.last)body.appendChild(lastBlock(d.last));
     if(d.stay)body.appendChild(stayBlock(d.stay));
     btn.addEventListener("click",function(){
       var open=w.classList.toggle("open");
@@ -532,7 +1005,7 @@ function renderFxStatus(){
 
 function applyRate(v){
   rate=v; var f=$("#rate"); if(f)f.value=showRate(v);
-  fromYen(); refreshChips(); renderFxStatus();
+  fromYen(); refreshChips(); renderBuyTotal(); renderFxStatus();
 }
 
 function fetchRate(){
@@ -576,7 +1049,7 @@ function initMoney(){
   $("#inr").addEventListener("input",fromInr);
   $("#rate").addEventListener("input",function(){
     var r=num(this.value);
-    if(r>0){fx.manual=true;fx.rate=r;S.set("fx",fx);rate=r;fromYen();refreshChips();renderFxStatus()}
+    if(r>0){fx.manual=true;fx.rate=r;S.set("fx",fx);rate=r;fromYen();refreshChips();renderBuyTotal();renderFxStatus()}
   });
   $("#fxRefresh").addEventListener("click",function(){
     if(fxBusy)return;
@@ -595,45 +1068,639 @@ function maybeRefresh(){
 /* ---------- splitter ---------- */
 var PEOPLE=["Arnav","Ayush","Manan"];
 var exps=S.get("exps",[]);
-function renderExps(){
-  var box=$("#expList");box.innerHTML="";
-  if(!exps.length){
-    var e=el("p","note","Nothing logged yet. Add the first thing someone pays for.");box.appendChild(e);
-  }
-  exps.forEach(function(x,i){
-    var r=el("div","exp");
-    r.appendChild(el("span",null,x.d||"Expense"));
-    r.appendChild(el("span","who",x.p));
-    r.appendChild(el("span","amt",yen(x.a)));
-    var del=el("button",null,"×");del.type="button";del.setAttribute("aria-label","Remove "+(x.d||"expense"));
-    del.addEventListener("click",function(){exps.splice(i,1);S.set("exps",exps);renderExps()});
-    r.appendChild(del);box.appendChild(r);
-  });
-  // settle
+var expWho=S.get("expWho","All");
+var budget=S.get("budget",0);
+
+function expDay(x){return x.ts?new Date(x.ts).toISOString().slice(0,10):null}
+function expTotals(){
   var paid={},total=0;
   PEOPLE.forEach(function(p){paid[p]=0});
   exps.forEach(function(x){paid[x.p]=(paid[x.p]||0)+x.a;total+=x.a});
-  var share=total/PEOPLE.length;
+  return {paid:paid,total:total,share:total/PEOPLE.length};
+}
+function renderFilter(){
+  var box=$("#expFilter");if(!box)return;
+  box.innerHTML="";
+  ["All"].concat(PEOPLE).forEach(function(p){
+    var b=el("button",null,p);b.type="button";
+    b.setAttribute("aria-pressed",p===expWho?"true":"false");
+    b.addEventListener("click",function(){expWho=p;S.set("expWho",p);renderExps()});
+    box.appendChild(b);
+  });
+}
+function renderExps(){
+  renderFilter();
+  var box=$("#expList");box.innerHTML="";
+  var shown=exps.map(function(x,i){return {x:x,i:i}})
+                .filter(function(o){return expWho==="All"||o.x.p===expWho});
+  if(!exps.length){
+    box.appendChild(el("p","note","Nothing logged yet. Add the first thing someone pays for."));
+  }else if(!shown.length){
+    box.appendChild(el("p","note",expWho+" hasn't paid for anything yet."));
+  }
+  shown.forEach(function(o){
+    var x=o.x,r=el("div","exp");
+    r.appendChild(el("span",null,x.d||"Expense"));
+    r.appendChild(el("span","who",x.p));
+    if(x.ts)r.appendChild(el("span","dd",fmtDate(expDay(x))));
+    r.appendChild(el("span","amt",yen(x.a)));
+    var del=el("button",null,"×");del.type="button";del.setAttribute("aria-label","Remove "+(x.d||"expense"));
+    del.addEventListener("click",function(){exps.splice(o.i,1);S.set("exps",exps);renderExps()});
+    r.appendChild(del);box.appendChild(r);
+  });
+  var t=expTotals();
   var s=$("#settle");s.innerHTML="";
-  s.appendChild(el("div","ttl","Total "+yen(total)+" · "+yen(share)+" each"));
-  if(total===0){s.appendChild(el("div",null,"Even, for now."));return}
-  PEOPLE.forEach(function(p){
-    var bal=paid[p]-share,line;
+  s.appendChild(el("div","ttl","Total "+yen(t.total)+" · "+yen(t.share)+" each"));
+  if(t.total===0){s.appendChild(el("div",null,"Even, for now."))}
+  else PEOPLE.forEach(function(p){
+    var bal=t.paid[p]-t.share,line;
     if(Math.abs(bal)<1)line=p+" is square";
     else if(bal>0)line=p+" is owed "+yen(bal);
     else line=p+" owes "+yen(-bal);
     s.appendChild(el("div",null,line));
   });
+  renderPace();
 }
+
+/* how fast the money is going */
+function renderPace(){
+  var box=$("#pace");if(!box)return;
+  box.innerHTML="";
+  var t=expTotals();
+  var todaySpend=0,daysWithSpend={};
+  exps.forEach(function(x){
+    var dd=expDay(x); if(!dd)return;
+    daysWithSpend[dd]=true;
+    if(dd===today)todaySpend+=x.a;
+  });
+  var onTrip=idx>=0;
+  var elapsed=onTrip?idx+1:Object.keys(daysWithSpend).length;
+  var left=onTrip?DAYS.length-idx-1:DAYS.length;
+
+  box.appendChild(el("div","big",yen(onTrip?todaySpend:t.total)));
+  box.appendChild(el("div","sub",(onTrip?"today, the three of you":"logged so far")+"  ·  ≈ ₹"+Math.round((onTrip?todaySpend:t.total)*rate).toLocaleString("en-IN")));
+
+  var rest=el("div","rest");
+  if(onTrip){
+    var avg=elapsed?t.total/elapsed:0;
+    rest.appendChild(el("span",null,"Day "+elapsed+" of "+DAYS.length+" · "+yen(t.total)+" total · "+yen(avg)+" a day between you"));
+    rest.appendChild(el("span",null,left+" day"+(left===1?"":"s")+" to go"+(budget>0?" · "+yen(budget*PEOPLE.length*left)+" of budget left":"")));
+  }else{
+    var untilGo=dayDiff(today,DAYS[0].d);
+    rest.appendChild(el("span",null,untilGo>0?("Trip starts in "+untilGo+" days. This starts counting on the 24th."):"Trip's over. This is the final tally."));
+    if(budget>0)rest.appendChild(el("span",null,"At "+yen(budget)+" each a day, the whole trip budgets to "+yen(budget*PEOPLE.length*DAYS.length)+"."));
+  }
+  box.appendChild(rest);
+
+  var bud=el("div","bud");
+  var lab=document.createElement("label");lab.setAttribute("for","budIn");lab.textContent="Budget ¥";
+  var inp=document.createElement("input");inp.id="budIn";inp.type="text";inp.inputMode="numeric";
+  inp.value=budget>0?String(budget):"";inp.placeholder="0";inp.setAttribute("aria-label","Budget in yen per person per day");
+  inp.addEventListener("input",function(){budget=num(inp.value);S.set("budget",budget)});
+  inp.addEventListener("change",renderPace);
+  bud.appendChild(lab);bud.appendChild(inp);
+  bud.appendChild(el("span",null,budget>0?("each, a day \u2014 "+yen(budget*PEOPLE.length)+" between you"):"each, a day"));
+  if(budget>0&&onTrip){
+    var over=todaySpend-budget*PEOPLE.length;
+    bud.appendChild(el("span","tag",over>0?("· "+yen(over)+" over today"):("· "+yen(-over)+" left today")));
+  }
+  box.appendChild(bud);
+}
+
+function expSummary(){
+  var t=expTotals();
+  var L=["Japan 2026 — who owes what",
+         "Total "+yen(t.total)+" (≈ ₹"+Math.round(t.total*rate).toLocaleString("en-IN")+")",
+         yen(t.share)+" each",""];
+  PEOPLE.forEach(function(p){
+    var bal=t.paid[p]-t.share;
+    L.push(p+": paid "+yen(t.paid[p])+" — "+
+      (Math.abs(bal)<1?"square":bal>0?("is owed "+yen(bal)):("owes "+yen(-bal))));
+  });
+  L.push("");
+  L.push(exps.length+" expense"+(exps.length===1?"":"s")+" logged.");
+  return L.join("\n");
+}
+
 function initSplit(){
   $("#eAdd").addEventListener("click",function(){
     var a=num($("#eAmt").value);
     if(a<=0){$("#eAmt").focus();return}
-    exps.push({d:$("#eDesc").value.trim(),a:a,p:$("#ePayer").value});
+    exps.push({d:$("#eDesc").value.trim(),a:a,p:$("#ePayer").value,ts:Date.now()});
     S.set("exps",exps);$("#eDesc").value="";$("#eAmt").value="";renderExps();
   });
   $("#eAmt").addEventListener("keydown",function(e){if(e.key==="Enter")$("#eAdd").click()});
+  $("#eDesc").addEventListener("keydown",function(e){if(e.key==="Enter")$("#eAmt").focus()});
+
+  $("#expCopy").addEventListener("click",function(){
+    copyText(expSummary(),function(ok){flash("#expFlash",ok?"Summary copied. Paste it in the group.":"Couldn't copy — open Export and copy it by hand.")});
+  });
+  $("#expShare").addEventListener("click",function(){
+    var txt=expSummary();
+    if(navigator.share){navigator.share({text:txt}).catch(function(){});}
+    else copyText(txt,function(ok){flash("#expFlash",ok?"No share sheet here, so it's copied instead.":"Couldn't copy.")});
+  });
+  $("#expIO").addEventListener("click",function(){
+    var pan=$("#ioPanel"),on=pan.classList.toggle("on");
+    if(on)$("#ioText").value=JSON.stringify({v:1,exps:exps});
+  });
+  $("#ioCopy").addEventListener("click",function(){
+    copyText($("#ioText").value,function(ok){flash("#expFlash",ok?"Copied. Whoever pastes it in gets the same list.":"Couldn't copy — select it and copy by hand.")});
+  });
+  $("#ioLoad").addEventListener("click",function(){
+    var raw=$("#ioText").value.trim();
+    if(!raw){flash("#expFlash","Paste the code in the box first.");return}
+    var o;
+    try{o=JSON.parse(raw)}catch(e){flash("#expFlash","That isn't the expense code — check you copied all of it.");return}
+    var list=o&&o.exps;
+    if(!list||typeof list.length!=="number"){flash("#expFlash","That isn't the expense code.");return}
+    var clean=[];
+    for(var i=0;i<list.length;i++){
+      var x=list[i];
+      if(!x||typeof x!=="object")continue;
+      var amt=num(x.a);
+      if(!(amt>0))continue;
+      clean.push({d:String(x.d||"").slice(0,80),a:amt,
+                  p:PEOPLE.indexOf(x.p)>=0?x.p:PEOPLE[0],
+                  ts:typeof x.ts==="number"?x.ts:undefined});
+    }
+    if(!confirm("Replace the "+exps.length+" expense"+(exps.length===1?"":"s")+" on this phone with "+clean.length+" from the box?"))return;
+    exps=clean;S.set("exps",exps);renderExps();
+    flash("#expFlash","Imported "+clean.length+".");
+  });
   renderExps();
+}
+
+/* ---------- shopping tab ---------- */
+var buys=S.get("buy",[]);
+function renderBuyTotal(){
+  var box=$("#buyTotal"); if(!box)return;
+  var got=0,plan=0;
+  buys.forEach(function(b){plan+=b.a||0;if(b.k)got+=b.a||0});
+  box.innerHTML="";
+  box.appendChild(el("div","big",yen(got)));
+  box.appendChild(el("div","sub","spent so far  ·  ≈ ₹"+Math.round(got*rate).toLocaleString("en-IN")));
+  var left=plan-got;
+  var r=el("div","rest");
+  if(!buys.length)r.textContent="Nothing on the list yet. Add the first thing you know you want.";
+  else if(left>0)r.textContent="Still to buy: "+yen(left)+" across "+buys.filter(function(b){return !b.k}).length+" things";
+  else r.textContent="Everything on the list is bought.";
+  box.appendChild(r);
+}
+function renderBuys(){
+  var box=$("#buyList"); if(!box)return;
+  box.innerHTML="";
+  buys.forEach(function(b,i){
+    var r=el("div","buy"+(b.k?" got":""));
+    var cb=document.createElement("input");cb.type="checkbox";cb.checked=!!b.k;
+    cb.setAttribute("aria-label","Bought "+(b.t||"item"));
+    cb.addEventListener("change",function(){b.k=cb.checked;S.set("buy",buys);renderBuys()});
+    r.appendChild(cb);
+    r.appendChild(el("span","txt",b.t||"Item"));
+    if(b.a>0){
+      var a=el("span","amt",yen(b.a));
+      a.appendChild(el("small",null,"≈ ₹"+Math.round(b.a*rate).toLocaleString("en-IN")));
+      r.appendChild(a);
+    }
+    var x=el("button","x","×");x.type="button";x.setAttribute("aria-label","Remove "+(b.t||"item"));
+    x.addEventListener("click",function(){buys.splice(i,1);S.set("buy",buys);renderBuys()});
+    r.appendChild(x);
+    box.appendChild(r);
+  });
+  renderBuyTotal();
+}
+function initBuy(){
+  $("#bAdd").addEventListener("click",function(){
+    var t=$("#bDesc").value.trim(); if(!t){$("#bDesc").focus();return}
+    buys.push({t:t,a:num($("#bAmt").value),k:false});
+    S.set("buy",buys);$("#bDesc").value="";$("#bAmt").value="";renderBuys();$("#bDesc").focus();
+  });
+  [$("#bDesc"),$("#bAmt")].forEach(function(f){
+    f.addEventListener("keydown",function(e){if(e.key==="Enter")$("#bAdd").click()});
+  });
+  renderBuys();
+}
+
+/* ---------- weather, and the Fuji decision ---------- */
+var WX_CODES={0:"clear",1:"mostly clear",2:"partly cloudy",3:"overcast",45:"fog",48:"freezing fog",
+ 51:"light drizzle",53:"drizzle",55:"heavy drizzle",56:"freezing drizzle",57:"freezing drizzle",
+ 61:"light rain",63:"rain",65:"heavy rain",66:"freezing rain",67:"freezing rain",
+ 71:"light snow",73:"snow",75:"heavy snow",77:"snow grains",
+ 80:"showers",81:"showers",82:"heavy showers",85:"snow showers",86:"snow showers",
+ 95:"thunderstorms",96:"thunderstorms",99:"thunderstorms"};
+function wxText(c){return WX_CODES[c]||"unsettled"}
+var wxCache=S.get("wxCache",{});
+var wxBusy={};
+
+function wxKey(ll){return ll[0].toFixed(2)+","+ll[1].toFixed(2)}
+function wxGet(ll,cb){
+  var k=wxKey(ll),hit=wxCache[k];
+  /* Always draw once, right now, with whatever we already have — otherwise a
+     redraw that lands mid-request (tapping Swap, say) never repaints at all. */
+  cb(hit?hit.data:null, hit?hit.ts:0);
+  var fresh=hit&&Date.now()-hit.ts<3*3600000;
+  if(fresh||wxBusy[k]||typeof fetch!=="function")return;
+  wxBusy[k]=true;
+  var u="https://api.open-meteo.com/v1/forecast?latitude="+ll[0]+"&longitude="+ll[1]+
+        "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max"+
+        "&hourly=cloud_cover&timezone=Asia%2FTokyo&forecast_days=16";
+  var ctl=(typeof AbortController==="function")?new AbortController():null;
+  var timer=setTimeout(function(){if(ctl)ctl.abort()},8000);
+  fetch(u,ctl?{signal:ctl.signal}:undefined)
+    .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
+    .then(function(d){
+      clearTimeout(timer);wxBusy[k]=false;
+      if(!d||!d.daily||!d.daily.time)throw new Error("bad shape");
+      wxCache[k]={ts:Date.now(),data:d};S.set("wxCache",wxCache);
+      cb(d,Date.now());
+    })
+    .catch(function(){clearTimeout(timer);wxBusy[k]=false;cb(hit?hit.data:null,hit?hit.ts:0)});
+}
+function wxForDate(d,iso){
+  if(!d||!d.daily||!d.daily.time)return null;
+  var i=d.daily.time.indexOf(iso);
+  if(i<0)return null;
+  var o={code:d.daily.weather_code[i],max:d.daily.temperature_2m_max[i],
+         min:d.daily.temperature_2m_min[i],pop:d.daily.precipitation_probability_max[i],
+         cloud:null,lastDay:d.daily.time[d.daily.time.length-1]};
+  if(d.hourly&&d.hourly.time&&d.hourly.cloud_cover){
+    var sum=0,n=0;
+    for(var j=0;j<d.hourly.time.length;j++){
+      var t=d.hourly.time[j];
+      if(t.slice(0,10)!==iso)continue;
+      var h=parseInt(t.slice(11,13),10);
+      if(h<6||h>13)continue;
+      var c=d.hourly.cloud_cover[j];
+      if(typeof c==="number"){sum+=c;n++}
+    }
+    if(n)o.cloud=sum/n;
+  }
+  return o;
+}
+function fujiVerdict(w){
+  var pop=typeof w.pop==="number"?w.pop:0, cl=w.cloud;
+  if(pop>=60||(w.code>=51&&w.code!==77))
+    return {cls:"no",say:"Swap it.",why:"Rain or snow on the forecast. You will stand in a car park looking at cloud."};
+  if(cl!==null&&cl<=30&&pop<30)
+    return {cls:"go",say:"Go.",why:"Clear morning. This is the day you booked it for."};
+  if(cl!==null&&cl<=60)
+    return {cls:"mid",say:"Probably fine.",why:"Broken cloud in the morning. Fuji comes and goes — check the webcam at 06:00 before you commit."};
+  if(cl!==null)
+    return {cls:"no",say:"Swap it.",why:"Heavy cloud through the morning. Kamakura does not care what the sky is doing."};
+  return {cls:"mid",say:"Toss-up.",why:"No cloud data, only the summary. Check the webcam before you leave."};
+}
+
+function wxLine(w){
+  return wxText(w.code)+" · "+Math.round(w.max)+"° / "+Math.round(w.min)+"°"+
+    (typeof w.pop==="number"?" · "+w.pop+"% rain":"")+
+    (w.cloud!==null?" · "+Math.round(w.cloud)+"% cloud, morning":"");
+}
+
+function renderWxToday(){
+  var box=$("#wxToday");if(!box)return;
+  if(idx<0||!DAYS[idx].ll){box.innerHTML="";return}
+  var d=DAYS[idx];
+  wxGet(d.ll,function(data,ts){
+    var w=data?wxForDate(data,d.d):null;
+    box.innerHTML="";
+    if(!w)return;
+    var c=el("div","wx");
+    var hd=el("div","hd");
+    hd.appendChild(el("b",null,d.city+" today"));
+    hd.appendChild(el("span","dy",ts?ago(ts):""));
+    c.appendChild(hd);
+    c.appendChild(el("div","nums",wxLine(w)));
+    if(w.min<=8)c.appendChild(el("div","why","Cold after dark. Take the jacket you were going to leave behind."));
+    else if(typeof w.pop==="number"&&w.pop>=50)c.appendChild(el("div","why","Take the umbrella."));
+    box.appendChild(c);
+  });
+}
+
+function renderFuji(){
+  var box=$("#fujiCard");if(!box)return;
+  var fd=fujiDay(),other=DAYS[fujiSwapped?FUJI_I:KAMA_I];
+  var draw=function(data,ts){
+    box.innerHTML="";
+    var c=el("div","wx"+(fujiSwapped?" swapped":""));
+    var hd=el("div","hd");
+    hd.appendChild(el("b",null,"The Fuji day — "+fmtDate(fd.d)+", "+fd.dow));
+    var n=dayDiff(today,fd.d);
+    hd.appendChild(el("span","dy",n>0?n+" days away":n===0?"today":"gone"));
+    c.appendChild(hd);
+
+    var w=data?wxForDate(data,fd.d):null;
+    if(n<0){
+      c.appendChild(el("div","why","Already done. Hope it was clear."));
+    }else if(w){
+      var v=fujiVerdict(w);
+      c.appendChild(el("div","verdict "+v.cls,v.say));
+      c.appendChild(el("div","nums",wxLine(w)));
+      c.appendChild(el("div","why",v.why+(ts?"  Forecast "+ago(ts)+".":"")));
+    }else{
+      var reach=data?wxForDate(data,DAYS[0].d):null;
+      c.appendChild(el("div","why","The forecast only reaches about 16 days out, so it doesn't cover "+fmtDate(fd.d)+" yet. Check back from around "+fmtDate(shiftISO(fd.d,-14))+". Until then the webcam and the JMA page are what you have."));
+    }
+    if(fujiSwapped)c.appendChild(el("div","why","Swapped: Fuji is now "+fmtDate(fd.d)+" and "+other.city+" is "+fmtDate(other.d)+". Your Fuji Excursion seats were booked for 26 Nov — change them on Eki-Net or you are paying twice."));
+
+    var acts=el("div","acts");
+    var cam=document.createElement("a");
+    cam.href="https://www.google.com/search?q=Mt+Fuji+live+camera+Kawaguchiko";
+    cam.target="_blank";cam.rel="noopener";cam.textContent="Webcam";acts.appendChild(cam);
+    var jma=document.createElement("a");
+    jma.href="https://www.jma.go.jp/bosai/forecast/#area_type=offices&area_code=190000";
+    jma.target="_blank";jma.rel="noopener";jma.textContent="JMA forecast";acts.appendChild(jma);
+    var sw=el("button","primary",fujiSwapped?"Swap them back":"Swap with "+other.city);
+    sw.type="button";sw.addEventListener("click",toggleFuji);
+    acts.appendChild(sw);
+    c.appendChild(acts);
+    box.appendChild(c);
+  };
+  if(fd.ll)wxGet(fd.ll,draw); else draw(null,0);
+}
+function shiftISO(iso,n){
+  var d=new Date(iso+"T12:00:00");d.setDate(d.getDate()+n);
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function toggleFuji(){
+  var to=fujiSwapped?"back the way they were":"round";
+  if(!confirm("Swap the Fuji day and the "+DAYS[fujiSwapped?FUJI_I:KAMA_I].city+" day "+to+"?\n\nThis only moves them in here. Any seats you have reserved for a particular date still need changing with the railway."))return;
+  fujiSwapped=!fujiSwapped;S.set("fujiSwap",fujiSwapped);
+  doSwap();
+  renderStatus();renderToday();renderDays();renderWxToday();renderFuji();
+}
+
+/* ---------- bookings, by deadline ---------- */
+function dueAt(b){return b.when?new Date(b.when+"+05:30").getTime():null}
+function dueInfo(b){
+  var t=dueAt(b);
+  if(t===null)return {cls:"open",label:"book now",sort:0};
+  var ms=t-Date.now();
+  if(ms<0)return {cls:"over",label:"passed",sort:t};
+  var days=Math.floor(ms/86400000);
+  var lab=days===0?"today":days===1?"tomorrow":days+" days";
+  return {cls:days<=1?"soon":days<=7?"near":"",label:lab,sort:t};
+}
+function sortedBookings(){
+  var done=S.get("ck_book",{});
+  return BOOKINGS.map(function(b,i){var o={i:i};for(var k in b)o[k]=b[k];return o})
+    .sort(function(a,b){
+      var da=!!done["b"+a.i],db=!!done["b"+b.i];
+      if(da!==db)return da?1:-1;
+      var sa=dueInfo(a).sort,sb=dueInfo(b).sort;
+      if(sa!==sb)return sa-sb;
+      return a.i-b.i;
+    });
+}
+function icsEscape(t){return String(t).replace(/([,;\\])/g,"\\$1").replace(/\n/g,"\\n")}
+function icsStamp(ms){
+  var d=new Date(ms),z=function(n){return String(n).padStart(2,"0")};
+  return d.getUTCFullYear()+z(d.getUTCMonth()+1)+z(d.getUTCDate())+"T"+
+         z(d.getUTCHours())+z(d.getUTCMinutes())+z(d.getUTCSeconds())+"Z";
+}
+function downloadICS(b){
+  var t=dueAt(b);if(t===null)return;
+  var L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Japan 2026//Trip//EN","CALSCALE:GREGORIAN",
+    "BEGIN:VEVENT","UID:japan2026-b"+b.i+"@local","DTSTAMP:"+icsStamp(Date.now()),
+    "DTSTART:"+icsStamp(t),"DTEND:"+icsStamp(t+30*60000),
+    "SUMMARY:"+icsEscape("Book: "+b.t),
+    "DESCRIPTION:"+icsEscape(b.w+"\nJapan 2026, 24 Nov – 6 Dec."),
+    "BEGIN:VALARM","TRIGGER:-PT30M","ACTION:DISPLAY","DESCRIPTION:"+icsEscape(b.t),"END:VALARM",
+    "BEGIN:VALARM","TRIGGER:-PT5M","ACTION:DISPLAY","DESCRIPTION:"+icsEscape(b.t),"END:VALARM",
+    "END:VEVENT","END:VCALENDAR"];
+  var body=L.join("\r\n");
+  try{
+    var blob=new Blob([body],{type:"text/calendar;charset=utf-8"});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement("a");
+    a.href=url;a.download="japan2026-"+b.i+".ics";
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url)},4000);
+  }catch(e){
+    window.open("data:text/calendar;charset=utf-8,"+encodeURIComponent(body));
+  }
+}
+function renderBookings(){
+  var state=S.get("ck_book",{});
+  var box=$("#list-book");box.innerHTML="";
+  sortedBookings().forEach(function(b){
+    var id="b"+b.i,on=!!state[id];
+    var r=el("div","bk"+(on?" done":""));
+    var cb=document.createElement("input");cb.type="checkbox";cb.checked=on;cb.id="cb-"+id;
+    cb.addEventListener("change",function(){
+      state[id]=cb.checked;S.set("ck_book",state);
+      renderBookings();renderNext();
+    });
+    r.appendChild(cb);
+    var lab=document.createElement("label");lab.className="txt";lab.setAttribute("for","cb-"+id);
+    lab.textContent=b.t;
+    lab.appendChild(el("span","when"+(b.u?" u":""),b.w));
+    r.appendChild(lab);
+    var side=el("div","side"),d=dueInfo(b);
+    side.appendChild(el("span","due "+d.cls,d.label));
+    if(b.when&&!on){
+      var cal=el("button","cal","Alarm");cal.type="button";
+      cal.setAttribute("aria-label","Add a calendar alarm for "+b.t);
+      cal.addEventListener("click",function(){downloadICS(b)});
+      side.appendChild(cal);
+    }
+    r.appendChild(side);
+    box.appendChild(r);
+  });
+  var n=BOOKINGS.filter(function(_,i){return state["b"+i]}).length;
+  $("#prog-book").textContent=n+" of "+BOOKINGS.length+" done";
+}
+
+/* ---------- phrases and driver cards ---------- */
+function renderPhrases(){
+  var box=$("#phraseList");if(!box)return;
+  box.innerHTML="";
+  PHRASES.forEach(function(f){
+    var b=el("button","ph");b.type="button";
+    var tx=el("div","tx");
+    tx.appendChild(el("div","jp",f.jp));
+    tx.appendChild(el("div","en",f.r+" — "+f.e));
+    b.appendChild(tx);
+    b.appendChild(el("span","zoom","大"));
+    b.setAttribute("aria-label","Show "+f.r+" full screen");
+    b.addEventListener("click",function(){
+      openShow({kicker:"Show this to someone",jp:f.jp,romaji:f.r,en:f.e,foot:f.n||""});
+    });
+    box.appendChild(b);
+  });
+}
+function renderDrivers(){
+  var box=$("#driverList");if(!box)return;
+  box.innerHTML="";
+  ["tok","kyo","osa","hon"].forEach(function(k){
+    var s=STAY[k],w=el("div","stay");
+    w.style.marginBottom="10px";
+    w.appendChild(el("div","nm",s.nm));
+    var jp=el("div",null,s.jp);jp.style.whiteSpace="pre-line";jp.style.margin="4px 0 8px";
+    w.appendChild(jp);
+    var b=el("button","tel","Show it big");b.type="button";
+    b.addEventListener("click",function(){showStay(k)});
+    w.appendChild(b);
+    var t=document.createElement("a");t.className="tel g";t.href="tel:"+s.tel;t.textContent="Call";
+    w.appendChild(t);
+    box.appendChild(w);
+  });
+}
+
+/* ---------- your documents, kept in this browser and nowhere else ----------
+   Blobs go in IndexedDB rather than local storage: a passport photo is a few
+   hundred KB and local storage is a ~5MB string bucket. Nothing here touches
+   the network, and there is no server in this app to touch. */
+var DOCDB=null,docUrls=[];
+function idb(cb){
+  if(DOCDB){cb(DOCDB);return}
+  if(!window.indexedDB){cb(null);return}
+  try{
+    var r=indexedDB.open("jp2026docs",1);
+    r.onupgradeneeded=function(e){
+      var d=e.target.result;
+      if(!d.objectStoreNames.contains("docs"))d.createObjectStore("docs",{keyPath:"id"});
+    };
+    r.onsuccess=function(){DOCDB=r.result;cb(DOCDB)};
+    r.onerror=function(){cb(null)};
+    r.onblocked=function(){cb(null)};
+  }catch(e){cb(null)}
+}
+function docsAll(cb){
+  idb(function(d){
+    if(!d){cb(null);return}
+    try{
+      var t=d.transaction("docs","readonly").objectStore("docs").getAll();
+      t.onsuccess=function(){cb(t.result||[])};
+      t.onerror=function(){cb(null)};
+    }catch(e){cb(null)}
+  });
+}
+function docsWrite(op,arg,cb){
+  idb(function(d){
+    if(!d){cb(false);return}
+    try{
+      var st=d.transaction("docs","readwrite").objectStore("docs");
+      var q=op==="put"?st.put(arg):st.delete(arg);
+      q.onsuccess=function(){cb(true)};
+      q.onerror=function(){cb(false)};
+    }catch(e){cb(false)}
+  });
+}
+
+/* a passport needs to be readable, not full resolution */
+function shrinkImage(file,cb){
+  if(!/^image\//.test(file.type)||typeof document.createElement("canvas").toBlob!=="function"){cb(file);return}
+  var url=URL.createObjectURL(file),img=new Image();
+  img.onload=function(){
+    try{
+      var max=1600,w=img.naturalWidth,h=img.naturalHeight;
+      var sc=Math.min(1,max/Math.max(w,h));
+      var c=document.createElement("canvas");
+      c.width=Math.max(1,Math.round(w*sc));c.height=Math.max(1,Math.round(h*sc));
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+      URL.revokeObjectURL(url);
+      c.toBlob(function(b){cb(b&&b.size?b:file)},"image/jpeg",0.85);
+    }catch(e){URL.revokeObjectURL(url);cb(file)}
+  };
+  img.onerror=function(){URL.revokeObjectURL(url);cb(file)};
+  img.src=url;
+}
+
+function docLabel(name){
+  var n=String(name||"").replace(/\.[a-z0-9]+$/i,"").replace(/[_-]+/g," ").trim();
+  return n.slice(0,42)||"Document";
+}
+function renderDocs(){
+  var box=$("#docList");if(!box)return;
+  docUrls.forEach(function(u){try{URL.revokeObjectURL(u)}catch(e){}});
+  docUrls=[];
+  docsAll(function(list){
+    box.innerHTML="";
+    if(list===null){
+      box.appendChild(el("p","note","This browser won't let the app store files. Keep your copies in your photos instead."));
+      return;
+    }
+    if(!list.length){
+      box.appendChild(el("p","note","Nothing saved yet. Add a photo of your passport page, your visa, and the insurance certificate — then screenshot them too, as a second copy."));
+      return;
+    }
+    list.sort(function(a,b){return a.ts-b.ts});
+    var grid=el("div","docs");
+    list.forEach(function(rec){
+      var cell=el("div","doc");
+      var open=el("button","open");open.type="button";
+      open.setAttribute("aria-label","Open "+rec.name);
+      if(/^image\//.test(rec.type)){
+        var u=URL.createObjectURL(rec.blob);docUrls.push(u);
+        var im=document.createElement("img");im.src=u;im.alt=rec.name;open.appendChild(im);
+      }else{
+        var pdf=el("div","pdf","PDF");open.appendChild(pdf);
+      }
+      open.addEventListener("click",function(){viewDoc(rec)});
+      cell.appendChild(open);
+      cell.appendChild(el("div","cap",rec.name));
+      var rm=el("button","rm","×");rm.type="button";
+      rm.setAttribute("aria-label","Delete "+rec.name);
+      rm.addEventListener("click",function(ev){
+        ev.stopPropagation();
+        if(!confirm("Delete "+rec.name+" from this phone?"))return;
+        docsWrite("del",rec.id,function(){renderDocs()});
+      });
+      cell.appendChild(rm);
+      grid.appendChild(cell);
+    });
+    box.appendChild(grid);
+    box.appendChild(el("p","note",list.length+" saved on this phone. They open with no signal."));
+  });
+}
+function viewDoc(rec){
+  var hold=$("#docHold");hold.innerHTML="";
+  var u=URL.createObjectURL(rec.blob);
+  if(/^image\//.test(rec.type)){
+    var im=document.createElement("img");im.src=u;im.alt=rec.name;hold.appendChild(im);
+  }else{
+    var a=document.createElement("a");a.href=u;a.target="_blank";a.rel="noopener";
+    a.className="tel";a.textContent="Open "+rec.name;hold.appendChild(a);
+  }
+  $("#docView").classList.add("on");
+  $("#docView")._u=u;
+  $("#docClose").focus();
+}
+function closeDoc(){
+  var v=$("#docView");v.classList.remove("on");
+  if(v._u){try{URL.revokeObjectURL(v._u)}catch(e){}v._u=null}
+  $("#docHold").innerHTML="";
+}
+function initDocs(){
+  var inp=$("#docFile");
+  $("#docAdd").addEventListener("click",function(){inp.click()});
+  $("#docWhy").addEventListener("click",function(){$("#docNote").classList.toggle("on")});
+  $("#docClose").addEventListener("click",closeDoc);
+  $("#docView").addEventListener("click",function(e){if(e.target===this)closeDoc()});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")closeDoc()});
+  inp.addEventListener("change",function(){
+    var files=[].slice.call(inp.files||[]);
+    if(!files.length)return;
+    var done=0,failed=0;
+    flash("#docFlash","Saving…");
+    files.forEach(function(f){
+      shrinkImage(f,function(blob){
+        var rec={id:"d"+Date.now()+"-"+Math.random().toString(36).slice(2,7),
+                 name:docLabel(f.name),type:blob.type||f.type||"image/jpeg",
+                 ts:Date.now(),blob:blob};
+        docsWrite("put",rec,function(okk){
+          if(!okk)failed++;
+          if(++done===files.length){
+            inp.value="";
+            renderDocs();
+            flash("#docFlash",failed?(failed+" of "+files.length+" couldn't be saved — the phone may be out of space."):
+              (files.length===1?"Saved to this phone only.":files.length+" saved to this phone only."));
+          }
+        });
+      });
+    });
+  });
+  renderDocs();
 }
 
 /* ---------- checklists ---------- */
@@ -679,26 +1746,64 @@ function initTabs(){
   if(t&&last!=="now")t.click();
 }
 
+/* ---------- offline ---------- */
+function initSW(){
+  var st=$("#swState");
+  if(!("serviceWorker" in navigator)){
+    if(st)st.textContent="This browser can't cache the page. It'll need a connection to open.";
+    return;
+  }
+  navigator.serviceWorker.register("sw.js").then(function(){
+    if(st)st.textContent="Saved to the phone. Opens with no signal.";
+  }).catch(function(){
+    if(st)st.textContent="Couldn't save it offline. Screenshot the important pages.";
+  });
+  navigator.serviceWorker.addEventListener("message",function(e){
+    if(e.data&&e.data.updated&&st)st.textContent="Saved to the phone, and up to date.";
+  });
+}
+
 /* ---------- go ---------- */
+initTheme();
+initShow();
 renderStatus();
 renderToday();
 renderDays();
 initMoney();
 initSplit();
-buildList(BOOKINGS,"#list-book","ck_book","#prog-book","b");
+renderBookings();
 buildList(DOCS,"#list-docs","ck_docs","#prog-docs","d");
 buildList(PACK,"#list-pack","ck_pack","#prog-pack","p");
 buildList(DAILY,"#dailyChecks","ck_daily",null,"y");
+buildList(BEFORE,"#list-before","ck_before","#prog-before","f");
+buildList(NEED,"#list-need","ck_need","#prog-need","n");
+buildList(GIFTS,"#list-gift","ck_gift","#prog-gift","g");
+initBuy();
+renderPhrases();
+renderDrivers();
+initDocs();
 renderNext();
+renderWxToday();
+renderFuji();
 initTabs();
+initSW();
+
 $("#resetAll").addEventListener("click",function(){
-  if(!confirm("Clear every tick on this phone? Expenses are kept."))return;
-  ["ck_book","ck_docs","ck_pack","ck_daily"].forEach(S.del);
-  buildList(BOOKINGS,"#list-book","ck_book","#prog-book","b");
+  if(!confirm("Clear every tick on this phone? Expenses and your shopping list are kept."))return;
+  ["ck_book","ck_docs","ck_pack","ck_daily","ck_before","ck_need","ck_gift"].forEach(S.del);
+  renderBookings();
   buildList(DOCS,"#list-docs","ck_docs","#prog-docs","d");
   buildList(PACK,"#list-pack","ck_pack","#prog-pack","p");
   buildList(DAILY,"#dailyChecks","ck_daily",null,"y");
+  buildList(BEFORE,"#list-before","ck_before","#prog-before","f");
+buildList(NEED,"#list-need","ck_need","#prog-need","n");
+  buildList(GIFTS,"#list-gift","ck_gift","#prog-gift","g");
   renderNext();
+});
+
+/* the weather is worth a second look when you come back to the app */
+document.addEventListener("visibilitychange",function(){
+  if(document.visibilityState==="visible"){renderWxToday();renderFuji()}
 });
 </script>
 </body>
