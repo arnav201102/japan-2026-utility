@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Japan 2026 — Arnav, Ayush, Manan</title>
+<meta name="description" content="Trip utility: itinerary, hosts, currency, checklists and emergency numbers for Japan, 24 Nov – 6 Dec 2026.">
+<meta name="theme-color" content="#27405E">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Japan 2026">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --washi:#E7E8E2;
+  --card:#F4F4F0;
+  --ink:#161C22;
+  --ink-soft:#5A6470;
+  --ai:#27405E;
+  --momiji:#A3372A;
+  --moss:#5D6A4E;
+  --sand:#D2D1C5;
+  --gothic:"Zen Kaku Gothic New","Hiragino Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mincho:"Zen Old Mincho","Hiragino Mincho ProN","Yu Mincho",Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--gothic);
+  background:var(--washi);
+  color:var(--ink);
+  font-size:16px;
+  line-height:1.6;
+  padding-bottom:calc(84px + env(safe-area-inset-bottom));
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:600px;margin:0 auto;padding:0 20px}
+.num{font-variant-numeric:tabular-nums}
+
+/* masthead */
+header.mast{border-bottom:2px solid var(--ai);margin-bottom:28px}
+.mast .wrap{padding-top:26px;padding-bottom:14px;display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.mast h1{font-family:var(--mincho);font-weight:700;font-size:25px;letter-spacing:.02em;line-height:1.1}
+.mast h1 span{color:var(--ai)}
+.mast .dates{font-size:13px;color:var(--ink-soft);white-space:nowrap}
+
+/* panels */
+.panel{display:none}
+.panel.on{display:block}
+h2.sec{font-family:var(--mincho);font-weight:600;font-size:19px;margin:34px 0 12px;color:var(--ai)}
+h2.sec:first-child{margin-top:0}
+p.note{font-size:14px;color:var(--ink-soft);margin-bottom:14px}
+
+/* hero status */
+.status{background:var(--ai);color:#EDEEE9;border-radius:3px;padding:22px 20px 20px;margin-bottom:20px}
+.status .big{font-family:var(--mincho);font-weight:700;font-size:66px;line-height:.9;letter-spacing:-.02em;display:block}
+.status .cap{font-size:14px;opacity:.82;margin-top:8px}
+.status .where{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.22);font-size:15px}
+.status .where b{font-weight:700}
+
+.alert{border-left:4px solid var(--momiji);background:var(--card);padding:14px 16px;margin-bottom:20px}
+.alert .k{font-size:13px;color:var(--momiji);font-weight:700}
+.alert .v{font-size:15px;margin-top:2px}
+.alert .d{font-size:13px;color:var(--ink-soft);margin-top:4px}
+
+/* day list */
+.day{border-left:2px solid var(--sand);padding:0 0 0 16px;position:relative}
+.day+.day .head{border-top:1px solid var(--sand)}
+.day.cur{border-left-color:var(--momiji)}
+.day .head{display:flex;gap:12px;align-items:baseline;width:100%;background:none;border:0;padding:11px 0;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.day .n{font-family:var(--mincho);font-weight:700;font-size:19px;color:var(--ai);min-width:26px}
+.day.cur .n{color:var(--momiji)}
+.day .dt{font-weight:700;font-size:15px}
+.day .cty{font-size:13px;color:var(--ink-soft);margin-left:auto;white-space:nowrap}
+.day .body{display:none;padding:2px 0 18px;font-size:15px}
+.day.open .body{display:block}
+.day .body p{margin-bottom:10px}
+.stay{background:var(--card);padding:12px 14px;border-radius:3px;font-size:14px;line-height:1.5}
+.stay .nm{font-weight:700;font-size:15px}
+.stay .ad{color:var(--ink-soft);margin:3px 0 8px}
+a.tel{display:inline-block;background:var(--ai);color:#fff;text-decoration:none;padding:7px 13px;border-radius:3px;font-size:14px;font-weight:500;margin-right:8px;margin-top:4px}
+a.tel.g{background:var(--moss)}
+.ref{font-size:12px;color:var(--ink-soft);margin-top:8px}
+
+/* money */
+.conv{background:var(--card);border-radius:3px;padding:18px;margin-bottom:16px}
+.fx{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.fx label{font-family:var(--mincho);font-size:26px;color:var(--ai);font-weight:700;min-width:34px}
+.fx input{flex:1;min-width:0;font:700 26px/1.2 var(--gothic);font-variant-numeric:tabular-nums;border:0;border-bottom:2px solid var(--sand);background:none;color:var(--ink);padding:4px 0;width:100%}
+.fx input:focus{outline:none;border-bottom-color:var(--momiji)}
+.rate{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink-soft);border-top:1px solid var(--sand);padding-top:12px;white-space:nowrap}
+.rate-hint{font-size:13px;color:var(--ink-soft);margin-top:7px;line-height:1.5}
+.linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--ai);text-decoration:underline;cursor:pointer}
+.linkbtn:disabled{color:var(--ink-soft);text-decoration:none;cursor:default}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--moss);margin-right:6px;vertical-align:middle}
+.dot.stale{background:#B8860B}.dot.off{background:var(--ink-soft)}
+.rate-warn{font-size:13px;color:var(--ink-soft);margin-top:6px;padding-top:6px;border-top:1px solid var(--sand)}
+.credit{font-size:12px;color:var(--ink-soft);margin:-10px 0 20px}
+.credit a{color:var(--ink-soft)}
+.rate input{width:72px;font:500 14px var(--gothic);font-variant-numeric:tabular-nums;border:1px solid var(--sand);border-radius:3px;padding:4px 6px;background:#fff;color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{background:none;border:1px solid var(--sand);border-radius:3px;padding:7px 11px;font:500 14px/1 var(--gothic);font-variant-numeric:tabular-nums;color:var(--ink);cursor:pointer}
+.chip b{color:var(--ai)}
+
+/* splitter */
+.addrow{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.addrow input,.addrow select{font:400 15px var(--gothic);border:1px solid var(--sand);border-radius:3px;padding:9px 10px;background:#fff;color:var(--ink);min-width:0}
+.addrow input.desc{flex:1 1 100%}
+.addrow input.amt{flex:1 1 90px;font-variant-numeric:tabular-nums}
+.addrow select{flex:1 1 110px}
+.btn{background:var(--ai);color:#fff;border:0;border-radius:3px;padding:9px 16px;font:500 15px var(--gothic);cursor:pointer}
+.btn.ghost{background:none;color:var(--ink-soft);border:1px solid var(--sand)}
+.exp{display:flex;align-items:baseline;gap:10px;padding:9px 0;border-bottom:1px solid var(--sand);font-size:15px}
+.exp .who{font-size:13px;color:var(--ink-soft)}
+.exp .amt{margin-left:auto;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.exp button{background:none;border:0;color:var(--sand);font-size:18px;cursor:pointer;line-height:1;padding:0 2px}
+.exp button:hover{color:var(--momiji)}
+.settle{background:var(--card);border-radius:3px;padding:14px 16px;margin-top:14px;font-size:15px}
+.settle div{padding:3px 0;font-variant-numeric:tabular-nums}
+.settle .ttl{font-weight:700;border-bottom:1px solid var(--sand);padding-bottom:7px;margin-bottom:6px}
+
+/* checklist */
+.chk{display:flex;gap:11px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--sand);cursor:pointer}
+.chk input{appearance:none;-webkit-appearance:none;width:19px;height:19px;flex:none;margin-top:2px;border:2px solid var(--ai);border-radius:2px;background:#fff;cursor:pointer;position:relative}
+.chk input:checked{background:var(--moss);border-color:var(--moss)}
+.chk input:checked::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(43deg)}
+.chk input:focus-visible{outline:2px solid var(--momiji);outline-offset:2px}
+.chk .txt{font-size:15px;line-height:1.45}
+.chk .when{display:block;font-size:12.5px;color:var(--ink-soft);margin-top:1px}
+.chk .when.u{color:var(--momiji);font-weight:700}
+.chk input:checked+.txt{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:var(--sand)}
+.chk input:checked+.txt .when{color:var(--ink-soft);text-decoration:none}
+.prog{font-size:13px;color:var(--ink-soft);margin:2px 0 12px;font-variant-numeric:tabular-nums}
+
+/* info */
+.row{display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--sand);font-size:15px;align-items:baseline}
+.row .l{color:var(--ink-soft);flex:none;width:122px;font-size:14px}
+.row .r{flex:1}
+.row .r a{color:var(--ai)}
+.sos{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.sos a{display:block;background:var(--momiji);color:#fff;text-decoration:none;border-radius:3px;padding:14px;text-align:center}
+.sos a .n{font-family:var(--mincho);font-weight:700;font-size:30px;display:block;line-height:1}
+.sos a .l{font-size:13px;opacity:.9;margin-top:3px}
+.ph{padding:10px 0;border-bottom:1px solid var(--sand)}
+.ph .jp{font-size:17px;font-weight:500}
+.ph .en{font-size:14px;color:var(--ink-soft)}
+.links a{display:block;padding:10px 0;border-bottom:1px solid var(--sand);color:var(--ai);text-decoration:none;font-size:15px}
+.links a span{display:block;font-size:13px;color:var(--ink-soft)}
+
+/* tab bar */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--ai);padding-bottom:env(safe-area-inset-bottom);z-index:20}
+nav.tabs .in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav.tabs button{background:none;border:0;color:rgba(237,238,233,.6);padding:13px 4px 15px;font:500 12.5px var(--gothic);cursor:pointer;border-top:3px solid transparent}
+nav.tabs button .g{display:block;font-family:var(--mincho);font-size:17px;line-height:1.15;margin-bottom:2px}
+nav.tabs button[aria-selected="true"]{color:#fff;border-top-color:var(--momiji)}
+nav.tabs button:focus-visible{outline:2px solid #fff;outline-offset:-4px}
+
+footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.5}
+@media (prefers-reduced-motion:no-preference){
+  .status .big{animation:rise .5s ease-out both}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap">
+    <h1>日本 <span>2026</span></h1>
+    <div class="dates">24 Nov – 6 Dec</div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ NOW ============ -->
+<section class="panel on" id="p-now" role="tabpanel" aria-labelledby="t-now">
+  <div class="status">
+    <span class="big num" id="bigNum">—</span>
+    <div class="cap" id="bigCap">loading</div>
+    <div class="where" id="whereNow"></div>
+  </div>
+  <div id="nextUp"></div>
+
+  <h2 class="sec" id="todayHead">Today</h2>
+  <div id="todayCard"></div>
+
+  <h2 class="sec">Before you leave the room</h2>
+  <div id="dailyChecks"></div>
+</section>
+
+<!-- ============ DAYS ============ -->
+<section class="panel" id="p-days" role="tabpanel" aria-labelledby="t-days">
+  <h2 class="sec">Itinerary</h2>
+  <p class="note">Tap a day for the plan, where you're staying and the host's number.</p>
+  <div id="dayList"></div>
+</section>
+
+<!-- ============ MONEY ============ -->
+<section class="panel" id="p-money" role="tabpanel" aria-labelledby="t-money">
+  <h2 class="sec">Convert</h2>
+  <div class="conv">
+    <div class="fx"><label for="jpy">¥</label><input id="jpy" type="text" inputmode="decimal" value="1000" aria-label="Japanese yen"></div>
+    <div class="fx"><label for="inr">₹</label><input id="inr" type="text" inputmode="decimal" aria-label="Indian rupees"></div>
+    <div class="rate">
+      <span>¥1 =</span><input id="rate" type="text" inputmode="decimal" aria-label="Rate: rupees per yen"><span>₹</span>
+    </div>
+    <div class="rate-hint"><span id="fxStatus">Checking the rate…</span> <button class="linkbtn" id="fxRefresh">Refresh</button></div>
+    <div class="rate-warn">Mid-market rate. Your forex card or an ATM will give you a couple of percent less, so treat this as the floor.</div>
+  </div>
+  <div class="chips" id="chips"></div>
+  <p class="credit">Rates from the <a href="https://frankfurter.dev" target="_blank" rel="noopener">European Central Bank via Frankfurter</a> and <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">ExchangeRate-API</a>.</p>
+
+  <h2 class="sec">Split the bill</h2>
+  <p class="note">Everyone pays their own way, so this just tracks who covered what and evens it out at the end. Stored on this phone only.</p>
+  <div class="addrow">
+    <input class="desc" id="eDesc" placeholder="What was it for?" aria-label="Description">
+    <input class="amt num" id="eAmt" type="text" inputmode="decimal" placeholder="¥ amount" aria-label="Amount in yen">
+    <select id="ePayer" aria-label="Who paid"><option>Arnav</option><option>Ayush</option><option>Manan</option></select>
+    <button class="btn" id="eAdd">Add</button>
+  </div>
+  <div id="expList"></div>
+  <div class="settle" id="settle"></div>
+</section>
+
+<!-- ============ CHECKLIST ============ -->
+<section class="panel" id="p-list" role="tabpanel" aria-labelledby="t-list">
+  <h2 class="sec">Bookings</h2>
+  <p class="note">Alarm times are IST. The 4 Oct one is the only alarm that really matters.</p>
+  <div class="prog" id="prog-book"></div>
+  <div id="list-book"></div>
+
+  <h2 class="sec">Documents</h2>
+  <div class="prog" id="prog-docs"></div>
+  <div id="list-docs"></div>
+
+  <h2 class="sec">Packing</h2>
+  <p class="note">Tokyo and Kyoto sit around 6–14°C in late November, and it drops fast after dark.</p>
+  <div class="prog" id="prog-pack"></div>
+  <div id="list-pack"></div>
+
+  <p style="margin-top:24px"><button class="btn ghost" id="resetAll">Clear all ticks</button></p>
+</section>
+
+<!-- ============ INFO ============ -->
+<section class="panel" id="p-info" role="tabpanel" aria-labelledby="t-info">
+  <h2 class="sec">Emergency</h2>
+  <div class="sos">
+    <a href="tel:110"><span class="n">110</span><span class="l">Police</span></a>
+    <a href="tel:119"><span class="n">119</span><span class="l">Fire · Ambulance</span></a>
+  </div>
+  <div class="row"><div class="l">Visitor hotline</div><div class="r"><a href="tel:+815038162787">050-3816-2787</a> — JNTO, 24 hours, English</div></div>
+  <div class="row"><div class="l">Embassy, Tokyo</div><div class="r"><a href="tel:+81332622391">+81 3-3262-2391</a><br>2-2-11 Kudan-Minami, Chiyoda-ku</div></div>
+  <div class="row"><div class="l">Consulate, Osaka</div><div class="r"><a href="tel:+81662617299">+81 6-6261-7299</a><br>Kyutaromachi, Chuo-ku — 1 min from Sakaisuji-Hommachi</div></div>
+  <div class="row"><div class="l">Lost something</div><div class="r">Ask any station office for 忘れ物 (wasuremono). Japan's lost-and-found actually works — things get handed in.</div></div>
+
+  <h2 class="sec">Flights</h2>
+  <div class="row"><div class="l">24 Nov</div><div class="r">NH838 · Delhi 18:55 → Haneda 05:55 (+1)</div></div>
+  <div class="row"><div class="l">6 Dec</div><div class="r">NH990 · Kansai 06:45 → Haneda 07:55</div></div>
+  <div class="row"><div class="l">6 Dec</div><div class="r">NH837 · Haneda 10:35 → Delhi 17:25</div></div>
+  <div class="row"><div class="l">Airport by</div><div class="r">05:45 at KIX. Ticketed through to Delhi, so check-in closes 60 min before. Taxi 04:15 from Honmachi.</div></div>
+
+  <h2 class="sec">Passes and how to pay</h2>
+  <div class="row"><div class="l">Everywhere</div><div class="r">Suica or ICOCA on your phone. Trains, buses, konbini, most vending machines.</div></div>
+  <div class="row"><div class="l">25–29 Nov</div><div class="r">Tokyo Subway 72-hour ticket. Metro and Toei only — the Kamakura day is JR, pay separately.</div></div>
+  <div class="row"><div class="l">1–5 Dec</div><div class="r">Kansai WIDE Area Pass. Carry your passport whenever you use it. Six free seat reservations — spend two on the Hashidate run.</div></div>
+  <div class="row"><div class="l">5 Dec</div><div class="r">Osaka Amazing Pass, 1 day. Umeda Sky is only free before 15:00, so go there first.</div></div>
+  <div class="row"><div class="l">Cash</div><div class="r">Keep ¥10,000 on you. Small restaurants, shrine entries and the Ine sea taxi are often cash only. 7-Eleven ATMs take Indian cards.</div></div>
+
+  <h2 class="sec">Worth saying out loud</h2>
+  <div class="ph"><div class="jp">すみません — Sumimasen</div><div class="en">Excuse me, and also sorry, and also thank you. Does most of the work.</div></div>
+  <div class="ph"><div class="jp">これをください — Kore o kudasai</div><div class="en">This one, please. Point at it.</div></div>
+  <div class="ph"><div class="jp">英語のメニューはありますか — Eigo no menyū wa arimasu ka</div><div class="en">Is there an English menu?</div></div>
+  <div class="ph"><div class="jp">肉は入っていますか — Niku wa haitte imasu ka</div><div class="en">Does this contain meat? Note that dashi (fish stock) is in almost everything.</div></div>
+  <div class="ph"><div class="jp">お会計お願いします — Okaikei onegaishimasu</div><div class="en">The bill, please. Usually you pay at the front counter, not the table.</div></div>
+  <div class="ph"><div class="jp">駅はどこですか — Eki wa doko desu ka</div><div class="en">Where is the station?</div></div>
+
+  <h2 class="sec">Book and check here</h2>
+  <div class="links">
+    <a href="https://smart-ex.jp/en/" target="_blank" rel="noopener">Smart EX<span>Shinkansen seats, changeable free until departure</span></a>
+    <a href="https://www.westjr.co.jp/global/en/ticket/pass/kansai_wide/" target="_blank" rel="noopener">JR West<span>Kansai WIDE Area Pass and seat reservations</span></a>
+    <a href="https://www.eki-net.com/en/" target="_blank" rel="noopener">JR East Eki-Net<span>Fuji Excursion, one month ahead at 10:00 JST</span></a>
+    <a href="https://teamlabplanets.dmm.com/en/" target="_blank" rel="noopener">teamLab Planets<span>Changeable up to 3 times, until 2 hours before</span></a>
+    <a href="https://www.usj.co.jp/web/en/us" target="_blank" rel="noopener">Universal Studios Japan<span>Express Pass is date-locked and non-refundable</span></a>
+    <a href="https://www.sagano-kanko.co.jp/en/" target="_blank" rel="noopener">Sagano Scenic Railway<span>Check whether 2 Dec, a Wednesday, is running</span></a>
+    <a href="https://museum-tickets.nintendo.com/en" target="_blank" rel="noopener">Nintendo Museum<span>Lottery only. Closed Tuesdays</span></a>
+    <a href="https://www.vjw.digital.go.jp/" target="_blank" rel="noopener">Visit Japan Web<span>Immigration and customs, do it before you fly</span></a>
+    <a href="https://www.jma.go.jp/bosai/forecast/" target="_blank" rel="noopener">Japan Meteorological Agency<span>The forecast that decides your Fuji day</span></a>
+  </div>
+
+  <footer>Built for Arnav, Ayush and Manan. Everything you tick or type is saved on your own phone and shared with nobody. Check fares and opening hours against the official sites before you rely on them.</footer>
+</section>
+
+</main>
+
+<nav class="tabs" role="tablist" aria-label="Sections">
+  <div class="in">
+    <button role="tab" id="t-now"   aria-selected="true"  aria-controls="p-now"   data-p="now"><span class="g">今</span>Now</button>
+    <button role="tab" id="t-days"  aria-selected="false" aria-controls="p-days"  data-p="days"><span class="g">程</span>Days</button>
+    <button role="tab" id="t-money" aria-selected="false" aria-controls="p-money" data-p="money"><span class="g">¥</span>Money</button>
+    <button role="tab" id="t-list"  aria-selected="false" aria-controls="p-list"  data-p="list"><span class="g">要</span>To do</button>
+    <button role="tab" id="t-info"  aria-selected="false" aria-controls="p-info"  data-p="info"><span class="g">報</span>Info</button>
+  </div>
+</nav>
+
+<script>
+/* ---------- storage that never throws ---------- */
+var mem={};
+var S={
+  get:function(k,d){try{var v=localStorage.getItem(k);return v===null?(k in mem?mem[k]:d):JSON.parse(v)}catch(e){return (k in mem)?mem[k]:d}},
+  set:function(k,v){mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},
+  del:function(k){delete mem[k];try{localStorage.removeItem(k)}catch(e){}}
+};
+
+/* ---------- trip data ---------- */
+var STAY={
+  tok:{nm:"Yu's Apartment, Shinjuku",ad:"2-19-12 Kabukichō, Shinjuku City, Tokyo 160-0021",host:"Yu",tel:"+818037956221",telShow:"+81 80-3795-6221",ref:"HMP29YNARR · in 25 Nov 16:00, out 30 Nov 11:00"},
+  kyo:{nm:"Private Room B, Kyoto",ad:"Kyoto, Kyoto Prefecture 600-8195",host:"Kizuna",tel:"+819039753891",telShow:"+81 90-3975-3891",ref:"HMSWQDSNFB · in 30 Nov 16:00, out 3 Dec 11:00"},
+  osa:{nm:"Apartment, Nipponbashihigashi",ad:"Nipponbashihigashi, Naniwa Ward, Osaka 556-0006",host:"Ayaka (絢香)",tel:"+815017210241",telShow:"+81 50-1721-0241",ref:"HMP2X3PCJF · in 3 Dec 16:00, out 5 Dec 10:00"},
+  hon:{nm:"Far East Village Hotel Osaka, Honmachi",ad:"中央区久太郎町3-3-6, Chuo-ku, Osaka 541-0056",host:"Front desk",tel:"+814523244476",telShow:"+81 45 232 4476",ref:"Booking.com 5665.397.455 · in 5 Dec 15:00, out 6 Dec 11:00 · 2 rooms"}
+};
+
+var DAYS=[
+ {d:"2026-11-24",dow:"Tue",city:"In transit",t:"Delhi → Tokyo",
+  p:["Reach T3 by 15:30 — it's a 12-day trip, don't cut it fine.","NH838 departs 18:55. Sleep on this one; you land at dawn and the day starts immediately."],stay:null},
+ {d:"2026-11-25",dow:"Wed",city:"Tokyo",t:"Shinjuku, Harajuku",
+  p:["Land 05:55. Immigration, then the limousine bus or Asakusa line to Shinjuku.","Drop bags at the apartment before check-in, then Kabukicho and Omoide Yokocho.","Afternoon: Meiji Jingu and Takeshita Street.","Buy the 72-hour Tokyo Subway ticket at Haneda arrivals. Set up Suica before you leave the airport."],stay:"tok"},
+ {d:"2026-11-26",dow:"Thu",city:"Mt. Fuji",t:"Kawaguchiko",
+  p:["Check the webcam before you leave. If the mountain is socked in, swap this with the Kamakura day — you have the flexibility.","Chureito Pagoda, Oshino Hakkai, Lake Kawaguchi. Red Line bus day pass at the station, about ¥1,500.","Last direct train back leaves Kawaguchiko around 17:41. Buses run later."],stay:"tok"},
+ {d:"2026-11-27",dow:"Fri",city:"Kamakura",t:"Temples and the coast",
+  p:["JR Yokosuka line from Tokyo, about an hour. Nothing here needs booking.","Kotoku-in for the Great Buddha, Hase-dera, Hokoku-ji bamboo.","Ride the Enoden to Kamakurakoko-mae for the level crossing by the sea.","Your subway pass doesn't cover JR today."],stay:"tok"},
+ {d:"2026-11-28",dow:"Sat",city:"Tokyo",t:"Asakusa, Skytree, teamLab",
+  p:["teamLab Planets first, earliest slot — it gets chaotic and you'll be wading through water, so wear shorts or trousers you can roll up.","Senso-ji and Nakamise, then Skytree mid-afternoon on the booked slot.","Saturday, so everything is busier than it looks on paper. Move early."],stay:"tok"},
+ {d:"2026-11-29",dow:"Sun",city:"Tokyo",t:"Tokyo Tower, Akihabara, Ginza",
+  p:["Tokyo Tower is walk-up.","Akihabara for the arcades and Super Potato, then Ginza.","Shibuya Sky at sunset, around 16:30 — book the slot 40 minutes before.","Good evening for the drift tour if you moved it here.","Repack tonight. You're on a Shinkansen tomorrow."],stay:"tok"},
+ {d:"2026-11-30",dow:"Mon",city:"Kyoto",t:"Shinkansen, Gion, Kiyomizu-dera",
+  p:["Out by 11:00. Nozomi around midday, seats D or E on the right for Fuji about 40 minutes in.","Drop bags in Kyoto, then Sannenzaka and Ninenzaka up to Kiyomizu-dera.","Tonight is the last night of the Kiyomizu-dera autumn illumination for 2026. Evening entry from 17:30, last entry 21:00, separate ticket at the gate. Don't drift — go."],stay:"kyo"},
+ {d:"2026-12-01",dow:"Tue",city:"Amanohashidate",t:"Ine and the coast",
+  p:["Long day. Limited Express Hashidate from Kyoto, roughly two hours each way.","Activate the Kansai WIDE pass this morning — it runs through the 5th.","Ine Bay cruise, the funaya boathouses, then the Amanohashidate chairlift and the view from Kasamatsu Park.","Carry cash. The sea taxi is often cash only."],stay:"kyo"},
+ {d:"2026-12-02",dow:"Wed",city:"Kyoto",t:"Fushimi Inari, Arashiyama",
+  p:["Fushimi Inari at first light. By 09:00 the lower gates are shoulder to shoulder, and it's free and open all night.","Arashiyama: bamboo grove, Tenryu-ji, the Sagano Romantic Train if it's running today.","Nishiki Market late afternoon.","Trains, not buses. Kyoto buses barely move in foliage season."],stay:"kyo"},
+ {d:"2026-12-03",dow:"Thu",city:"Osaka",t:"Namba, Dotonbori",
+  p:["Out by 11:00. JR Kyoto Line to Osaka, covered by the pass, about 30 minutes.","Kuromon Market for lunch, Dotonbori and Shinsaibashi in the evening.","Den Den Town is a few minutes' walk from the apartment.","Register your USJ Studio Pass in the official app tonight — you'll need it at the gate tomorrow."],stay:"osa"},
+ {d:"2026-12-04",dow:"Fri",city:"Universal",t:"Universal Studios Japan",
+  p:["Be at the gate before opening, not at opening.","If you don't have Express Pass Nintendo World access, pull an Area Timed Entry Ticket in the app the moment gates open. Distribution can end early.","JR Yumesaki Line to Universal City, covered by the pass.","Long day on your feet. Wear the shoes that already fit."],stay:"osa"},
+ {d:"2026-12-05",dow:"Sat",city:"Osaka",t:"Castle, Umeda, last shopping",
+  p:["Check out by 10:00 and leave bags in storage.","Activate the Osaka Amazing Pass this morning. Umeda Sky Building first — it's only free before 15:00.","Osaka Castle, Tombori River Cruise, Shinsaibashi for whatever's left on the list.","Collect bags and check into Honmachi from 15:00.","Confirm the airport taxi with the front desk tonight. Pack tonight, not at 3am.","Set two alarms."],stay:"hon"},
+ {d:"2026-12-06",dow:"Sun",city:"Going home",t:"Kansai → Delhi",
+  p:["Taxi 04:15 from the hotel, at KIX by about 05:05.","Check-in closes 60 minutes before NH990 at 06:45, so be at the counter by 05:45.","Connect at Haneda, NH837 at 10:35, Delhi 17:25.","Last chance for KitKats is airside at KIX."],stay:null}
+];
+
+var BOOKINGS=[
+ {t:"Smart EX: Shinkansen Tokyo → Kyoto, 30 Nov",w:"book now, opens a year ahead"},
+ {t:"teamLab Planets, 28 Nov, earliest slot",w:"book now"},
+ {t:"Kansai WIDE Area Pass ×3, from JR West directly",w:"book now, ¥12,000 each"},
+ {t:"Drift experience",w:"book now, small groups sell out"},
+ {t:"Mt. Fuji: pick train, bus or guided tour",w:"decide now, book tour if guided"},
+ {t:"Nintendo Museum December lottery entry",w:"by 30 Sep — window won't reopen",u:true},
+ {t:"Nintendo Museum: pay if you win",w:"1–7 Oct"},
+ {t:"USJ 4 Dec: Studio Pass + Express Pass with Nintendo World",w:"4 Oct, 21:30 IST — set an alarm",u:true},
+ {t:"Fuji Excursion reserved seats, 26 Nov",w:"26 Oct, 06:30 IST"},
+ {t:"Tokyo Skytree, 28 Nov, mid-afternoon",w:"28 Oct, 20:30 IST"},
+ {t:"Ltd Exp Hashidate seats, 1 Dec",w:"31 Oct, 06:30 IST — free with the pass"},
+ {t:"Sagano Romantic Train, 2 Dec",w:"1 Nov, 20:30 IST — check Wednesday running first"},
+ {t:"Shibuya Sky, 29 Nov, sunset slot",w:"14 Nov, 20:30 IST"},
+ {t:"KIX airport taxi for 6 Dec",w:"around 15 Nov"},
+ {t:"Visit Japan Web for all three",w:"around 20 Nov"}
+];
+var DOCS=[
+ {t:"Passport valid well past 6 Dec"},{t:"Visa stamped and photographed"},
+ {t:"Printed flight tickets, both directions"},{t:"All four accommodation confirmations, offline"},
+ {t:"Travel insurance, policy number saved offline"},{t:"Photo of passport and visa in a separate place from the passport"},
+ {t:"Forex card activated for Japan, plus one backup card with 3-D Secure on"},
+ {t:"Told your bank you're travelling"},{t:"¥10,000 cash each, before you land"},
+ {t:"eSIM or pocket wifi sorted"},{t:"Offline map of Tokyo, Kyoto and Osaka downloaded"},
+ {t:"Everything in this list screenshotted, in case there's no signal"}
+];
+var PACK=[
+ {t:"Warm layers — 6–14°C, colder after sunset and much colder at Kawaguchiko"},
+ {t:"One properly warm jacket"},{t:"Walking shoes you've already broken in"},
+ {t:"Socks with no holes — you'll take your shoes off more than you expect"},
+ {t:"Slip-on shoes for temples"},{t:"Compact umbrella"},
+ {t:"Type A plug, 100V. Indian chargers mostly work, check the brick"},
+ {t:"Power bank — in cabin baggage only, never checked"},
+ {t:"Small daypack, and a foldable bag for the shopping"},
+ {t:"Any regular medicines in original packaging, with the prescription"},
+ {t:"Handkerchief — most public toilets have no dryer"},
+ {t:"A small bag for rubbish. There are almost no public bins"},
+ {t:"Shorts or roll-up trousers for teamLab Planets, 28 Nov"},
+ {t:"Space in the suitcase for the way back"}
+];
+var DAILY=[
+ {t:"Passport"},{t:"Phone charged, power bank charged"},{t:"Suica or ICOCA topped up"},
+ {t:"Cash on you"},{t:"Today's tickets loaded and screenshotted"},{t:"Umbrella if it's grey"}
+];
+
+/* ---------- helpers ---------- */
+function $(s){return document.querySelector(s)}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function fmtDate(iso){var d=new Date(iso+"T12:00:00");return d.getDate()+" "+["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()]}
+function todayISO(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function dayDiff(a,b){return Math.round((new Date(b+"T12:00:00")-new Date(a+"T12:00:00"))/86400000)}
+function yen(n){return "¥"+Math.round(n).toLocaleString("en-US")}
+
+/* ---------- status ---------- */
+var today=todayISO();
+var idx=DAYS.findIndex(function(d){return d.d===today});
+function renderStatus(){
+  var big=$("#bigNum"),cap=$("#bigCap"),wh=$("#whereNow");
+  if(idx>=0){
+    big.textContent=idx+1;
+    cap.textContent="Day "+(idx+1)+" of "+DAYS.length+" — "+DAYS[idx].city;
+    var s=DAYS[idx].stay?STAY[DAYS[idx].stay]:null;
+    wh.innerHTML=s?("Tonight: <b>"+esc(s.nm)+"</b>"):"No bed tonight — you're moving.";
+  }else{
+    var n=dayDiff(today,DAYS[0].d);
+    if(n>0){big.textContent=n;cap.textContent=n===1?"day until you fly":"days until you fly";wh.innerHTML="Wheels up <b>24 Nov, 18:55</b> from Delhi T3.";}
+    else{big.textContent="—";cap.textContent="Trip's done";wh.innerHTML="Back at work on the 7th. Sorry.";}
+  }
+}
+
+function renderNext(){
+  var done=S.get("ck_book",{});
+  var pending=BOOKINGS.filter(function(b,i){return !done["b"+i]});
+  var box=$("#nextUp");box.innerHTML="";
+  if(!pending.length){
+    var ok=el("div","alert");ok.appendChild(el("div","k","Bookings"));
+    ok.appendChild(el("div","v","All ticked off. Nothing left to book."));box.appendChild(ok);return;
+  }
+  var b=pending[0];
+  var a=el("div","alert");
+  a.appendChild(el("div","k","Next to book"));
+  a.appendChild(el("div","v",b.t));
+  a.appendChild(el("div","d",b.w+(pending.length>1?"  ·  "+(pending.length-1)+" more after this":"")));
+  box.appendChild(a);
+}
+
+function stayBlock(key){
+  var s=STAY[key],w=el("div","stay");
+  w.appendChild(el("div","nm",s.nm));
+  w.appendChild(el("div","ad",s.ad));
+  var t=document.createElement("a");t.className="tel";t.href="tel:"+s.tel;t.textContent="Call "+s.host;w.appendChild(t);
+  var m=document.createElement("a");m.className="tel g";m.href="https://maps.google.com/?q="+encodeURIComponent(s.ad);m.target="_blank";m.rel="noopener";m.textContent="Map";w.appendChild(m);
+  w.appendChild(el("div","ref",s.ref));
+  return w;
+}
+
+function renderToday(){
+  var box=$("#todayCard");box.innerHTML="";
+  var d=idx>=0?DAYS[idx]:DAYS[0];
+  $("#todayHead").textContent=idx>=0?"Today":"Day one";
+  var h=el("div");
+  h.appendChild(el("div",null,fmtDate(d.d)+", "+d.dow+" — "+d.t));
+  h.style.fontWeight="700";h.style.marginBottom="8px";
+  box.appendChild(h);
+  d.p.forEach(function(p){var e=el("p",null,p);e.style.marginBottom="9px";e.style.fontSize="15px";box.appendChild(e)});
+  if(d.stay)box.appendChild(stayBlock(d.stay));
+}
+
+function renderDays(){
+  var box=$("#dayList");box.innerHTML="";
+  DAYS.forEach(function(d,i){
+    var w=el("div","day"+(d.d===today?" cur":""));
+    var btn=el("button","head");btn.type="button";btn.setAttribute("aria-expanded","false");
+    btn.appendChild(el("span","n",String(i+1)));
+    var lbl=el("span","dt",fmtDate(d.d)+" "+d.dow);
+    btn.appendChild(lbl);
+    btn.appendChild(el("span","cty",d.city));
+    var body=el("div","body");
+    d.p.forEach(function(p){body.appendChild(el("p",null,p))});
+    if(d.stay)body.appendChild(stayBlock(d.stay));
+    btn.addEventListener("click",function(){
+      var open=w.classList.toggle("open");
+      btn.setAttribute("aria-expanded",open?"true":"false");
+    });
+    w.appendChild(btn);w.appendChild(body);box.appendChild(w);
+    if(d.d===today)w.classList.add("open");
+  });
+}
+
+/* ---------- currency ---------- */
+var FX_SOURCES=[
+ {n:"the ECB",u:"https://api.frankfurter.dev/v2/rate/JPY/INR",pick:function(d){return d&&d.rate}},
+ {n:"ExchangeRate-API",u:"https://open.er-api.com/v6/latest/JPY",pick:function(d){return d&&d.rates&&d.rates.INR}},
+ {n:"Currency API",u:"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/jpy.min.json",pick:function(d){return d&&d.jpy&&d.jpy.inr}},
+ {n:"Currency API",u:"https://currency-api.pages.dev/v1/currencies/jpy.min.json",pick:function(d){return d&&d.jpy&&d.jpy.inr}}
+];
+var fx=S.get("fx",null);
+if(!fx){ var legacy=S.get("rate",null);
+  fx=legacy?{rate:legacy,ts:0,src:null,manual:true,failed:false}:{rate:0.58,ts:0,src:null,manual:false,failed:false}; }
+var rate=fx.rate, fxBusy=false;
+
+function num(v){var n=parseFloat(String(v).replace(/[^\d.]/g,""));return isNaN(n)?0:n}
+function showRate(v){return String(Math.round(v*10000)/10000)}
+function fmtINR(n){return String(Math.round(n*100)/100)}
+function fromYen(){$("#inr").value=fmtINR(num($("#jpy").value)*rate)}
+function fromInr(){$("#jpy").value=Math.round(num($("#inr").value)/rate)}
+
+function ago(ts){
+  var m=Math.floor((Date.now()-ts)/60000);
+  if(m<2)return "just now";
+  if(m<60)return m+" minutes ago";
+  var h=Math.round(m/60); if(h<24)return h===1?"an hour ago":h+" hours ago";
+  var d=Math.round(h/24); return d===1?"yesterday":d+" days ago";
+}
+
+function renderFxStatus(){
+  var st=$("#fxStatus"), btn=$("#fxRefresh");
+  if(!st)return;
+  btn.disabled=fxBusy; btn.textContent=fxBusy?"Checking…":"Refresh";
+  if(fx.manual){
+    st.innerHTML='<span class="dot off"></span>Your own rate.';
+    btn.textContent="Use the live rate"; return;
+  }
+  if(!fx.ts){
+    st.innerHTML=fx.failed
+      ? '<span class="dot off"></span>No connection. Using a placeholder — set it yourself above.'
+      : '<span class="dot off"></span>Checking the rate…';
+    return;
+  }
+  var days=(Date.now()-fx.ts)/86400000;
+  var cls=fx.failed||days>3?"stale":"";
+  st.innerHTML='<span class="dot '+cls+'"></span>'+
+    (fx.failed ? "Saved rate from "+ago(fx.ts)+". Couldn't refresh."
+               : "Live from "+esc(fx.src)+", "+ago(fx.ts)+".");
+}
+
+function applyRate(v){
+  rate=v; var f=$("#rate"); if(f)f.value=showRate(v);
+  fromYen(); refreshChips(); renderFxStatus();
+}
+
+function fetchRate(){
+  if(typeof fetch!=="function"){fx.failed=true;renderFxStatus();return}
+  fxBusy=true; renderFxStatus();
+  var i=0;
+  (function next(){
+    if(i>=FX_SOURCES.length){
+      fxBusy=false; fx.failed=true; S.set("fx",fx); renderFxStatus(); return;
+    }
+    var src=FX_SOURCES[i++], done=false;
+    var ctl=(typeof AbortController==="function")?new AbortController():null;
+    var timer=setTimeout(function(){if(!done&&ctl)ctl.abort()},7000);
+    fetch(src.u,ctl?{signal:ctl.signal}:undefined)
+      .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
+      .then(function(d){
+        var v=src.pick(d);
+        if(!(v>0)||v>100)throw new Error("bad rate");
+        done=true; clearTimeout(timer); fxBusy=false;
+        fx={rate:v,ts:Date.now(),src:src.n,manual:false,failed:false};
+        S.set("fx",fx); applyRate(v);
+      })
+      .catch(function(){done=true;clearTimeout(timer);next()});
+  })();
+}
+
+function refreshChips(){
+  var chips=$("#chips"); if(!chips)return;
+  chips.innerHTML="";
+  [100,500,1000,3000,5000,10000].forEach(function(v){
+    var b=el("button","chip");b.type="button";
+    b.innerHTML="¥"+v.toLocaleString("en-US")+" <b>≈ ₹"+Math.round(v*rate).toLocaleString("en-IN")+"</b>";
+    b.addEventListener("click",function(){$("#jpy").value=v;fromYen()});
+    chips.appendChild(b);
+  });
+}
+
+function initMoney(){
+  $("#rate").value=showRate(rate);
+  $("#jpy").addEventListener("input",fromYen);
+  $("#inr").addEventListener("input",fromInr);
+  $("#rate").addEventListener("input",function(){
+    var r=num(this.value);
+    if(r>0){fx.manual=true;fx.rate=r;S.set("fx",fx);rate=r;fromYen();refreshChips();renderFxStatus()}
+  });
+  $("#fxRefresh").addEventListener("click",function(){
+    if(fxBusy)return;
+    fx.manual=false; S.set("fx",fx); fetchRate();
+  });
+  fromYen(); refreshChips(); renderFxStatus();
+  if(!fx.manual) fetchRate();
+}
+
+/* re-check when the Money tab is opened, if the saved rate has gone cold */
+function maybeRefresh(){
+  if(fx.manual||fxBusy)return;
+  if(!fx.ts||Date.now()-fx.ts>6*3600000) fetchRate();
+}
+
+/* ---------- splitter ---------- */
+var PEOPLE=["Arnav","Ayush","Manan"];
+var exps=S.get("exps",[]);
+function renderExps(){
+  var box=$("#expList");box.innerHTML="";
+  if(!exps.length){
+    var e=el("p","note","Nothing logged yet. Add the first thing someone pays for.");box.appendChild(e);
+  }
+  exps.forEach(function(x,i){
+    var r=el("div","exp");
+    r.appendChild(el("span",null,x.d||"Expense"));
+    r.appendChild(el("span","who",x.p));
+    r.appendChild(el("span","amt",yen(x.a)));
+    var del=el("button",null,"×");del.type="button";del.setAttribute("aria-label","Remove "+(x.d||"expense"));
+    del.addEventListener("click",function(){exps.splice(i,1);S.set("exps",exps);renderExps()});
+    r.appendChild(del);box.appendChild(r);
+  });
+  // settle
+  var paid={},total=0;
+  PEOPLE.forEach(function(p){paid[p]=0});
+  exps.forEach(function(x){paid[x.p]=(paid[x.p]||0)+x.a;total+=x.a});
+  var share=total/PEOPLE.length;
+  var s=$("#settle");s.innerHTML="";
+  s.appendChild(el("div","ttl","Total "+yen(total)+" · "+yen(share)+" each"));
+  if(total===0){s.appendChild(el("div",null,"Even, for now."));return}
+  PEOPLE.forEach(function(p){
+    var bal=paid[p]-share,line;
+    if(Math.abs(bal)<1)line=p+" is square";
+    else if(bal>0)line=p+" is owed "+yen(bal);
+    else line=p+" owes "+yen(-bal);
+    s.appendChild(el("div",null,line));
+  });
+}
+function initSplit(){
+  $("#eAdd").addEventListener("click",function(){
+    var a=num($("#eAmt").value);
+    if(a<=0){$("#eAmt").focus();return}
+    exps.push({d:$("#eDesc").value.trim(),a:a,p:$("#ePayer").value});
+    S.set("exps",exps);$("#eDesc").value="";$("#eAmt").value="";renderExps();
+  });
+  $("#eAmt").addEventListener("keydown",function(e){if(e.key==="Enter")$("#eAdd").click()});
+  renderExps();
+}
+
+/* ---------- checklists ---------- */
+function buildList(items,mount,key,progMount,prefix){
+  var state=S.get(key,{});
+  var box=$(mount);box.innerHTML="";
+  items.forEach(function(it,i){
+    var id=prefix+i;
+    var lab=el("label","chk");
+    var cb=document.createElement("input");cb.type="checkbox";cb.checked=!!state[id];
+    var tx=el("span","txt",it.t);
+    if(it.w){var wn=el("span","when"+(it.u?" u":""),it.w);tx.appendChild(wn)}
+    cb.addEventListener("change",function(){
+      state[id]=cb.checked;S.set(key,state);
+      if(progMount)updateProg();
+      if(key==="ck_book")renderNext();
+    });
+    lab.appendChild(cb);lab.appendChild(tx);box.appendChild(lab);
+  });
+  function updateProg(){
+    var n=items.filter(function(_,i){return state[prefix+i]}).length;
+    $(progMount).textContent=n+" of "+items.length+" done";
+  }
+  if(progMount)updateProg();
+}
+
+/* ---------- tabs ---------- */
+function initTabs(){
+  var btns=document.querySelectorAll("nav.tabs button");
+  btns.forEach(function(b){
+    b.addEventListener("click",function(){
+      btns.forEach(function(o){o.setAttribute("aria-selected","false")});
+      b.setAttribute("aria-selected","true");
+      document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("on")});
+      $("#p-"+b.dataset.p).classList.add("on");
+      window.scrollTo(0,0);
+      S.set("tab",b.dataset.p);
+      if(b.dataset.p==="money")maybeRefresh();
+    });
+  });
+  var last=S.get("tab","now");
+  var t=document.querySelector('nav.tabs button[data-p="'+last+'"]');
+  if(t&&last!=="now")t.click();
+}
+
+/* ---------- go ---------- */
+renderStatus();
+renderToday();
+renderDays();
+initMoney();
+initSplit();
+buildList(BOOKINGS,"#list-book","ck_book","#prog-book","b");
+buildList(DOCS,"#list-docs","ck_docs","#prog-docs","d");
+buildList(PACK,"#list-pack","ck_pack","#prog-pack","p");
+buildList(DAILY,"#dailyChecks","ck_daily",null,"y");
+renderNext();
+initTabs();
+$("#resetAll").addEventListener("click",function(){
+  if(!confirm("Clear every tick on this phone? Expenses are kept."))return;
+  ["ck_book","ck_docs","ck_pack","ck_daily"].forEach(S.del);
+  buildList(BOOKINGS,"#list-book","ck_book","#prog-book","b");
+  buildList(DOCS,"#list-docs","ck_docs","#prog-docs","d");
+  buildList(PACK,"#list-pack","ck_pack","#prog-pack","p");
+  buildList(DAILY,"#dailyChecks","ck_daily",null,"y");
+  renderNext();
+});
+</script>
+</body>
+</html>
