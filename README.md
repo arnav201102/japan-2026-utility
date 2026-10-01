@@ -49,6 +49,27 @@ list, delete the deployment, and redeploy from a clean folder.
 Keep passport scans in your phone's photos or a password manager, not next to a
 website.
 
+## Booking reminders (Telegram)
+
+A GitHub Action runs every day at **08:00 IST** and posts to your trip Telegram
+group when something in `deadlines.json` is overdue (last 3 days), due within
+48 hours, or due this week. Keep that file in sync when you change dated rows
+in `BOOKINGS` inside `index.html`.
+
+### One-time setup
+
+1. In Telegram, message [@BotFather](https://t.me/BotFather) → `/newbot` → copy the **bot token**.
+2. Create a group (or use the existing trip chat). Add the bot. Send any message in the group.
+3. Open  
+   `https://api.telegram.org/bot<TOKEN>/getUpdates`  
+   in a browser. Find `"chat":{"id":` — for a group it’s usually a **negative** number. That’s the **chat id**.
+4. In the GitHub repo → **Settings → Secrets and variables → Actions**, add:
+   - `TELEGRAM_BOT_TOKEN` — the bot token  
+   - `TELEGRAM_CHAT_ID` — the chat id  
+5. **Actions → Telegram booking reminders → Run workflow** (force = true) to test.
+
+Only people with access to the GitHub secrets / bot token can change where it posts. The site itself never sees the token.
+
 ## Deploy to Vercel
 
 **Easiest: drag and drop.** Go to [vercel.com/new](https://vercel.com/new), drop
@@ -117,7 +138,7 @@ Everything else lives in `index.html`. The data is near the top of the
 |---|---|
 | Hosts, addresses in English and Japanese, booking refs | `var STAY` |
 | The 13 days, their plans, map pins and last-train notes | `var DAYS` |
-| Booking deadlines | `var BOOKINGS` |
+| Booking deadlines | `var BOOKINGS` in `index.html`, and dated copies in `deadlines.json` for Telegram |
 | Packing and documents | `var PACK`, `var DOCS` |
 | Things to buy | `var BEFORE`, `var NEED`, `var GIFTS` |
 | Phrases | `var PHRASES` |
