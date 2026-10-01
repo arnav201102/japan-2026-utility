@@ -412,8 +412,9 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
 
 <!-- ============ BUY ============ -->
 <section class="panel" id="p-buy" role="tabpanel" aria-labelledby="t-buy">
-  <h2 class="sec">Your tab</h2>
-  <p class="note">Add anything you mean to buy, tick it when you have. Ticked items count as spent. Yours only, on this phone.</p>
+  <h2 class="sec">Shopping lists</h2>
+  <p class="note">Shared between Arnav, Ayush and Manan. Pick whose list you're editing, add things, tick when bought. Needs a connection to sync — last save wins if two of you edit at once.</p>
+  <div class="seg" id="buyWho" role="group" aria-label="Whose list"></div>
   <div class="tab-total" id="buyTotal"></div>
   <div class="addrow">
     <input class="desc" id="bDesc" placeholder="What are you buying?" aria-label="Item">
@@ -421,6 +422,10 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
     <button class="btn" id="bAdd">Add</button>
   </div>
   <div id="buyList"></div>
+  <div class="toolbar">
+    <button type="button" id="buyRefresh">Refresh from cloud</button>
+  </div>
+  <div class="flash" id="buyFlash"></div>
 
   <h2 class="sec">Before you fly</h2>
   <p class="note">Bought here, in rupees, while you still have time to return it. Prices are rough for September 2026.</p>
@@ -437,7 +442,7 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
   <div class="prog" id="prog-gift"></div>
   <div id="list-gift"></div>
 
-  <div class="tip"><b>Tax free</b>Show your passport at the till and you skip the 10% consumption tax on ¥5,000+ spent in one shop on one day. Japan has been moving this to a refund-you-collect-at-the-airport system, possibly from November 2026 — ask at the first big shop you hit how it works now, and if it is the new system, keep receipts and leave 30 extra minutes at KIX.</div>
+  <div class="tip"><b>Tax free</b>From 1 Nov 2026 Japan uses a refund system, not tax off at the till. You pay the full price (¥5,000+ tax-excluded per shop per day still qualifies), keep the goods with you, then get the consumption tax back after a customs check at the airport you leave Japan from. For you that is <b>Haneda</b> (Delhi flight), not KIX — do it in the international departure lobby <b>before</b> baggage check-in. Bring passport and every item on each receipt. Ask the first big shop how their refund works, and leave extra time at Haneda.</div>
 
   <div class="tip"><b>Before the big purchases</b>Check what your ANA fare actually allows in checked baggage, and weigh the case on the 5th, not at the airport. Knives, scissors and liquids over 100ml go in checked bags only. Whisky and sake are easier bought airside at KIX than carried from Osaka.</div>
 </section>
@@ -564,7 +569,7 @@ var STAY={
        host:"Ayaka (\u7dbe\u9999)",tel:"+815017210241",telShow:"+81 50-1721-0241",ref:"HMP2X3PCJF \u00b7 in 3 Dec 16:00, out 5 Dec 10:00"},
   hon:{nm:"Far East Village Hotel Osaka, Honmachi",ad:"\u4e2d\u592e\u533a\u4e45\u592a\u90ce\u753a3-3-6, Chuo-ku, Osaka 541-0056",
        jp:"\u3012541-0056 \u5927\u962a\u5e9c\u5927\u962a\u5e02\u4e2d\u592e\u533a\u4e45\u592a\u90ce\u753a3-3-6\n\u30d5\u30a1\u30fc\u30a4\u30fc\u30b9\u30c8\u30f4\u30a3\u30ec\u30c3\u30b8\u30db\u30c6\u30eb\u5927\u962a\u672c\u753a",
-       host:"Front desk",tel:"+814523244476",telShow:"+81 45 232 4476",ref:"Booking.com 5665.397.455 \u00b7 in 5 Dec 15:00, out 6 Dec 11:00 \u00b7 2 rooms"}
+       host:"Front desk",tel:"+81669268500",telShow:"+81 6-6926-8500",ref:"Booking.com 5665.397.455 \u00b7 in 5 Dec 15:00, out 6 Dec 11:00 \u00b7 2 rooms"}
 };
 
 var DAYS=[
@@ -596,7 +601,7 @@ var DAYS=[
   p:["Tokyo Tower is walk-up.","Akihabara for the arcades and Super Potato, then Ginza.","Shibuya Sky at sunset, around 16:30 \u2014 book the slot 40 minutes before.","Good evening for the drift tour if you moved it here.","Repack tonight. You're on a Shinkansen tomorrow."],
   stay:"tok",ll:[35.659,139.701],
   spots:["Tokyo Tower","Super Potato Akihabara","Shibuya Sky","Ginza"],
-  last:"Shibuya Sky's last entry is 22:20. Last trains around 00:30. Repack before you go out, not after."},
+  last:"Shibuya Sky's last entry is 21:20. Last trains around 00:30. Repack before you go out, not after."},
  {d:"2026-11-30",dow:"Mon",city:"Kyoto",t:"Shinkansen, Gion, Kiyomizu-dera",
   p:["Out by 11:00. Nozomi around midday, seats D or E on the right for Fuji about 40 minutes in.","Drop bags in Kyoto, then Sannenzaka and Ninenzaka up to Kiyomizu-dera.","Tonight is the last night of the Kiyomizu-dera autumn illumination for 2026. Evening entry from 17:30, last entry 21:00, separate ticket at the gate. Don't drift \u2014 go."],
   stay:"kyo",ll:[34.985,135.758],
@@ -628,28 +633,29 @@ var DAYS=[
   spots:["Umeda Sky Building","Osaka Castle","Shinsaibashi","Far East Village Hotel Osaka Honmachi"],
   last:"Umeda Sky is only free on the pass before 15:00. Bags out of storage before the desk shuts. In the room by 22:00, packed, two alarms set."},
  {d:"2026-12-06",dow:"Sun",city:"Going home",t:"Kansai \u2192 Delhi",
-  p:["Taxi 04:15 from the hotel, at KIX by about 05:05.","Check-in closes 60 minutes before NH990 at 06:45, so be at the counter by 05:45.","Connect at Haneda, NH837 at 10:35, Delhi 17:25.","Last chance for KitKats is airside at KIX."],
+  p:["Taxi 04:15 from the hotel, at KIX by about 05:05.","Check-in closes 60 minutes before NH990 at 06:45, so be at the counter by 05:45.","Connect at Haneda, NH837 at 10:35, Delhi 17:25.","Tax-free refund is at Haneda, not KIX \u2014 you leave Japan on the international leg. Do it in the departure lobby before you check bags for Delhi.","Last chance for KitKats is airside at KIX, or again at Haneda if you have time."],
   stay:null,ll:[34.434,135.244],
   spots:["Kansai International Airport","Far East Village Hotel Osaka Honmachi"],
-  last:"Nothing runs at 04:15 \u2014 that is exactly why it is a taxi, confirmed the night before. Counter by 05:45, no argument."}
+  last:"Nothing runs at 04:15 \u2014 that is exactly why it is a taxi, confirmed the night before. Counter by 05:45, no argument. Leave extra time at Haneda for the tax-free customs step."}
 ];
 
 var BOOKINGS=[
- {t:"Smart EX: Shinkansen Tokyo \u2192 Kyoto, 30 Nov",w:"book now, opens a year ahead",when:null},
+ {t:"Smart EX: Shinkansen Tokyo \u2192 Kyoto, 30 Nov",w:"after Arnav's visa",when:null},
  {t:"teamLab Planets, 28 Nov, earliest slot",w:"book now",when:null},
  {t:"Kansai WIDE Area Pass \u00d73, from JR West directly",w:"book now, \u00a512,000 each",when:null},
  {t:"Drift experience",w:"book now, small groups sell out",when:null},
  {t:"Mt. Fuji: pick train, bus or guided tour",w:"decide now, book tour if guided",when:null},
- {t:"Nintendo Museum December lottery entry",w:"by 30 Sep \u2014 window won't reopen",when:"2026-09-30T21:00",u:true},
- {t:"Nintendo Museum: pay if you win",w:"1\u20137 Oct",when:"2026-10-07T21:00"},
- {t:"USJ 4 Dec: Studio Pass + Express Pass with Nintendo World",w:"4 Oct, 21:30 IST \u2014 set an alarm",when:"2026-10-04T21:30",u:true},
+ {t:"Nintendo Museum December lottery entry",w:"closed 30 Sep \u2014 if you entered, results 1 Oct",when:"2026-09-30T21:00",u:true},
+ {t:"Nintendo Museum: pay if you win",w:"by 7 Oct 23:59 JST (waitlist to 14 Oct)",when:"2026-10-07T21:00"},
+ {t:"USJ 4 Dec: Studio Pass + Express Pass with Nintendo World",w:"~2 months out \u2014 about 4 Oct, 21:30 IST. Check usj.co.jp that week",when:"2026-10-04T21:30",u:true},
  {t:"Fuji Excursion reserved seats, 26 Nov",w:"26 Oct, 06:30 IST",when:"2026-10-26T06:30"},
  {t:"Tokyo Skytree, 28 Nov, mid-afternoon",w:"28 Oct, 20:30 IST",when:"2026-10-28T20:30"},
  {t:"Ltd Exp Hashidate seats, 1 Dec",w:"31 Oct, 06:30 IST \u2014 free with the pass",when:"2026-10-31T06:30"},
  {t:"Sagano Romantic Train, 2 Dec",w:"1 Nov, 20:30 IST \u2014 check Wednesday running first",when:"2026-11-01T20:30"},
  {t:"Shibuya Sky, 29 Nov, sunset slot",w:"14 Nov, 20:30 IST",when:"2026-11-14T20:30"},
  {t:"KIX airport taxi for 6 Dec",w:"around 15 Nov",when:"2026-11-15T10:00"},
- {t:"Visit Japan Web for all three",w:"around 20 Nov",when:"2026-11-20T10:00"}
+ {t:"Visit Japan Web for all three",w:"around 20 Nov",when:"2026-11-20T10:00"},
+ {t:"teamLab Biovortex Kyoto",w:"after Arnav's visa \u2014 near Kyoto Station, last entry 19:30",when:null}
 ];
 var DOCS=[
  {t:"Passport valid well past 6 Dec"},{t:"Visa stamped and photographed"},
@@ -690,7 +696,7 @@ var PHRASES=[
  {jp:"\u3053\u3053\u307e\u3067\u304a\u9858\u3044\u3057\u307e\u3059\u3002",r:"Koko made onegaishimasu",e:"Take me here, please.",n:"Say it while showing the driver the address. That is the whole transaction."},
  {jp:"\u5fd8\u308c\u7269\u3092\u3057\u307e\u3057\u305f\u3002",r:"Wasuremono o shimashita",e:"I've left something behind.",n:"Say this at any station office. Japan's lost-and-found genuinely works."},
  {jp:"\u30ab\u30fc\u30c9\u3067\u652f\u6255\u3048\u307e\u3059\u304b\uff1f",r:"K\u0101do de shiharaemasu ka",e:"Can I pay by card?"},
- {jp:"\u514d\u7a0e\u3067\u304a\u9858\u3044\u3057\u307e\u3059\u3002",r:"Menzei de onegaishimasu",e:"Tax free, please.",n:"Have your passport out when you say it."},
+ {jp:"\u514d\u7a0e\u3067\u304a\u9858\u3044\u3057\u307e\u3059\u3002",r:"Menzei de onegaishimasu",e:"Tax free, please.",n:"Have your passport out. From Nov 2026 you still pay tax in-store and claim the refund at departure."},
  {jp:"\u52a9\u3051\u3066\u304f\u3060\u3055\u3044\uff01",r:"Tasukete kudasai",e:"Help, please. The one you hope not to need."}
 ];
 
@@ -1231,30 +1237,85 @@ function initSplit(){
   renderExps();
 }
 
-/* ---------- shopping tab ---------- */
-var buys=S.get("buy",[]);
+/* ---------- shopping tab (shared via JSONBin) ---------- */
+var BUY_BIN="6abeafc0ffd5d1605343bce8";
+var BUY_KEY="$2a$10$NzE3zw6Cmlj2MnQr/Q5HQeJRKS.1xQTXVgw7h8sJT328Fu9GXg0Aa";
+var BUY_URL="https://api.jsonbin.io/v3/b/"+BUY_BIN;
+function emptyBuyMap(){var o={};PEOPLE.forEach(function(p){o[p]=[]});return o}
+function normalizeBuyMap(raw){
+  var o=emptyBuyMap();
+  if(!raw||typeof raw!=="object")return o;
+  PEOPLE.forEach(function(p){
+    var arr=raw[p];
+    if(!arr||typeof arr.length!=="number")return;
+    o[p]=[];
+    for(var i=0;i<arr.length;i++){
+      var b=arr[i]; if(!b)continue;
+      var t=String(b.t||"").trim(); if(!t)continue;
+      o[p].push({t:t,a:num(b.a),k:!!b.k});
+    }
+  });
+  return o;
+}
+function buyIsEmpty(m){
+  return PEOPLE.every(function(p){return !(m[p]&&m[p].length)});
+}
+var buyWho=S.get("buyWho",PEOPLE[0]);
+if(PEOPLE.indexOf(buyWho)<0)buyWho=PEOPLE[0];
+var buyMap=normalizeBuyMap(S.get("buyMap",null));
+var buyTs=S.get("buyTs",0);
+var buyDirty=false,buyBusy=false,buyPushTimer=null,buyLastPull=0;
+/* one-time: fold the old phone-only list into whoever's selected */
+(function(){
+  var old=S.get("buy",null);
+  if(!old||typeof old.length!=="number"||!old.length)return;
+  if(!buyIsEmpty(buyMap)){S.del("buy");return}
+  buyMap[buyWho]=old.map(function(b){return {t:String(b.t||"").trim(),a:num(b.a),k:!!b.k}}).filter(function(b){return b.t});
+  S.set("buyMap",buyMap);S.del("buy");buyDirty=true;
+})();
+function buys(){return buyMap[buyWho]||(buyMap[buyWho]=[])}
+function saveBuysLocal(){S.set("buyMap",buyMap);S.set("buyTs",buyTs);S.set("buyWho",buyWho)}
+function buyPayload(){
+  var o={ts:buyTs};
+  PEOPLE.forEach(function(p){o[p]=buyMap[p]||[]});
+  return o;
+}
+function setBuyStatus(msg){flash("#buyFlash",msg)}
+function renderBuyWho(){
+  var box=$("#buyWho");if(!box)return;
+  box.innerHTML="";
+  PEOPLE.forEach(function(p){
+    var b=el("button",null,p);b.type="button";
+    b.setAttribute("aria-pressed",p===buyWho?"true":"false");
+    b.addEventListener("click",function(){buyWho=p;S.set("buyWho",p);renderBuys()});
+    box.appendChild(b);
+  });
+}
 function renderBuyTotal(){
   var box=$("#buyTotal"); if(!box)return;
-  var got=0,plan=0;
-  buys.forEach(function(b){plan+=b.a||0;if(b.k)got+=b.a||0});
+  var list=buys(),got=0,plan=0;
+  list.forEach(function(b){plan+=b.a||0;if(b.k)got+=b.a||0});
   box.innerHTML="";
   box.appendChild(el("div","big",yen(got)));
-  box.appendChild(el("div","sub","spent so far  ·  ≈ ₹"+Math.round(got*rate).toLocaleString("en-IN")));
+  box.appendChild(el("div","sub",buyWho+" · spent so far  ·  ≈ ₹"+Math.round(got*rate).toLocaleString("en-IN")));
   var left=plan-got;
   var r=el("div","rest");
-  if(!buys.length)r.textContent="Nothing on the list yet. Add the first thing you know you want.";
-  else if(left>0)r.textContent="Still to buy: "+yen(left)+" across "+buys.filter(function(b){return !b.k}).length+" things";
-  else r.textContent="Everything on the list is bought.";
+  if(!list.length)r.textContent="Nothing on "+buyWho+"'s list yet.";
+  else if(left>0)r.textContent="Still to buy: "+yen(left)+" across "+list.filter(function(b){return !b.k}).length+" things";
+  else r.textContent="Everything on "+buyWho+"'s list is bought.";
   box.appendChild(r);
 }
 function renderBuys(){
+  renderBuyWho();
   var box=$("#buyList"); if(!box)return;
+  var list=buys();
   box.innerHTML="";
-  buys.forEach(function(b,i){
+  if(!list.length)box.appendChild(el("p","note","Empty. Add the first thing "+buyWho+" wants."));
+  list.forEach(function(b,i){
     var r=el("div","buy"+(b.k?" got":""));
     var cb=document.createElement("input");cb.type="checkbox";cb.checked=!!b.k;
     cb.setAttribute("aria-label","Bought "+(b.t||"item"));
-    cb.addEventListener("change",function(){b.k=cb.checked;S.set("buy",buys);renderBuys()});
+    cb.addEventListener("change",function(){b.k=cb.checked;touchBuys();renderBuys()});
     r.appendChild(cb);
     r.appendChild(el("span","txt",b.t||"Item"));
     if(b.a>0){
@@ -1263,22 +1324,86 @@ function renderBuys(){
       r.appendChild(a);
     }
     var x=el("button","x","×");x.type="button";x.setAttribute("aria-label","Remove "+(b.t||"item"));
-    x.addEventListener("click",function(){buys.splice(i,1);S.set("buy",buys);renderBuys()});
+    x.addEventListener("click",function(){buys().splice(i,1);touchBuys();renderBuys()});
     r.appendChild(x);
     box.appendChild(r);
   });
   renderBuyTotal();
 }
+function touchBuys(){
+  buyDirty=true;buyTs=Date.now();saveBuysLocal();scheduleBuyPush();
+}
+function scheduleBuyPush(){
+  clearTimeout(buyPushTimer);
+  buyPushTimer=setTimeout(buyPush,450);
+}
+function buyHeaders(write){
+  var h={"X-Access-Key":BUY_KEY};
+  if(write)h["Content-Type"]="application/json";
+  return h;
+}
+function buyPush(cb){
+  if(typeof fetch!=="function"){setBuyStatus("No network API here — list stays on this phone.");if(cb)cb(false);return}
+  if(buyBusy){scheduleBuyPush();if(cb)cb(false);return}
+  buyBusy=true;
+  fetch(BUY_URL,{method:"PUT",headers:buyHeaders(true),body:JSON.stringify(buyPayload())})
+    .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
+    .then(function(){
+      buyBusy=false;buyDirty=false;saveBuysLocal();
+      setBuyStatus("Synced.");
+      if(cb)cb(true);
+    })
+    .catch(function(){
+      buyBusy=false;
+      setBuyStatus("Couldn't sync — kept on this phone. Try Refresh when you're online.");
+      if(cb)cb(false);
+    });
+}
+function buyPull(force,cb){
+  if(typeof fetch!=="function"){if(cb)cb(false);return}
+  if(buyBusy){if(cb)cb(false);return}
+  if(!force&&buyLastPull&&Date.now()-buyLastPull<20000){if(cb)cb(true);return}
+  buyBusy=true;
+  fetch(BUY_URL+"/latest",{headers:buyHeaders(false)})
+    .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
+    .then(function(d){
+      buyBusy=false;buyLastPull=Date.now();
+      var rec=(d&&d.record)?d.record:d;
+      var remote=normalizeBuyMap(rec);
+      var rts=(rec&&typeof rec.ts==="number")?rec.ts:0;
+      if(buyDirty&&buyTs>rts){
+        setBuyStatus("Local edits waiting to sync…");
+        scheduleBuyPush();
+        if(cb)cb(true);return;
+      }
+      buyMap=remote;buyTs=rts||Date.now();buyDirty=false;saveBuysLocal();
+      renderBuys();
+      setBuyStatus("Loaded shared lists.");
+      if(cb)cb(true);
+    })
+    .catch(function(){
+      buyBusy=false;
+      setBuyStatus("Couldn't reach the shared list. Showing what's saved on this phone.");
+      if(cb)cb(false);
+    });
+}
+function maybeBuyPull(){buyPull(false)}
 function initBuy(){
   $("#bAdd").addEventListener("click",function(){
     var t=$("#bDesc").value.trim(); if(!t){$("#bDesc").focus();return}
-    buys.push({t:t,a:num($("#bAmt").value),k:false});
-    S.set("buy",buys);$("#bDesc").value="";$("#bAmt").value="";renderBuys();$("#bDesc").focus();
+    buys().push({t:t,a:num($("#bAmt").value),k:false});
+    touchBuys();$("#bDesc").value="";$("#bAmt").value="";renderBuys();$("#bDesc").focus();
   });
   [$("#bDesc"),$("#bAmt")].forEach(function(f){
     f.addEventListener("keydown",function(e){if(e.key==="Enter")$("#bAdd").click()});
   });
+  $("#buyRefresh").addEventListener("click",function(){
+    setBuyStatus("Refreshing…");
+    buyPull(true);
+  });
   renderBuys();
+  if(buyDirty)scheduleBuyPush();
+  buyPull(true);
 }
 
 /* ---------- weather, and the Fuji decision ---------- */
@@ -1739,6 +1864,7 @@ function initTabs(){
       window.scrollTo(0,0);
       S.set("tab",b.dataset.p);
       if(b.dataset.p==="money")maybeRefresh();
+      if(b.dataset.p==="buy")maybeBuyPull();
     });
   });
   var last=S.get("tab","now");
@@ -1789,7 +1915,7 @@ initTabs();
 initSW();
 
 $("#resetAll").addEventListener("click",function(){
-  if(!confirm("Clear every tick on this phone? Expenses and your shopping list are kept."))return;
+  if(!confirm("Clear every tick on this phone? Expenses and the shared shopping lists are kept."))return;
   ["ck_book","ck_docs","ck_pack","ck_daily","ck_before","ck_need","ck_gift"].forEach(S.del);
   renderBookings();
   buildList(DOCS,"#list-docs","ck_docs","#prog-docs","d");
