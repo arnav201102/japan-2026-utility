@@ -1,0 +1,35 @@
+# Daily booking reminders to the trip Telegram group.
+# Needs repo secrets: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+# Deadlines live in deadlines.json (keep in sync with BOOKINGS.when in index.html).
+
+name: Telegram booking reminders
+
+on:
+  schedule:
+    # 08:00 IST = 02:30 UTC
+    - cron: "30 2 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Send even if nothing is due (test ping)"
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Send Telegram reminder
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          FORCE: ${{ github.event_name == 'workflow_dispatch' && inputs.force || 'false' }}
+        run: node scripts/telegram-remind.js
