@@ -2,10 +2,10 @@
 
 Trip utility for Arnav, Ayush and Manan. 24 Nov – 6 Dec 2026.
 
-Static site, no build step, no dependencies, no backend. Everything each person
-ticks or types stays in their own browser's local storage — nothing is shared
-between the three of you and nothing leaves the phone, except the two requests
-that fetch the exchange rate and the weather.
+Static site, no build step, no dependencies, no backend. Most ticks and notes stay
+in each phone's local storage. The Buy shopping lists are the exception: those
+sync through a shared JSONBin record so all three of you see the same lists.
+Expenses can be shared by copying a code into WhatsApp.
 
 ## The six tabs
 
@@ -15,7 +15,7 @@ that fetch the exchange rate and the weather.
 | **程 Days** | All 13 days. Tap one for the plan, map links for each stop, the thing you can't afford to miss that day, and the host's number |
 | **¥ Money** | Converter on a live rate, what you've spent and how fast, and the bill splitter |
 | **要 To do** | Bookings sorted by deadline, documents, packing |
-| **買 Buy** | What to buy here before you fly, your shopping list with a running tab, what to buy in Japan, and what to take home |
+| **買 Buy** | Shared shopping lists for Arnav, Ayush and Manan (synced via JSONBin), what to buy before you fly, early in Japan, and to take home |
 | **報 Info** | Emergency numbers, your passport copies, flights, passes, phrases you can hold up, addresses in Japanese for a taxi driver |
 
 ## Passport copies
@@ -103,8 +103,10 @@ Three lists, in the order you'll need them:
 - **Get these early** — the konbini and Don Quijote run on the first night. Heattech, heat pads for the Fuji day, a coin purse. Priced in yen.
 - **Taking things home** — where to buy it cheaper than the airport.
 
-The curated lists are tick-only. The running tab at the top of the Buy tab is
-your own list, in yen, and only counts what you have ticked as bought.
+The curated lists are tick-only. At the top of Buy, each of you has a shared
+list (Arnav / Ayush / Manan) kept in one JSONBin record — any of you can add,
+tick or delete, and it syncs when there's a connection. Ticked items count as
+spent on that person's running tab.
 
 ## Things to change
 
@@ -190,6 +192,7 @@ door number before you fly.
 Fares, opening hours and booking windows were correct in September 2026 but
 move around. Check anything you're about to pay for against the official site.
 
-Tax-free shopping is the one to watch: Japan has been moving from tax deducted
-at the till to a refund collected at the airport, possibly from November 2026.
-Ask at the first big shop you walk into rather than trusting the Buy tab.
+Tax-free shopping is the one to watch: from 1 November 2026 Japan uses a
+refund-at-departure system, not tax off at the till. This trip is entirely under
+the new rules. The Buy tab and the 6 Dec day note say what to do; refunds for
+you happen at Haneda (final international departure), not at KIX.
