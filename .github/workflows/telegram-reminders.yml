@@ -1,17 +1,25 @@
-# Daily booking reminders to the trip Telegram group.
-# Needs repo secrets: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
-# Deadlines live in deadlines.json (keep in sync with BOOKINGS.when in index.html).
+# Booking reminders → Telegram group.
+# Needs secrets: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+# Deadlines: deadlines.json (keep in sync with BOOKINGS.when in index.html).
+#
+# GitHub's once-a-day cron is unreliable (often never queues). We run several
+# times through the IST morning and send at most once per IST day via cache.
 
 name: Telegram booking reminders
 
 on:
   schedule:
-    # 08:00 IST = 02:30 UTC
+    # ~08:00–11:00 IST (02:30–05:30 UTC), several bites so one skip doesn't kill the day
     - cron: "30 2 * * *"
+    - cron: "0 3 * * *"
+    - cron: "30 3 * * *"
+    - cron: "0 4 * * *"
+    - cron: "30 4 * * *"
+    - cron: "0 5 * * *"
   workflow_dispatch:
     inputs:
       force:
-        description: "Send even if nothing is due (test ping)"
+        description: "Send even if nothing is due / already sent today (test ping)"
         required: false
         default: "true"
         type: choice
@@ -24,12 +32,47 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: IST date
+        id: ist
+        run: echo "date=$(TZ=Asia/Kolkata date +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Already sent today?
+        id: gate
+        if: github.event_name == 'schedule'
+        uses: actions/cache/restore@v4
+        with:
+          path: .telegram-sent
+          key: telegram-remind-${{ steps.ist.outputs.date }}
+
+      - name: Skip if already sent
+        if: github.event_name == 'schedule' && steps.gate.outputs.cache-hit == 'true'
+        run: |
+          echo "Already sent for IST date ${{ steps.ist.outputs.date }} — skipping."
+          echo "skip=true" >> "$GITHUB_ENV"
+
       - uses: actions/setup-node@v4
+        if: env.skip != 'true'
         with:
           node-version: "20"
+
       - name: Send Telegram reminder
+        if: env.skip != 'true'
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           FORCE: ${{ github.event_name == 'workflow_dispatch' && inputs.force || 'false' }}
         run: node scripts/telegram-remind.js
+
+      - name: Mark sent for today
+        if: env.skip != 'true' && github.event_name == 'schedule' && success()
+        run: |
+          mkdir -p .telegram-sent
+          echo "sent ${{ steps.ist.outputs.date }} at $(date -u +%FT%TZ)" > .telegram-sent/ok
+
+      - name: Save sent marker
+        if: env.skip != 'true' && github.event_name == 'schedule' && success()
+        uses: actions/cache/save@v4
+        with:
+          path: .telegram-sent
+          key: telegram-remind-${{ steps.ist.outputs.date }}

@@ -51,10 +51,13 @@ website.
 
 ## Booking reminders (Telegram)
 
-A GitHub Action runs every day at **08:00 IST** and posts to your trip Telegram
-group when something in `deadlines.json` is overdue (last 3 days), due within
-48 hours, or due this week. Keep that file in sync when you change dated rows
-in `BOOKINGS` inside `index.html`.
+A GitHub Action tries several times each morning (**~08:00–11:00 IST**) and
+posts to your trip Telegram group when something in `deadlines.json` is
+overdue (last 3 days), due within 48 hours, or due this week. It sends **at
+most once per IST day**. A single daily cron on GitHub often never runs — that’s
+why there are multiple slots. Check **Actions** if a morning is quiet; use
+**Run workflow** to test. Keep `deadlines.json` in sync when you change dated
+rows in `BOOKINGS` inside `index.html`.
 
 ### One-time setup
 

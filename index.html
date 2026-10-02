@@ -1264,14 +1264,14 @@ var buyWho=S.get("buyWho",PEOPLE[0]);
 if(PEOPLE.indexOf(buyWho)<0)buyWho=PEOPLE[0];
 var buyMap=normalizeBuyMap(S.get("buyMap",null));
 var buyTs=S.get("buyTs",0);
-var buyDirty=false,buyBusy=false,buyPushTimer=null,buyLastPull=0;
+var buyDirty=false,buyBusy=false,buyPushTimer=null,buyLastPull=0,buyGen=0,buyPullGen=0;
 /* one-time: fold the old phone-only list into whoever's selected */
 (function(){
   var old=S.get("buy",null);
   if(!old||typeof old.length!=="number"||!old.length)return;
   if(!buyIsEmpty(buyMap)){S.del("buy");return}
   buyMap[buyWho]=old.map(function(b){return {t:String(b.t||"").trim(),a:num(b.a),k:!!b.k}}).filter(function(b){return b.t});
-  S.set("buyMap",buyMap);S.del("buy");buyDirty=true;
+  S.set("buyMap",buyMap);S.del("buy");buyDirty=true;buyGen++;
 })();
 function buys(){return buyMap[buyWho]||(buyMap[buyWho]=[])}
 function saveBuysLocal(){S.set("buyMap",buyMap);S.set("buyTs",buyTs);S.set("buyWho",buyWho)}
@@ -1315,7 +1315,12 @@ function renderBuys(){
     var r=el("div","buy"+(b.k?" got":""));
     var cb=document.createElement("input");cb.type="checkbox";cb.checked=!!b.k;
     cb.setAttribute("aria-label","Bought "+(b.t||"item"));
-    cb.addEventListener("change",function(){b.k=cb.checked;touchBuys();renderBuys()});
+    cb.addEventListener("change",function(){
+      b.k=cb.checked;
+      r.className="buy"+(b.k?" got":"");
+      touchBuys();
+      renderBuyTotal();
+    });
     r.appendChild(cb);
     r.appendChild(el("span","txt",b.t||"Item"));
     if(b.a>0){
@@ -1331,11 +1336,11 @@ function renderBuys(){
   renderBuyTotal();
 }
 function touchBuys(){
-  buyDirty=true;buyTs=Date.now();saveBuysLocal();scheduleBuyPush();
+  buyDirty=true;buyGen++;buyTs=Date.now();saveBuysLocal();scheduleBuyPush();
 }
 function scheduleBuyPush(){
   clearTimeout(buyPushTimer);
-  buyPushTimer=setTimeout(buyPush,450);
+  buyPushTimer=setTimeout(function(){buyPush()},300);
 }
 function buyHeaders(write){
   var h={"X-Access-Key":BUY_KEY};
@@ -1345,17 +1350,31 @@ function buyHeaders(write){
 function buyPush(cb){
   if(typeof fetch!=="function"){setBuyStatus("No network API here — list stays on this phone.");if(cb)cb(false);return}
   if(buyBusy){scheduleBuyPush();if(cb)cb(false);return}
+  var gen=buyGen;
+  var body=JSON.stringify(buyPayload());
   buyBusy=true;
-  fetch(BUY_URL,{method:"PUT",headers:buyHeaders(true),body:JSON.stringify(buyPayload())})
-    .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
+  setBuyStatus("Saving…");
+  fetch(BUY_URL,{method:"PUT",headers:buyHeaders(true),body:body})
+    .then(function(r){
+      return r.text().then(function(t){
+        if(!r.ok)throw new Error(r.status+(t?" "+t.slice(0,120):""));
+        try{return JSON.parse(t)}catch(e){return {}}
+      });
+    })
     .then(function(){
-      buyBusy=false;buyDirty=false;saveBuysLocal();
-      setBuyStatus("Synced.");
+      buyBusy=false;
+      /* Only clear dirty if nothing newer was edited while this PUT was in flight. */
+      if(gen===buyGen){buyDirty=false;saveBuysLocal();setBuyStatus("Synced.")}
+      else{setBuyStatus("Saving…");scheduleBuyPush()}
       if(cb)cb(true);
     })
-    .catch(function(){
+    .catch(function(err){
       buyBusy=false;
-      setBuyStatus("Couldn't sync — kept on this phone. Try Refresh when you're online.");
+      var m=String(err&&err.message||err||"");
+      if(/\b401\b|\b403\b/.test(m))
+        setBuyStatus("Cloud refused the save — Access Key needs update permission on JSONBin.");
+      else
+        setBuyStatus("Couldn't sync — kept on this phone. Try Refresh when you're online.");
       if(cb)cb(false);
     });
 }
@@ -1363,19 +1382,27 @@ function buyPull(force,cb){
   if(typeof fetch!=="function"){if(cb)cb(false);return}
   if(buyBusy){if(cb)cb(false);return}
   if(!force&&buyLastPull&&Date.now()-buyLastPull<20000){if(cb)cb(true);return}
-  buyBusy=true;
+  if(buyDirty){scheduleBuyPush();if(cb)cb(false);return}
+  var gen=buyGen;
+  buyBusy=true;buyPullGen=gen;
   fetch(BUY_URL+"/latest",{headers:buyHeaders(false)})
-    .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
+    .then(function(r){
+      return r.text().then(function(t){
+        if(!r.ok)throw new Error(r.status);
+        try{return JSON.parse(t)}catch(e){throw new Error("bad json")}
+      });
+    })
     .then(function(d){
       buyBusy=false;buyLastPull=Date.now();
-      var rec=(d&&d.record)?d.record:d;
-      var remote=normalizeBuyMap(rec);
-      var rts=(rec&&typeof rec.ts==="number")?rec.ts:0;
-      if(buyDirty&&buyTs>rts){
+      /* Local edit happened while we were fetching — keep local and push. */
+      if(buyDirty||buyGen!==gen){
         setBuyStatus("Local edits waiting to sync…");
         scheduleBuyPush();
         if(cb)cb(true);return;
       }
+      var rec=(d&&d.record)?d.record:d;
+      var remote=normalizeBuyMap(rec);
+      var rts=(rec&&typeof rec.ts==="number")?rec.ts:0;
       buyMap=remote;buyTs=rts||Date.now();buyDirty=false;saveBuysLocal();
       renderBuys();
       setBuyStatus("Loaded shared lists.");
@@ -1387,7 +1414,7 @@ function buyPull(force,cb){
       if(cb)cb(false);
     });
 }
-function maybeBuyPull(){buyPull(false)}
+function maybeBuyPull(){if(!buyDirty)buyPull(false)}
 function initBuy(){
   $("#bAdd").addEventListener("click",function(){
     var t=$("#bDesc").value.trim(); if(!t){$("#bDesc").focus();return}
@@ -1398,12 +1425,16 @@ function initBuy(){
     f.addEventListener("keydown",function(e){if(e.key==="Enter")$("#bAdd").click()});
   });
   $("#buyRefresh").addEventListener("click",function(){
+    if(buyDirty){setBuyStatus("Saving local edits first…");buyPush(function(){buyPull(true)});return}
     setBuyStatus("Refreshing…");
     buyPull(true);
   });
+  document.addEventListener("visibilitychange",function(){
+    if(document.visibilityState==="hidden"&&buyDirty)buyPush();
+  });
   renderBuys();
   if(buyDirty)scheduleBuyPush();
-  buyPull(true);
+  else buyPull(true);
 }
 
 /* ---------- weather, and the Fuji decision ---------- */
