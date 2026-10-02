@@ -1264,7 +1264,8 @@ var buyWho=S.get("buyWho",PEOPLE[0]);
 if(PEOPLE.indexOf(buyWho)<0)buyWho=PEOPLE[0];
 var buyMap=normalizeBuyMap(S.get("buyMap",null));
 var buyTs=S.get("buyTs",0);
-var buyDirty=false,buyBusy=false,buyPushTimer=null,buyLastPull=0,buyGen=0,buyPullGen=0;
+var buyDirty=false,buyBusy=false,buyPushTimer=null,buyLastPull=0,buyGen=0;
+var buyPullQueued=null;
 /* one-time: fold the old phone-only list into whoever's selected */
 (function(){
   var old=S.get("buy",null);
@@ -1347,6 +1348,12 @@ function buyHeaders(write){
   if(write)h["Content-Type"]="application/json";
   return h;
 }
+function buyRunQueued(){
+  if(buyPullQueued===null||buyBusy)return;
+  var force=!!buyPullQueued;
+  buyPullQueued=null;
+  buyPull(force);
+}
 function buyPush(cb){
   if(typeof fetch!=="function"){setBuyStatus("No network API here — list stays on this phone.");if(cb)cb(false);return}
   if(buyBusy){scheduleBuyPush();if(cb)cb(false);return}
@@ -1354,7 +1361,7 @@ function buyPush(cb){
   var body=JSON.stringify(buyPayload());
   buyBusy=true;
   setBuyStatus("Saving…");
-  fetch(BUY_URL,{method:"PUT",headers:buyHeaders(true),body:body})
+  fetch(BUY_URL,{method:"PUT",headers:buyHeaders(true),body:body,cache:"no-store"})
     .then(function(r){
       return r.text().then(function(t){
         if(!r.ok)throw new Error(r.status+(t?" "+t.slice(0,120):""));
@@ -1363,10 +1370,10 @@ function buyPush(cb){
     })
     .then(function(){
       buyBusy=false;
-      /* Only clear dirty if nothing newer was edited while this PUT was in flight. */
       if(gen===buyGen){buyDirty=false;saveBuysLocal();setBuyStatus("Synced.")}
       else{setBuyStatus("Saving…");scheduleBuyPush()}
       if(cb)cb(true);
+      buyRunQueued();
     })
     .catch(function(err){
       buyBusy=false;
@@ -1376,16 +1383,29 @@ function buyPush(cb){
       else
         setBuyStatus("Couldn't sync — kept on this phone. Try Refresh when you're online.");
       if(cb)cb(false);
+      buyRunQueued();
     });
 }
 function buyPull(force,cb){
   if(typeof fetch!=="function"){if(cb)cb(false);return}
-  if(buyBusy){if(cb)cb(false);return}
-  if(!force&&buyLastPull&&Date.now()-buyLastPull<20000){if(cb)cb(true);return}
-  if(buyDirty){scheduleBuyPush();if(cb)cb(false);return}
+  if(buyBusy){
+    buyPullQueued=force||buyPullQueued;
+    if(force)setBuyStatus("Waiting for save to finish…");
+    if(cb)cb(false);return;
+  }
+  if(!force&&buyLastPull&&Date.now()-buyLastPull<8000){if(cb)cb(true);return}
+  if(buyDirty){
+    if(force){
+      setBuyStatus("Saving local edits first…");
+      buyPush(function(ok){if(ok)buyPull(true,cb);else if(cb)cb(false)});
+      return;
+    }
+    scheduleBuyPush();if(cb)cb(false);return;
+  }
   var gen=buyGen;
-  buyBusy=true;buyPullGen=gen;
-  fetch(BUY_URL+"/latest",{headers:buyHeaders(false)})
+  buyBusy=true;
+  if(force)setBuyStatus("Refreshing…");
+  fetch(BUY_URL+"/latest",{headers:buyHeaders(false),cache:"no-store"})
     .then(function(r){
       return r.text().then(function(t){
         if(!r.ok)throw new Error(r.status);
@@ -1394,11 +1414,10 @@ function buyPull(force,cb){
     })
     .then(function(d){
       buyBusy=false;buyLastPull=Date.now();
-      /* Local edit happened while we were fetching — keep local and push. */
       if(buyDirty||buyGen!==gen){
         setBuyStatus("Local edits waiting to sync…");
         scheduleBuyPush();
-        if(cb)cb(true);return;
+        if(cb)cb(true);buyRunQueued();return;
       }
       var rec=(d&&d.record)?d.record:d;
       var remote=normalizeBuyMap(rec);
@@ -1407,14 +1426,29 @@ function buyPull(force,cb){
       renderBuys();
       setBuyStatus("Loaded shared lists.");
       if(cb)cb(true);
+      buyRunQueued();
     })
     .catch(function(){
       buyBusy=false;
       setBuyStatus("Couldn't reach the shared list. Showing what's saved on this phone.");
       if(cb)cb(false);
+      buyRunQueued();
     });
 }
-function maybeBuyPull(){if(!buyDirty)buyPull(false)}
+var buyPollTimer=null;
+function buyTabOpen(){
+  return !!($("#t-buy")&&$("#t-buy").getAttribute("aria-selected")==="true");
+}
+function startBuyPoll(){
+  stopBuyPoll();
+  buyPollTimer=setInterval(function(){
+    if(!buyTabOpen()||buyDirty||buyBusy)return;
+    buyPull(true);
+  },12000);
+}
+function stopBuyPoll(){
+  if(buyPollTimer){clearInterval(buyPollTimer);buyPollTimer=null}
+}
 function initBuy(){
   $("#bAdd").addEventListener("click",function(){
     var t=$("#bDesc").value.trim(); if(!t){$("#bDesc").focus();return}
@@ -1425,16 +1459,20 @@ function initBuy(){
     f.addEventListener("keydown",function(e){if(e.key==="Enter")$("#bAdd").click()});
   });
   $("#buyRefresh").addEventListener("click",function(){
-    if(buyDirty){setBuyStatus("Saving local edits first…");buyPush(function(){buyPull(true)});return}
-    setBuyStatus("Refreshing…");
     buyPull(true);
   });
   document.addEventListener("visibilitychange",function(){
-    if(document.visibilityState==="hidden"&&buyDirty)buyPush();
+    if(document.visibilityState==="hidden"){
+      if(buyDirty)buyPush();
+      return;
+    }
+    /* Coming back to the app — pull so ticks from the others show up. */
+    if(buyTabOpen()&&!buyDirty)buyPull(true);
   });
   renderBuys();
   if(buyDirty)scheduleBuyPush();
   else buyPull(true);
+  if(buyTabOpen())startBuyPoll();
 }
 
 /* ---------- weather, and the Fuji decision ---------- */
@@ -1895,7 +1933,8 @@ function initTabs(){
       window.scrollTo(0,0);
       S.set("tab",b.dataset.p);
       if(b.dataset.p==="money")maybeRefresh();
-      if(b.dataset.p==="buy")maybeBuyPull();
+      if(b.dataset.p==="buy"){buyPull(true);startBuyPoll()}
+      else stopBuyPoll();
     });
   });
   var last=S.get("tab","now");
