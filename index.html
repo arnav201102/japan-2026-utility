@@ -204,7 +204,11 @@ a.tel.g,button.tel.g{background:var(--moss-bg)}
 .chk input:checked{background:var(--moss-bg);border-color:var(--moss-bg)}
 .chk input:checked::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(43deg)}
 .chk input:focus-visible{outline:2px solid var(--momiji);outline-offset:2px}
-.chk .txt{font-size:15px;line-height:1.45}
+.chk .txt{flex:1;font-size:15px;line-height:1.45}
+.chk .x,.bk .x{background:none;border:0;color:var(--sand);font-size:18px;cursor:pointer;line-height:1;padding:0 2px;margin-left:4px;flex:none;align-self:flex-start}
+.chk .x:hover,.bk .x:hover{color:var(--momiji)}
+.chk.got .txt{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:var(--sand)}
+.chk.got .txt .when{color:var(--ink-soft);text-decoration:none}
 .chk .when{display:block;font-size:12.5px;color:var(--ink-soft);margin-top:1px}
 .chk .when.u{color:var(--momiji);font-weight:700}
 .chk input:checked+.txt{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:var(--sand)}
@@ -336,6 +340,10 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
   <div id="todayCard"></div>
 
   <h2 class="sec">Before you leave the room</h2>
+  <div class="addrow">
+    <input class="desc" id="addDailyInput" placeholder="Add daily check..." aria-label="Add daily check">
+    <button class="btn" id="addDailyBtn">Add</button>
+  </div>
   <div id="dailyChecks"></div>
 </section>
 
@@ -365,7 +373,7 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
   <div class="tab-total" id="pace"></div>
 
   <h2 class="sec">Split the bill</h2>
-  <p class="note">Everyone pays their own way, so this just tracks who covered what and evens it out at the end. Stored on this phone only.</p>
+  <p class="note">Everyone pays their own way, so this just tracks who covered what and evens it out at the end. Synced across phones via cloud — last save wins if two of you edit at once.</p>
   <div class="addrow">
     <input class="desc" id="eDesc" placeholder="What was it for?" aria-label="Description">
     <input class="amt num" id="eAmt" type="text" inputmode="decimal" placeholder="¥ amount" aria-label="Amount in yen">
@@ -378,6 +386,7 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
   <div class="toolbar">
     <button id="expCopy">Copy summary</button>
     <button id="expShare">Send to the others</button>
+    <button type="button" id="expRefresh">Refresh from cloud</button>
     <button id="expIO">Export / import</button>
   </div>
   <div class="flash" id="expFlash"></div>
@@ -394,20 +403,36 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
 <!-- ============ CHECKLIST ============ -->
 <section class="panel" id="p-list" role="tabpanel" aria-labelledby="t-list">
   <h2 class="sec">Bookings</h2>
-  <p class="note">Alarm times are IST. Dated ones also ping the trip Telegram group each morning (passed / next 48h / this week). The 4 Oct USJ one is the alarm that really matters now.</p>
+  <p class="note">Alarm times are IST. Dated ones also ping the trip Telegram group each morning (passed / next 48h / this week). Synced with cloud so bookings and checklist items show for all three of you.</p>
   <div class="prog" id="prog-book"></div>
+  <div class="addrow">
+    <input class="desc" id="addBookInput" placeholder="Add booking (e.g. Shibuya Sky, restaurant)..." aria-label="Add booking">
+    <button class="btn" id="addBookBtn">Add</button>
+  </div>
   <div id="list-book"></div>
 
   <h2 class="sec">Documents</h2>
   <div class="prog" id="prog-docs"></div>
+  <div class="addrow">
+    <input class="desc" id="addDocsInput" placeholder="Add document to prepare..." aria-label="Add document">
+    <button class="btn" id="addDocsBtn">Add</button>
+  </div>
   <div id="list-docs"></div>
 
   <h2 class="sec">Packing</h2>
   <p class="note">Tokyo and Kyoto sit around 6–14°C in late November, and it drops fast after dark.</p>
   <div class="prog" id="prog-pack"></div>
+  <div class="addrow">
+    <input class="desc" id="addPackInput" placeholder="Add something to pack..." aria-label="Add packing item">
+    <button class="btn" id="addPackBtn">Add</button>
+  </div>
   <div id="list-pack"></div>
 
-  <p style="margin-top:24px"><button class="btn ghost" id="resetAll">Clear all ticks</button></p>
+  <p style="margin-top:24px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <button class="btn ghost" id="resetAll">Clear all ticks</button>
+    <button type="button" class="btn ghost" id="listRefresh">Refresh from cloud</button>
+  </p>
+  <div class="flash" id="listFlash"></div>
 </section>
 
 <!-- ============ BUY ============ -->
@@ -430,16 +455,28 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
   <h2 class="sec">Before you fly</h2>
   <p class="note">Bought here, in rupees, while you still have time to return it. Prices are rough for September 2026.</p>
   <div class="prog" id="prog-before"></div>
+  <div class="addrow">
+    <input class="desc" id="addBeforeInput" placeholder="Add item to buy before flying..." aria-label="Add before you fly item">
+    <button class="btn" id="addBeforeBtn">Add</button>
+  </div>
   <div id="list-before"></div>
 
   <h2 class="sec">Get these early</h2>
   <p class="note">Cheap, and the trip is worse without them. Most of it is a konbini or Don Quijote run on the first night in Shinjuku.</p>
   <div class="prog" id="prog-need"></div>
+  <div class="addrow">
+    <input class="desc" id="addNeedInput" placeholder="Add item to get early in Japan..." aria-label="Add get early item">
+    <button class="btn" id="addNeedBtn">Add</button>
+  </div>
   <div id="list-need"></div>
 
   <h2 class="sec">Taking things home</h2>
   <p class="note">Prices are rough and from September 2026. Don Quijote beats the airport on almost everything except alcohol.</p>
   <div class="prog" id="prog-gift"></div>
+  <div class="addrow">
+    <input class="desc" id="addGiftInput" placeholder="Add souvenir / gift to take home..." aria-label="Add gift item">
+    <button class="btn" id="addGiftBtn">Add</button>
+  </div>
   <div id="list-gift"></div>
 
   <div class="tip"><b>Tax free</b>From 1 Nov 2026 Japan uses a refund system, not tax off at the till. You pay the full price (¥5,000+ tax-excluded per shop per day still qualifies), keep the goods with you, then get the consumption tax back after a customs check at the airport you leave Japan from. For you that is <b>Haneda</b> (Delhi flight), not KIX — do it in the international departure lobby <b>before</b> baggage check-in. Bring passport and every item on each receipt. Ask the first big shop how their refund works, and leave extra time at Haneda.</div>
@@ -1111,7 +1148,7 @@ function renderExps(){
     if(x.ts)r.appendChild(el("span","dd",fmtDate(expDay(x))));
     r.appendChild(el("span","amt",yen(x.a)));
     var del=el("button",null,"×");del.type="button";del.setAttribute("aria-label","Remove "+(x.d||"expense"));
-    del.addEventListener("click",function(){exps.splice(o.i,1);S.set("exps",exps);renderExps()});
+    del.addEventListener("click",function(){exps.splice(o.i,1);S.set("exps",exps);renderExps();touchCloud()});
     r.appendChild(del);box.appendChild(r);
   });
   var t=expTotals();
@@ -1163,7 +1200,7 @@ function renderPace(){
   var inp=document.createElement("input");inp.id="budIn";inp.type="text";inp.inputMode="numeric";
   inp.value=budget>0?String(budget):"";inp.placeholder="0";inp.setAttribute("aria-label","Budget in yen per person per day");
   inp.addEventListener("input",function(){budget=num(inp.value);S.set("budget",budget)});
-  inp.addEventListener("change",renderPace);
+  inp.addEventListener("change",function(){renderPace();touchCloud()});
   bud.appendChild(lab);bud.appendChild(inp);
   bud.appendChild(el("span",null,budget>0?("each, a day \u2014 "+yen(budget*PEOPLE.length)+" between you"):"each, a day"));
   if(budget>0&&onTrip){
@@ -1194,6 +1231,7 @@ function initSplit(){
     if(a<=0){$("#eAmt").focus();return}
     exps.push({d:$("#eDesc").value.trim(),a:a,p:$("#ePayer").value,ts:Date.now()});
     S.set("exps",exps);$("#eDesc").value="";$("#eAmt").value="";renderExps();
+    touchCloud();
   });
   $("#eAmt").addEventListener("keydown",function(e){if(e.key==="Enter")$("#eAdd").click()});
   $("#eDesc").addEventListener("keydown",function(e){if(e.key==="Enter")$("#eAmt").focus()});
@@ -1232,15 +1270,45 @@ function initSplit(){
     }
     if(!confirm("Replace the "+exps.length+" expense"+(exps.length===1?"":"s")+" on this phone with "+clean.length+" from the box?"))return;
     exps=clean;S.set("exps",exps);renderExps();
-    flash("#expFlash","Imported "+clean.length+".");
+    touchCloud();
+    flash("#expFlash","Imported "+clean.length+" and synced to cloud.");
   });
+  var er=$("#expRefresh");
+  if(er)er.addEventListener("click",function(){cloudPull(true)});
   renderExps();
 }
 
-/* ---------- shopping tab (shared via JSONBin) ---------- */
-var BUY_BIN="6abeafc0ffd5d1605343bce8";
-var BUY_KEY="$2a$10$NzE3zw6Cmlj2MnQr/Q5HQeJRKS.1xQTXVgw7h8sJT328Fu9GXg0Aa";
-var BUY_URL="https://api.jsonbin.io/v3/b/"+BUY_BIN;
+/* ---------- shared cloud sync (via JSONBin) ---------- */
+var CLOUD_BIN="6abeafc0ffd5d1605343bce8";
+var CLOUD_KEY="$2a$10$NzE3zw6Cmlj2MnQr/Q5HQeJRKS.1xQTXVgw7h8sJT328Fu9GXg0Aa";
+var CLOUD_URL="https://api.jsonbin.io/v3/b/"+CLOUD_BIN;
+var BUY_BIN=CLOUD_BIN,BUY_KEY=CLOUD_KEY,BUY_URL=CLOUD_URL;
+
+var CHECK_KEYS=["ck_book","ck_docs","ck_pack","ck_daily","ck_before","ck_need","ck_gift"];
+function getChecksMap(){
+  var o={};
+  CHECK_KEYS.forEach(function(k){o[k]=S.get(k,{})});
+  return o;
+}
+
+function normalizeExps(raw){
+  if(!raw||!Array.isArray(raw))return [];
+  var clean=[];
+  for(var i=0;i<raw.length;i++){
+    var x=raw[i];
+    if(!x||typeof x!=="object")continue;
+    var amt=num(x.a);
+    if(!(amt>0))continue;
+    clean.push({
+      d:String(x.d||"").slice(0,80),
+      a:amt,
+      p:PEOPLE.indexOf(x.p)>=0?x.p:PEOPLE[0],
+      ts:typeof x.ts==="number"?x.ts:undefined
+    });
+  }
+  return clean;
+}
+
 function emptyBuyMap(){var o={};PEOPLE.forEach(function(p){o[p]=[]});return o}
 function normalizeBuyMap(raw){
   var o=emptyBuyMap();
@@ -1263,25 +1331,237 @@ function buyIsEmpty(m){
 var buyWho=S.get("buyWho",PEOPLE[0]);
 if(PEOPLE.indexOf(buyWho)<0)buyWho=PEOPLE[0];
 var buyMap=normalizeBuyMap(S.get("buyMap",null));
-var buyTs=S.get("buyTs",0);
-var buyDirty=false,buyBusy=false,buyPushTimer=null,buyLastPull=0,buyGen=0;
-var buyPullQueued=null;
-/* one-time: fold the old phone-only list into whoever's selected */
+var cloudTs=S.get("cloudTs",S.get("buyTs",0));
+var buyTs=cloudTs;
+var cloudDirty=false,cloudBusy=false,cloudPushTimer=null,cloudLastPull=0,cloudGen=0;
+var cloudPullQueued=null;
+
+/* one-time: fold old phone-only list into whoever's selected */
 (function(){
   var old=S.get("buy",null);
   if(!old||typeof old.length!=="number"||!old.length)return;
   if(!buyIsEmpty(buyMap)){S.del("buy");return}
   buyMap[buyWho]=old.map(function(b){return {t:String(b.t||"").trim(),a:num(b.a),k:!!b.k}}).filter(function(b){return b.t});
-  S.set("buyMap",buyMap);S.del("buy");buyDirty=true;buyGen++;
+  S.set("buyMap",buyMap);S.del("buy");cloudDirty=true;cloudGen++;
 })();
+
 function buys(){return buyMap[buyWho]||(buyMap[buyWho]=[])}
-function saveBuysLocal(){S.set("buyMap",buyMap);S.set("buyTs",buyTs);S.set("buyWho",buyWho)}
-function buyPayload(){
-  var o={ts:buyTs};
+function saveBuysLocal(){S.set("buyMap",buyMap);S.set("buyTs",cloudTs);S.set("cloudTs",cloudTs);S.set("buyWho",buyWho)}
+
+function cloudPayload(){
+  var o={
+    ts:cloudTs,
+    exps:exps,
+    budget:budget,
+    checks:getChecksMap(),
+    fujiSwap:!!fujiSwapped,
+    lists:{
+      docs:getList("docs"),
+      pack:getList("pack"),
+      daily:getList("daily"),
+      before:getList("before"),
+      need:getList("need"),
+      gift:getList("gift"),
+      book:getList("book")
+    }
+  };
   PEOPLE.forEach(function(p){o[p]=buyMap[p]||[]});
   return o;
 }
-function setBuyStatus(msg){flash("#buyFlash",msg)}
+function buyPayload(){return cloudPayload()}
+
+function setCloudStatus(msg){
+  flash("#buyFlash",msg);
+  flash("#expFlash",msg);
+  flash("#listFlash",msg);
+}
+function setBuyStatus(msg){setCloudStatus(msg)}
+
+function touchCloud(){
+  cloudDirty=true;cloudGen++;cloudTs=Date.now();
+  saveBuysLocal();
+  scheduleCloudPush();
+}
+function touchBuys(){touchCloud()}
+
+function scheduleCloudPush(){
+  clearTimeout(cloudPushTimer);
+  cloudPushTimer=setTimeout(function(){cloudPush()},300);
+}
+function scheduleBuyPush(){scheduleCloudPush()}
+
+function cloudHeaders(write){
+  var h={"X-Access-Key":CLOUD_KEY};
+  if(write)h["Content-Type"]="application/json";
+  return h;
+}
+function buyHeaders(write){return cloudHeaders(write)}
+
+function cloudRunQueued(){
+  if(cloudPullQueued===null||cloudBusy)return;
+  var force=!!cloudPullQueued;
+  cloudPullQueued=null;
+  cloudPull(force);
+}
+function buyRunQueued(){cloudRunQueued()}
+
+function cloudPush(cb){
+  if(typeof fetch!=="function"){setCloudStatus("No network API here — items stay on this phone.");if(cb)cb(false);return}
+  if(cloudBusy){scheduleCloudPush();if(cb)cb(false);return}
+  var gen=cloudGen;
+  var body=JSON.stringify(cloudPayload());
+  cloudBusy=true;
+  setCloudStatus("Saving…");
+  fetch(CLOUD_URL,{method:"PUT",headers:cloudHeaders(true),body:body,cache:"no-store"})
+    .then(function(r){
+      return r.text().then(function(t){
+        if(!r.ok)throw new Error(r.status+(t?" "+t.slice(0,120):""));
+        try{return JSON.parse(t)}catch(e){return {}}
+      });
+    })
+    .then(function(){
+      cloudBusy=false;
+      if(gen===cloudGen){
+        cloudDirty=false;
+        saveBuysLocal();
+        S.set("exps",exps);
+        S.set("budget",budget);
+        S.set("fujiSwap",fujiSwapped);
+        setCloudStatus("Synced.");
+      }
+      else{setCloudStatus("Saving…");scheduleCloudPush()}
+      if(cb)cb(true);
+      cloudRunQueued();
+    })
+    .catch(function(err){
+      cloudBusy=false;
+      var m=String(err&&err.message||err||"");
+      if(/401|403/.test(m))
+        setCloudStatus("Cloud refused the save — Access Key needs update permission on JSONBin.");
+      else
+        setCloudStatus("Couldn't sync — kept on this phone. Try Refresh when you're online.");
+      if(cb)cb(false);
+      cloudRunQueued();
+    });
+}
+function buyPush(cb){cloudPush(cb)}
+
+function cloudPull(force,cb){
+  if(typeof fetch!=="function"){if(cb)cb(false);return}
+  if(cloudBusy){
+    cloudPullQueued=force||cloudPullQueued;
+    if(force)setCloudStatus("Waiting for save to finish…");
+    if(cb)cb(false);return;
+  }
+  if(!force&&cloudLastPull&&Date.now()-cloudLastPull<8000){if(cb)cb(true);return}
+  if(cloudDirty){
+    if(force){
+      setCloudStatus("Saving local edits first…");
+      cloudPush(function(ok){if(ok)cloudPull(true,cb);else if(cb)cb(false)});
+      return;
+    }
+    scheduleCloudPush();if(cb)cb(false);return;
+  }
+  var gen=cloudGen;
+  cloudBusy=true;
+  if(force)setCloudStatus("Refreshing…");
+  fetch(CLOUD_URL+"/latest",{headers:cloudHeaders(false),cache:"no-store"})
+    .then(function(r){
+      return r.text().then(function(t){
+        if(!r.ok)throw new Error(r.status);
+        try{return JSON.parse(t)}catch(e){throw new Error("bad json")}
+      });
+    })
+    .then(function(d){
+      cloudBusy=false;cloudLastPull=Date.now();
+      if(cloudDirty||cloudGen!==gen){
+        setCloudStatus("Local edits waiting to sync…");
+        scheduleCloudPush();
+        if(cb)cb(true);cloudRunQueued();return;
+      }
+      var rec=(d&&d.record)?d.record:d;
+      var remote=normalizeBuyMap(rec);
+      var rts=(rec&&typeof rec.ts==="number")?rec.ts:0;
+      buyMap=remote;cloudTs=rts||Date.now();buyTs=cloudTs;
+      saveBuysLocal();
+      renderBuys();
+
+      if(Array.isArray(rec.exps)){
+        exps=normalizeExps(rec.exps);
+        S.set("exps",exps);
+        renderExps();
+      } else if(exps.length>0){
+        cloudDirty=true;
+      }
+
+      if(typeof rec.budget==="number"&&!isNaN(rec.budget)&&rec.budget>0){
+        budget=rec.budget;
+        S.set("budget",budget);
+        renderPace();
+      } else if(budget>0){
+        cloudDirty=true;
+      }
+
+      if(rec.lists&&typeof rec.lists==="object"){
+        ["docs","pack","daily","before","need","gift","book"].forEach(function(name){
+          if(Array.isArray(rec.lists[name])){
+            setList(name,rec.lists[name]);
+          }
+        });
+        renderAllChecks();
+      } else if(rec.checks&&typeof rec.checks==="object"){
+        CHECK_KEYS.forEach(function(k){
+          if(rec.checks[k]&&typeof rec.checks[k]==="object")
+            S.set(k,rec.checks[k]);
+        });
+        renderAllChecks();
+        cloudDirty=true;
+      } else {
+        cloudDirty=true;
+      }
+
+      if(typeof rec.fujiSwap==="boolean"){
+        if(fujiSwapped!==rec.fujiSwap){
+          fujiSwapped=rec.fujiSwap;
+          S.set("fujiSwap",fujiSwapped);
+          doSwap();
+          renderStatus();renderToday();renderDays();renderWxToday();renderFuji();
+        }
+      } else if(fujiSwapped){
+        cloudDirty=true;
+      }
+
+      if(cloudDirty){
+        scheduleCloudPush();
+      } else if(force){
+        setCloudStatus("Synced with cloud.");
+      }
+      if(cb)cb(true);
+      cloudRunQueued();
+    })
+    .catch(function(){
+      cloudBusy=false;
+      setCloudStatus("Couldn't reach cloud. Showing what's saved on this phone.");
+      if(cb)cb(false);
+      cloudRunQueued();
+    });
+}
+function buyPull(force,cb){cloudPull(force,cb)}
+
+var cloudPollTimer=null;
+function startCloudPoll(){
+  stopCloudPoll();
+  cloudPollTimer=setInterval(function(){
+    if(document.visibilityState==="hidden"||cloudDirty||cloudBusy)return;
+    cloudPull(false);
+  },15000);
+}
+function stopCloudPoll(){
+  if(cloudPollTimer){clearInterval(cloudPollTimer);cloudPollTimer=null}
+}
+function startBuyPoll(){startCloudPoll()}
+function stopBuyPoll(){stopCloudPoll()}
+
 function renderBuyWho(){
   var box=$("#buyWho");if(!box)return;
   box.innerHTML="";
@@ -1319,7 +1599,7 @@ function renderBuys(){
     cb.addEventListener("change",function(){
       b.k=cb.checked;
       r.className="buy"+(b.k?" got":"");
-      touchBuys();
+      touchCloud();
       renderBuyTotal();
     });
     r.appendChild(cb);
@@ -1330,149 +1610,26 @@ function renderBuys(){
       r.appendChild(a);
     }
     var x=el("button","x","×");x.type="button";x.setAttribute("aria-label","Remove "+(b.t||"item"));
-    x.addEventListener("click",function(){buys().splice(i,1);touchBuys();renderBuys()});
+    x.addEventListener("click",function(){buys().splice(i,1);touchCloud();renderBuys()});
     r.appendChild(x);
     box.appendChild(r);
   });
   renderBuyTotal();
 }
-function touchBuys(){
-  buyDirty=true;buyGen++;buyTs=Date.now();saveBuysLocal();scheduleBuyPush();
-}
-function scheduleBuyPush(){
-  clearTimeout(buyPushTimer);
-  buyPushTimer=setTimeout(function(){buyPush()},300);
-}
-function buyHeaders(write){
-  var h={"X-Access-Key":BUY_KEY};
-  if(write)h["Content-Type"]="application/json";
-  return h;
-}
-function buyRunQueued(){
-  if(buyPullQueued===null||buyBusy)return;
-  var force=!!buyPullQueued;
-  buyPullQueued=null;
-  buyPull(force);
-}
-function buyPush(cb){
-  if(typeof fetch!=="function"){setBuyStatus("No network API here — list stays on this phone.");if(cb)cb(false);return}
-  if(buyBusy){scheduleBuyPush();if(cb)cb(false);return}
-  var gen=buyGen;
-  var body=JSON.stringify(buyPayload());
-  buyBusy=true;
-  setBuyStatus("Saving…");
-  fetch(BUY_URL,{method:"PUT",headers:buyHeaders(true),body:body,cache:"no-store"})
-    .then(function(r){
-      return r.text().then(function(t){
-        if(!r.ok)throw new Error(r.status+(t?" "+t.slice(0,120):""));
-        try{return JSON.parse(t)}catch(e){return {}}
-      });
-    })
-    .then(function(){
-      buyBusy=false;
-      if(gen===buyGen){buyDirty=false;saveBuysLocal();setBuyStatus("Synced.")}
-      else{setBuyStatus("Saving…");scheduleBuyPush()}
-      if(cb)cb(true);
-      buyRunQueued();
-    })
-    .catch(function(err){
-      buyBusy=false;
-      var m=String(err&&err.message||err||"");
-      if(/\b401\b|\b403\b/.test(m))
-        setBuyStatus("Cloud refused the save — Access Key needs update permission on JSONBin.");
-      else
-        setBuyStatus("Couldn't sync — kept on this phone. Try Refresh when you're online.");
-      if(cb)cb(false);
-      buyRunQueued();
-    });
-}
-function buyPull(force,cb){
-  if(typeof fetch!=="function"){if(cb)cb(false);return}
-  if(buyBusy){
-    buyPullQueued=force||buyPullQueued;
-    if(force)setBuyStatus("Waiting for save to finish…");
-    if(cb)cb(false);return;
-  }
-  if(!force&&buyLastPull&&Date.now()-buyLastPull<8000){if(cb)cb(true);return}
-  if(buyDirty){
-    if(force){
-      setBuyStatus("Saving local edits first…");
-      buyPush(function(ok){if(ok)buyPull(true,cb);else if(cb)cb(false)});
-      return;
-    }
-    scheduleBuyPush();if(cb)cb(false);return;
-  }
-  var gen=buyGen;
-  buyBusy=true;
-  if(force)setBuyStatus("Refreshing…");
-  fetch(BUY_URL+"/latest",{headers:buyHeaders(false),cache:"no-store"})
-    .then(function(r){
-      return r.text().then(function(t){
-        if(!r.ok)throw new Error(r.status);
-        try{return JSON.parse(t)}catch(e){throw new Error("bad json")}
-      });
-    })
-    .then(function(d){
-      buyBusy=false;buyLastPull=Date.now();
-      if(buyDirty||buyGen!==gen){
-        setBuyStatus("Local edits waiting to sync…");
-        scheduleBuyPush();
-        if(cb)cb(true);buyRunQueued();return;
-      }
-      var rec=(d&&d.record)?d.record:d;
-      var remote=normalizeBuyMap(rec);
-      var rts=(rec&&typeof rec.ts==="number")?rec.ts:0;
-      buyMap=remote;buyTs=rts||Date.now();buyDirty=false;saveBuysLocal();
-      renderBuys();
-      setBuyStatus("Loaded shared lists.");
-      if(cb)cb(true);
-      buyRunQueued();
-    })
-    .catch(function(){
-      buyBusy=false;
-      setBuyStatus("Couldn't reach the shared list. Showing what's saved on this phone.");
-      if(cb)cb(false);
-      buyRunQueued();
-    });
-}
-var buyPollTimer=null;
-function buyTabOpen(){
-  return !!($("#t-buy")&&$("#t-buy").getAttribute("aria-selected")==="true");
-}
-function startBuyPoll(){
-  stopBuyPoll();
-  buyPollTimer=setInterval(function(){
-    if(!buyTabOpen()||buyDirty||buyBusy)return;
-    buyPull(true);
-  },12000);
-}
-function stopBuyPoll(){
-  if(buyPollTimer){clearInterval(buyPollTimer);buyPollTimer=null}
-}
+
 function initBuy(){
   $("#bAdd").addEventListener("click",function(){
     var t=$("#bDesc").value.trim(); if(!t){$("#bDesc").focus();return}
     buys().push({t:t,a:num($("#bAmt").value),k:false});
-    touchBuys();$("#bDesc").value="";$("#bAmt").value="";renderBuys();$("#bDesc").focus();
+    touchCloud();$("#bDesc").value="";$("#bAmt").value="";renderBuys();$("#bDesc").focus();
   });
   [$("#bDesc"),$("#bAmt")].forEach(function(f){
     f.addEventListener("keydown",function(e){if(e.key==="Enter")$("#bAdd").click()});
   });
   $("#buyRefresh").addEventListener("click",function(){
-    buyPull(true);
-  });
-  document.addEventListener("visibilitychange",function(){
-    if(document.visibilityState==="hidden"){
-      if(buyDirty)buyPush();
-      return;
-    }
-    /* Coming back to the app — pull so ticks from the others show up. */
-    if(buyTabOpen()&&!buyDirty)buyPull(true);
+    cloudPull(true);
   });
   renderBuys();
-  if(buyDirty)scheduleBuyPush();
-  else buyPull(true);
-  if(buyTabOpen())startBuyPoll();
 }
 
 /* ---------- weather, and the Fuji decision ---------- */
@@ -1621,9 +1778,10 @@ function toggleFuji(){
   fujiSwapped=!fujiSwapped;S.set("fujiSwap",fujiSwapped);
   doSwap();
   renderStatus();renderToday();renderDays();renderWxToday();renderFuji();
+  touchCloud();
 }
 
-/* ---------- bookings, by deadline ---------- */
+/* ---------- dynamic lists and bookings (with add/delete/tick) ---------- */
 function dueAt(b){return b.when?new Date(b.when+"+05:30").getTime():null}
 function dueInfo(b){
   var t=dueAt(b);
@@ -1634,18 +1792,7 @@ function dueInfo(b){
   var lab=days===0?"today":days===1?"tomorrow":days+" days";
   return {cls:days<=1?"soon":days<=7?"near":"",label:lab,sort:t};
 }
-function sortedBookings(){
-  var done=S.get("ck_book",{});
-  return BOOKINGS.map(function(b,i){var o={i:i};for(var k in b)o[k]=b[k];return o})
-    .sort(function(a,b){
-      var da=!!done["b"+a.i],db=!!done["b"+b.i];
-      if(da!==db)return da?1:-1;
-      var sa=dueInfo(a).sort,sb=dueInfo(b).sort;
-      if(sa!==sb)return sa-sb;
-      return a.i-b.i;
-    });
-}
-function icsEscape(t){return String(t).replace(/([,;\\])/g,"\\$1").replace(/\n/g,"\\n")}
+function icsEscape(t){return String(t).replace(/([,;\\\\])/g,"\\$1").replace(/\n/g,"\\n")}
 function icsStamp(ms){
   var d=new Date(ms),z=function(n){return String(n).padStart(2,"0")};
   return d.getUTCFullYear()+z(d.getUTCMonth()+1)+z(d.getUTCDate())+"T"+
@@ -1654,10 +1801,10 @@ function icsStamp(ms){
 function downloadICS(b){
   var t=dueAt(b);if(t===null)return;
   var L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Japan 2026//Trip//EN","CALSCALE:GREGORIAN",
-    "BEGIN:VEVENT","UID:japan2026-b"+b.i+"@local","DTSTAMP:"+icsStamp(Date.now()),
+    "BEGIN:VEVENT","UID:japan2026-b"+b.id+"@local","DTSTAMP:"+icsStamp(Date.now()),
     "DTSTART:"+icsStamp(t),"DTEND:"+icsStamp(t+30*60000),
     "SUMMARY:"+icsEscape("Book: "+b.t),
-    "DESCRIPTION:"+icsEscape(b.w+"\nJapan 2026, 24 Nov – 6 Dec."),
+    "DESCRIPTION:"+icsEscape((b.w||"")+"\nJapan 2026, 24 Nov – 6 Dec."),
     "BEGIN:VALARM","TRIGGER:-PT30M","ACTION:DISPLAY","DESCRIPTION:"+icsEscape(b.t),"END:VALARM",
     "BEGIN:VALARM","TRIGGER:-PT5M","ACTION:DISPLAY","DESCRIPTION:"+icsEscape(b.t),"END:VALARM",
     "END:VEVENT","END:VCALENDAR"];
@@ -1666,42 +1813,212 @@ function downloadICS(b){
     var blob=new Blob([body],{type:"text/calendar;charset=utf-8"});
     var url=URL.createObjectURL(blob);
     var a=document.createElement("a");
-    a.href=url;a.download="japan2026-"+b.i+".ics";
+    a.href=url;a.download="japan2026-"+b.id+".ics";
     document.body.appendChild(a);a.click();document.body.removeChild(a);
     setTimeout(function(){URL.revokeObjectURL(url)},4000);
   }catch(e){
     window.open("data:text/calendar;charset=utf-8,"+encodeURIComponent(body));
   }
 }
+
+var LIST_DEFAULTS={
+  docs:DOCS,
+  pack:PACK,
+  daily:DAILY,
+  before:BEFORE,
+  need:NEED,
+  gift:GIFTS,
+  book:BOOKINGS
+};
+
+function initListItems(name){
+  var saved=S.get("items_"+name,null);
+  if(saved&&Array.isArray(saved))return saved;
+  var checkKey=name==="book"?"ck_book":("ck_"+name);
+  var oldChecks=S.get(checkKey,{});
+  var defaults=LIST_DEFAULTS[name]||[];
+  var list=defaults.map(function(item,i){
+    var id=name[0]+i;
+    return {
+      id:id,
+      t:item.t,
+      w:item.w||"",
+      u:!!item.u,
+      when:item.when||null,
+      k:!!oldChecks[id]
+    };
+  });
+  S.set("items_"+name,list);
+  return list;
+}
+
+var allLists={
+  docs:initListItems("docs"),
+  pack:initListItems("pack"),
+  daily:initListItems("daily"),
+  before:initListItems("before"),
+  need:initListItems("need"),
+  gift:initListItems("gift"),
+  book:initListItems("book")
+};
+
+function getList(name){
+  return allLists[name]||(allLists[name]=initListItems(name));
+}
+function setList(name,items){
+  allLists[name]=items;
+  S.set("items_"+name,items);
+}
+
 function renderBookings(){
-  var state=S.get("ck_book",{});
-  var box=$("#list-book");box.innerHTML="";
-  sortedBookings().forEach(function(b){
-    var id="b"+b.i,on=!!state[id];
+  var box=$("#list-book");if(!box)return;
+  var items=getList("book");
+  box.innerHTML="";
+  if(!items.length){
+    box.appendChild(el("p","note","No bookings yet. Add one above."));
+  }
+  var sorted=items.slice().sort(function(a,b){
+    if(!!a.k!==!!b.k)return a.k?1:-1;
+    var sa=dueInfo(a).sort,sb=dueInfo(b).sort;
+    if(sa!==sb)return sa-sb;
+    return (a.t||"").localeCompare(b.t||"");
+  });
+
+  sorted.forEach(function(b){
+    var on=!!b.k;
     var r=el("div","bk"+(on?" done":""));
-    var cb=document.createElement("input");cb.type="checkbox";cb.checked=on;cb.id="cb-"+id;
+    var cb=document.createElement("input");cb.type="checkbox";cb.checked=on;cb.id="cb-"+b.id;
+    cb.setAttribute("aria-label","Booking "+(b.t||"item")+" done");
     cb.addEventListener("change",function(){
-      state[id]=cb.checked;S.set("ck_book",state);
-      renderBookings();renderNext();
+      b.k=cb.checked;
+      setList("book",items);
+      renderBookings();
+      renderNext();
+      touchCloud();
     });
     r.appendChild(cb);
-    var lab=document.createElement("label");lab.className="txt";lab.setAttribute("for","cb-"+id);
+
+    var lab=document.createElement("label");lab.className="txt";lab.setAttribute("for","cb-"+b.id);
     lab.textContent=b.t;
-    lab.appendChild(el("span","when"+(b.u?" u":""),b.w));
+    if(b.w)lab.appendChild(el("span","when"+(b.u?" u":""),b.w));
     r.appendChild(lab);
-    var side=el("div","side"),d=dueInfo(b);
-    side.appendChild(el("span","due "+d.cls,d.label));
+
+    var side=el("div","side");
+    var d=dueInfo(b);
+    if(d.label)side.appendChild(el("span","due "+d.cls,d.label));
     if(b.when&&!on){
       var cal=el("button","cal","Alarm");cal.type="button";
-      cal.setAttribute("aria-label","Add a calendar alarm for "+b.t);
+      cal.setAttribute("aria-label","Add calendar alarm for "+b.t);
       cal.addEventListener("click",function(){downloadICS(b)});
       side.appendChild(cal);
     }
     r.appendChild(side);
+
+    var x=el("button","x","×");x.type="button";
+    x.setAttribute("aria-label","Remove "+(b.t||"booking"));
+    x.addEventListener("click",function(){
+      var idx=items.indexOf(b);
+      if(idx>=0){
+        items.splice(idx,1);
+        setList("book",items);
+        renderBookings();
+        renderNext();
+        touchCloud();
+      }
+    });
+    r.appendChild(x);
     box.appendChild(r);
   });
-  var n=BOOKINGS.filter(function(_,i){return state["b"+i]}).length;
-  $("#prog-book").textContent=n+" of "+BOOKINGS.length+" done";
+
+  var n=items.filter(function(x){return x.k}).length;
+  var pb=$("#prog-book");
+  if(pb)pb.textContent=n+" of "+items.length+" done";
+}
+
+function renderChecklist(name,mount,progMount){
+  var box=$(mount);if(!box)return;
+  var items=getList(name);
+  box.innerHTML="";
+  if(!items.length){
+    box.appendChild(el("p","note","Empty. Add an item above."));
+  }
+  items.forEach(function(it,i){
+    var r=el("div","chk"+(it.k?" got":""));
+    var cb=document.createElement("input");cb.type="checkbox";cb.checked=!!it.k;
+    cb.setAttribute("aria-label","Mark "+(it.t||"item")+" as done");
+    cb.addEventListener("change",function(){
+      it.k=cb.checked;
+      r.className="chk"+(it.k?" got":"");
+      setList(name,items);
+      touchCloud();
+      updateProg();
+    });
+    r.appendChild(cb);
+
+    var tx=el("span","txt",it.t);
+    if(it.w){
+      var wn=el("span","when"+(it.u?" u":""),it.w);
+      tx.appendChild(wn);
+    }
+    r.appendChild(tx);
+
+    var x=el("button","x","×");x.type="button";
+    x.setAttribute("aria-label","Remove "+(it.t||"item"));
+    x.addEventListener("click",function(){
+      items.splice(i,1);
+      setList(name,items);
+      touchCloud();
+      renderChecklist(name,mount,progMount);
+    });
+    r.appendChild(x);
+    box.appendChild(r);
+  });
+
+  function updateProg(){
+    if(!progMount)return;
+    var n=items.filter(function(x){return x.k}).length;
+    var elP=$(progMount);
+    if(elP)elP.textContent=n+" of "+items.length+" done";
+  }
+  updateProg();
+}
+
+function setupListAdder(name,inputId,btnId,mount,progMount){
+  var inp=$(inputId),btn=$(btnId);
+  if(!inp||!btn)return;
+  function add(){
+    var t=inp.value.trim();
+    if(!t){inp.focus();return}
+    var list=getList(name);
+    list.push({
+      id:name[0]+"_"+Date.now(),
+      t:t,
+      w:"",
+      k:false
+    });
+    setList(name,list);
+    inp.value="";
+    if(name==="book"){
+      renderBookings();
+      renderNext();
+    }else{
+      renderChecklist(name,mount,progMount);
+    }
+    touchCloud();
+    inp.focus();
+  }
+  btn.addEventListener("click",add);
+  inp.addEventListener("keydown",function(e){if(e.key==="Enter")add()});
+}
+
+function setupAllListAdders(){
+  setupListAdder("daily","#addDailyInput","#addDailyBtn","#dailyChecks",null);
+  setupListAdder("book","#addBookInput","#addBookBtn","#list-book","#prog-book");
+  setupListAdder("docs","#addDocsInput","#addDocsBtn","#list-docs","#prog-docs");
+  setupListAdder("pack","#addPackInput","#addPackBtn","#list-pack","#prog-pack");
+  setupListAdder("before","#addBeforeInput","#addBeforeBtn","#list-before","#prog-before");
+  setupListAdder("need","#addNeedInput","#addNeedBtn","#list-need","#prog-need");
+  setupListAdder("gift","#addGiftInput","#addGiftBtn","#list-gift","#prog-gift");
 }
 
 /* ---------- phrases and driver cards ---------- */
@@ -1897,28 +2214,1184 @@ function initDocs(){
   renderDocs();
 }
 
-/* ---------- checklists ---------- */
-function buildList(items,mount,key,progMount,prefix){
-  var state=S.get(key,{});
-  var box=$(mount);box.innerHTML="";
-  items.forEach(function(it,i){
-    var id=prefix+i;
-    var lab=el("label","chk");
-    var cb=document.createElement("input");cb.type="checkbox";cb.checked=!!state[id];
-    var tx=el("span","txt",it.t);
-    if(it.w){var wn=el("span","when"+(it.u?" u":""),it.w);tx.appendChild(wn)}
-    cb.addEventListener("change",function(){
-      state[id]=cb.checked;S.set(key,state);
-      if(progMount)updateProg();
-      if(key==="ck_book")renderNext();
-    });
-    lab.appendChild(cb);lab.appendChild(tx);box.appendChild(lab);
-  });
-  function updateProg(){
-    var n=items.filter(function(_,i){return state[prefix+i]}).length;
-    $(progMount).textContent=n+" of "+items.length+" done";
+
+function renderNext(){
+  var done=S.get("ck_book",{});
+  var pending=sortedBookings().filter(function(b){return !done["b"+b.i]});
+  var box=$("#nextUp");box.innerHTML="";
+  if(!pending.length){
+    var ok=el("div","alert");ok.appendChild(el("div","k","Bookings"));
+    ok.appendChild(el("div","v","All ticked off. Nothing left to book."));box.appendChild(ok);return;
   }
-  if(progMount)updateProg();
+  var over=pending.filter(function(x){return dueInfo(x).cls==="over"});
+  var b=pending[0],d=dueInfo(b);
+  var a=el("div","alert");
+  a.appendChild(el("div","k","Next to book"));
+  a.appendChild(el("div","v",b.t));
+  a.appendChild(el("div","d",b.w+"  ·  "+d.label+(pending.length>1?"  ·  "+(pending.length-1)+" more after this":"")));
+  if(over.length){
+    var w=el("div","d",over.length===1
+      ? "One deadline has already gone: "+over[0].t+". Tick it off or sort it out."
+      : over.length+" deadlines have already gone. They are marked in the list below.");
+    w.style.color="var(--momiji)";w.style.fontWeight="700";
+    a.appendChild(w);
+  }
+  box.appendChild(a);
+}
+
+function mapLink(q){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q)}
+
+function stayBlock(key){
+  var s=STAY[key],w=el("div","stay");
+  w.appendChild(el("div","nm",s.nm));
+  w.appendChild(el("div","ad",s.ad));
+  var t=document.createElement("a");t.className="tel";t.href="tel:"+s.tel;t.textContent="Call "+s.host;w.appendChild(t);
+  var m=document.createElement("a");m.className="tel g";m.href=mapLink(s.ad);m.target="_blank";m.rel="noopener";m.textContent="Map";w.appendChild(m);
+  if(s.jp){
+    var d=el("button","tel","Show a driver");d.type="button";
+    d.addEventListener("click",function(){showStay(key)});
+    w.appendChild(d);
+  }
+  w.appendChild(el("div","ref",s.ref));
+  return w;
+}
+function showStay(key){
+  var s=STAY[key];
+  openShow({kicker:"Take me here, please",jp:s.jp,
+    romaji:"ここまでお願いします — Koko made onegaishimasu",
+    en:s.nm+"  ·  "+s.telShow,
+    foot:s.jpNote||"Show the screen rather than reading it out. Fares are metered and tips are not a thing."});
+}
+
+function spotsBlock(spots){
+  var w=el("div","spots");
+  spots.forEach(function(q){
+    var a=document.createElement("a");
+    a.href=mapLink(q);a.target="_blank";a.rel="noopener";a.textContent=q.replace(/ (Station|Kyoto|Osaka|Kamakura|Tokyo|Amanohashidate)$/,"");
+    w.appendChild(a);
+  });
+  return w;
+}
+function lastBlock(txt){
+  var w=el("div","last");
+  w.appendChild(el("b",null,"Don't miss: "));
+  w.appendChild(document.createTextNode(txt));
+  return w;
+}
+
+function renderToday(){
+  var box=$("#todayCard");box.innerHTML="";
+  var d=idx>=0?DAYS[idx]:DAYS[0];
+  $("#todayHead").textContent=idx>=0?"Today":"Day one";
+  var h=el("div");
+  h.appendChild(el("div",null,fmtDate(d.d)+", "+d.dow+" — "+d.t));
+  h.style.fontWeight="700";h.style.marginBottom="8px";
+  box.appendChild(h);
+  d.p.forEach(function(p){var e=el("p",null,p);e.style.marginBottom="9px";e.style.fontSize="15px";box.appendChild(e)});
+  if(d.spots)box.appendChild(spotsBlock(d.spots));
+  if(d.last)box.appendChild(lastBlock(d.last));
+  if(d.stay)box.appendChild(stayBlock(d.stay));
+}
+
+function renderDays(){
+  var box=$("#dayList");box.innerHTML="";
+  DAYS.forEach(function(d,i){
+    var w=el("div","day"+(d.d===today?" cur":""));
+    var btn=el("button","head");btn.type="button";btn.setAttribute("aria-expanded","false");
+    btn.appendChild(el("span","n",String(i+1)));
+    var lbl=el("span","dt",fmtDate(d.d)+" "+d.dow);
+    btn.appendChild(lbl);
+    btn.appendChild(el("span","cty",d.city));
+    var body=el("div","body");
+    d.p.forEach(function(p){body.appendChild(el("p",null,p))});
+    if(d.spots)body.appendChild(spotsBlock(d.spots));
+    if(d.last)body.appendChild(lastBlock(d.last));
+    if(d.stay)body.appendChild(stayBlock(d.stay));
+    btn.addEventListener("click",function(){
+      var open=w.classList.toggle("open");
+      btn.setAttribute("aria-expanded",open?"true":"false");
+    });
+    w.appendChild(btn);w.appendChild(body);box.appendChild(w);
+    if(d.d===today)w.classList.add("open");
+  });
+}
+
+/* ---------- currency ---------- */
+var FX_SOURCES=[
+ {n:"the ECB",u:"https://api.frankfurter.dev/v2/rate/JPY/INR",pick:function(d){return d&&d.rate}},
+ {n:"ExchangeRate-API",u:"https://open.er-api.com/v6/latest/JPY",pick:function(d){return d&&d.rates&&d.rates.INR}},
+ {n:"Currency API",u:"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/jpy.min.json",pick:function(d){return d&&d.jpy&&d.jpy.inr}},
+ {n:"Currency API",u:"https://currency-api.pages.dev/v1/currencies/jpy.min.json",pick:function(d){return d&&d.jpy&&d.jpy.inr}}
+];
+var fx=S.get("fx",null);
+if(!fx){ var legacy=S.get("rate",null);
+  fx=legacy?{rate:legacy,ts:0,src:null,manual:true,failed:false}:{rate:0.58,ts:0,src:null,manual:false,failed:false}; }
+var rate=fx.rate, fxBusy=false;
+
+function num(v){var n=parseFloat(String(v).replace(/[^\d.]/g,""));return isNaN(n)?0:n}
+function showRate(v){return String(Math.round(v*10000)/10000)}
+function fmtINR(n){return String(Math.round(n*100)/100)}
+function fromYen(){$("#inr").value=fmtINR(num($("#jpy").value)*rate)}
+function fromInr(){$("#jpy").value=Math.round(num($("#inr").value)/rate)}
+
+function ago(ts){
+  var m=Math.floor((Date.now()-ts)/60000);
+  if(m<2)return "just now";
+  if(m<60)return m+" minutes ago";
+  var h=Math.round(m/60); if(h<24)return h===1?"an hour ago":h+" hours ago";
+  var d=Math.round(h/24); return d===1?"yesterday":d+" days ago";
+}
+
+function renderFxStatus(){
+  var st=$("#fxStatus"), btn=$("#fxRefresh");
+  if(!st)return;
+  btn.disabled=fxBusy; btn.textContent=fxBusy?"Checking…":"Refresh";
+  if(fx.manual){
+    st.innerHTML='<span class="dot off"></span>Your own rate.';
+    btn.textContent="Use the live rate"; return;
+  }
+  if(!fx.ts){
+    st.innerHTML=fx.failed
+      ? '<span class="dot off"></span>No connection. Using a placeholder — set it yourself above.'
+      : '<span class="dot off"></span>Checking the rate…';
+    return;
+  }
+  var days=(Date.now()-fx.ts)/86400000;
+  var cls=fx.failed||days>3?"stale":"";
+  st.innerHTML='<span class="dot '+cls+'"></span>'+
+    (fx.failed ? "Saved rate from "+ago(fx.ts)+". Couldn't refresh."
+               : "Live from "+esc(fx.src)+", "+ago(fx.ts)+".");
+}
+
+function applyRate(v){
+  rate=v; var f=$("#rate"); if(f)f.value=showRate(v);
+  fromYen(); refreshChips(); renderBuyTotal(); renderFxStatus();
+}
+
+function fetchRate(){
+  if(typeof fetch!=="function"){fx.failed=true;renderFxStatus();return}
+  fxBusy=true; renderFxStatus();
+  var i=0;
+  (function next(){
+    if(i>=FX_SOURCES.length){
+      fxBusy=false; fx.failed=true; S.set("fx",fx); renderFxStatus(); return;
+    }
+    var src=FX_SOURCES[i++], done=false;
+    var ctl=(typeof AbortController==="function")?new AbortController():null;
+    var timer=setTimeout(function(){if(!done&&ctl)ctl.abort()},7000);
+    fetch(src.u,ctl?{signal:ctl.signal}:undefined)
+      .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
+      .then(function(d){
+        var v=src.pick(d);
+        if(!(v>0)||v>100)throw new Error("bad rate");
+        done=true; clearTimeout(timer); fxBusy=false;
+        fx={rate:v,ts:Date.now(),src:src.n,manual:false,failed:false};
+        S.set("fx",fx); applyRate(v);
+      })
+      .catch(function(){done=true;clearTimeout(timer);next()});
+  })();
+}
+
+function refreshChips(){
+  var chips=$("#chips"); if(!chips)return;
+  chips.innerHTML="";
+  [100,500,1000,3000,5000,10000].forEach(function(v){
+    var b=el("button","chip");b.type="button";
+    b.innerHTML="¥"+v.toLocaleString("en-US")+" <b>≈ ₹"+Math.round(v*rate).toLocaleString("en-IN")+"</b>";
+    b.addEventListener("click",function(){$("#jpy").value=v;fromYen()});
+    chips.appendChild(b);
+  });
+}
+
+function initMoney(){
+  $("#rate").value=showRate(rate);
+  $("#jpy").addEventListener("input",fromYen);
+  $("#inr").addEventListener("input",fromInr);
+  $("#rate").addEventListener("input",function(){
+    var r=num(this.value);
+    if(r>0){fx.manual=true;fx.rate=r;S.set("fx",fx);rate=r;fromYen();refreshChips();renderBuyTotal();renderFxStatus()}
+  });
+  $("#fxRefresh").addEventListener("click",function(){
+    if(fxBusy)return;
+    fx.manual=false; S.set("fx",fx); fetchRate();
+  });
+  fromYen(); refreshChips(); renderFxStatus();
+  if(!fx.manual) fetchRate();
+}
+
+/* re-check when the Money tab is opened, if the saved rate has gone cold */
+function maybeRefresh(){
+  if(fx.manual||fxBusy)return;
+  if(!fx.ts||Date.now()-fx.ts>6*3600000) fetchRate();
+}
+
+/* ---------- splitter ---------- */
+var PEOPLE=["Arnav","Ayush","Manan"];
+var exps=S.get("exps",[]);
+var expWho=S.get("expWho","All");
+var budget=S.get("budget",0);
+
+function expDay(x){return x.ts?new Date(x.ts).toISOString().slice(0,10):null}
+function expTotals(){
+  var paid={},total=0;
+  PEOPLE.forEach(function(p){paid[p]=0});
+  exps.forEach(function(x){paid[x.p]=(paid[x.p]||0)+x.a;total+=x.a});
+  return {paid:paid,total:total,share:total/PEOPLE.length};
+}
+function renderFilter(){
+  var box=$("#expFilter");if(!box)return;
+  box.innerHTML="";
+  ["All"].concat(PEOPLE).forEach(function(p){
+    var b=el("button",null,p);b.type="button";
+    b.setAttribute("aria-pressed",p===expWho?"true":"false");
+    b.addEventListener("click",function(){expWho=p;S.set("expWho",p);renderExps()});
+    box.appendChild(b);
+  });
+}
+function renderExps(){
+  renderFilter();
+  var box=$("#expList");box.innerHTML="";
+  var shown=exps.map(function(x,i){return {x:x,i:i}})
+                .filter(function(o){return expWho==="All"||o.x.p===expWho});
+  if(!exps.length){
+    box.appendChild(el("p","note","Nothing logged yet. Add the first thing someone pays for."));
+  }else if(!shown.length){
+    box.appendChild(el("p","note",expWho+" hasn't paid for anything yet."));
+  }
+  shown.forEach(function(o){
+    var x=o.x,r=el("div","exp");
+    r.appendChild(el("span",null,x.d||"Expense"));
+    r.appendChild(el("span","who",x.p));
+    if(x.ts)r.appendChild(el("span","dd",fmtDate(expDay(x))));
+    r.appendChild(el("span","amt",yen(x.a)));
+    var del=el("button",null,"×");del.type="button";del.setAttribute("aria-label","Remove "+(x.d||"expense"));
+    del.addEventListener("click",function(){exps.splice(o.i,1);S.set("exps",exps);renderExps();touchCloud()});
+    r.appendChild(del);box.appendChild(r);
+  });
+  var t=expTotals();
+  var s=$("#settle");s.innerHTML="";
+  s.appendChild(el("div","ttl","Total "+yen(t.total)+" · "+yen(t.share)+" each"));
+  if(t.total===0){s.appendChild(el("div",null,"Even, for now."))}
+  else PEOPLE.forEach(function(p){
+    var bal=t.paid[p]-t.share,line;
+    if(Math.abs(bal)<1)line=p+" is square";
+    else if(bal>0)line=p+" is owed "+yen(bal);
+    else line=p+" owes "+yen(-bal);
+    s.appendChild(el("div",null,line));
+  });
+  renderPace();
+}
+
+/* how fast the money is going */
+function renderPace(){
+  var box=$("#pace");if(!box)return;
+  box.innerHTML="";
+  var t=expTotals();
+  var todaySpend=0,daysWithSpend={};
+  exps.forEach(function(x){
+    var dd=expDay(x); if(!dd)return;
+    daysWithSpend[dd]=true;
+    if(dd===today)todaySpend+=x.a;
+  });
+  var onTrip=idx>=0;
+  var elapsed=onTrip?idx+1:Object.keys(daysWithSpend).length;
+  var left=onTrip?DAYS.length-idx-1:DAYS.length;
+
+  box.appendChild(el("div","big",yen(onTrip?todaySpend:t.total)));
+  box.appendChild(el("div","sub",(onTrip?"today, the three of you":"logged so far")+"  ·  ≈ ₹"+Math.round((onTrip?todaySpend:t.total)*rate).toLocaleString("en-IN")));
+
+  var rest=el("div","rest");
+  if(onTrip){
+    var avg=elapsed?t.total/elapsed:0;
+    rest.appendChild(el("span",null,"Day "+elapsed+" of "+DAYS.length+" · "+yen(t.total)+" total · "+yen(avg)+" a day between you"));
+    rest.appendChild(el("span",null,left+" day"+(left===1?"":"s")+" to go"+(budget>0?" · "+yen(budget*PEOPLE.length*left)+" of budget left":"")));
+  }else{
+    var untilGo=dayDiff(today,DAYS[0].d);
+    rest.appendChild(el("span",null,untilGo>0?("Trip starts in "+untilGo+" days. This starts counting on the 24th."):"Trip's over. This is the final tally."));
+    if(budget>0)rest.appendChild(el("span",null,"At "+yen(budget)+" each a day, the whole trip budgets to "+yen(budget*PEOPLE.length*DAYS.length)+"."));
+  }
+  box.appendChild(rest);
+
+  var bud=el("div","bud");
+  var lab=document.createElement("label");lab.setAttribute("for","budIn");lab.textContent="Budget ¥";
+  var inp=document.createElement("input");inp.id="budIn";inp.type="text";inp.inputMode="numeric";
+  inp.value=budget>0?String(budget):"";inp.placeholder="0";inp.setAttribute("aria-label","Budget in yen per person per day");
+  inp.addEventListener("input",function(){budget=num(inp.value);S.set("budget",budget)});
+  inp.addEventListener("change",function(){renderPace();touchCloud()});
+  bud.appendChild(lab);bud.appendChild(inp);
+  bud.appendChild(el("span",null,budget>0?("each, a day \u2014 "+yen(budget*PEOPLE.length)+" between you"):"each, a day"));
+  if(budget>0&&onTrip){
+    var over=todaySpend-budget*PEOPLE.length;
+    bud.appendChild(el("span","tag",over>0?("· "+yen(over)+" over today"):("· "+yen(-over)+" left today")));
+  }
+  box.appendChild(bud);
+}
+
+function expSummary(){
+  var t=expTotals();
+  var L=["Japan 2026 — who owes what",
+         "Total "+yen(t.total)+" (≈ ₹"+Math.round(t.total*rate).toLocaleString("en-IN")+")",
+         yen(t.share)+" each",""];
+  PEOPLE.forEach(function(p){
+    var bal=t.paid[p]-t.share;
+    L.push(p+": paid "+yen(t.paid[p])+" — "+
+      (Math.abs(bal)<1?"square":bal>0?("is owed "+yen(bal)):("owes "+yen(-bal))));
+  });
+  L.push("");
+  L.push(exps.length+" expense"+(exps.length===1?"":"s")+" logged.");
+  return L.join("\n");
+}
+
+function initSplit(){
+  $("#eAdd").addEventListener("click",function(){
+    var a=num($("#eAmt").value);
+    if(a<=0){$("#eAmt").focus();return}
+    exps.push({d:$("#eDesc").value.trim(),a:a,p:$("#ePayer").value,ts:Date.now()});
+    S.set("exps",exps);$("#eDesc").value="";$("#eAmt").value="";renderExps();
+    touchCloud();
+  });
+  $("#eAmt").addEventListener("keydown",function(e){if(e.key==="Enter")$("#eAdd").click()});
+  $("#eDesc").addEventListener("keydown",function(e){if(e.key==="Enter")$("#eAmt").focus()});
+
+  $("#expCopy").addEventListener("click",function(){
+    copyText(expSummary(),function(ok){flash("#expFlash",ok?"Summary copied. Paste it in the group.":"Couldn't copy — open Export and copy it by hand.")});
+  });
+  $("#expShare").addEventListener("click",function(){
+    var txt=expSummary();
+    if(navigator.share){navigator.share({text:txt}).catch(function(){});}
+    else copyText(txt,function(ok){flash("#expFlash",ok?"No share sheet here, so it's copied instead.":"Couldn't copy.")});
+  });
+  $("#expIO").addEventListener("click",function(){
+    var pan=$("#ioPanel"),on=pan.classList.toggle("on");
+    if(on)$("#ioText").value=JSON.stringify({v:1,exps:exps});
+  });
+  $("#ioCopy").addEventListener("click",function(){
+    copyText($("#ioText").value,function(ok){flash("#expFlash",ok?"Copied. Whoever pastes it in gets the same list.":"Couldn't copy — select it and copy by hand.")});
+  });
+  $("#ioLoad").addEventListener("click",function(){
+    var raw=$("#ioText").value.trim();
+    if(!raw){flash("#expFlash","Paste the code in the box first.");return}
+    var o;
+    try{o=JSON.parse(raw)}catch(e){flash("#expFlash","That isn't the expense code — check you copied all of it.");return}
+    var list=o&&o.exps;
+    if(!list||typeof list.length!=="number"){flash("#expFlash","That isn't the expense code.");return}
+    var clean=[];
+    for(var i=0;i<list.length;i++){
+      var x=list[i];
+      if(!x||typeof x!=="object")continue;
+      var amt=num(x.a);
+      if(!(amt>0))continue;
+      clean.push({d:String(x.d||"").slice(0,80),a:amt,
+                  p:PEOPLE.indexOf(x.p)>=0?x.p:PEOPLE[0],
+                  ts:typeof x.ts==="number"?x.ts:undefined});
+    }
+    if(!confirm("Replace the "+exps.length+" expense"+(exps.length===1?"":"s")+" on this phone with "+clean.length+" from the box?"))return;
+    exps=clean;S.set("exps",exps);renderExps();
+    touchCloud();
+    flash("#expFlash","Imported "+clean.length+" and synced to cloud.");
+  });
+  var er=$("#expRefresh");
+  if(er)er.addEventListener("click",function(){cloudPull(true)});
+  renderExps();
+}
+
+/* ---------- shared cloud sync (via JSONBin) ---------- */
+var CLOUD_BIN="6abeafc0ffd5d1605343bce8";
+var CLOUD_KEY="$2a$10$NzE3zw6Cmlj2MnQr/Q5HQeJRKS.1xQTXVgw7h8sJT328Fu9GXg0Aa";
+var CLOUD_URL="https://api.jsonbin.io/v3/b/"+CLOUD_BIN;
+var BUY_BIN=CLOUD_BIN,BUY_KEY=CLOUD_KEY,BUY_URL=CLOUD_URL;
+
+var CHECK_KEYS=["ck_book","ck_docs","ck_pack","ck_daily","ck_before","ck_need","ck_gift"];
+function getChecksMap(){
+  var o={};
+  CHECK_KEYS.forEach(function(k){o[k]=S.get(k,{})});
+  return o;
+}
+
+function normalizeExps(raw){
+  if(!raw||!Array.isArray(raw))return [];
+  var clean=[];
+  for(var i=0;i<raw.length;i++){
+    var x=raw[i];
+    if(!x||typeof x!=="object")continue;
+    var amt=num(x.a);
+    if(!(amt>0))continue;
+    clean.push({
+      d:String(x.d||"").slice(0,80),
+      a:amt,
+      p:PEOPLE.indexOf(x.p)>=0?x.p:PEOPLE[0],
+      ts:typeof x.ts==="number"?x.ts:undefined
+    });
+  }
+  return clean;
+}
+
+function emptyBuyMap(){var o={};PEOPLE.forEach(function(p){o[p]=[]});return o}
+function normalizeBuyMap(raw){
+  var o=emptyBuyMap();
+  if(!raw||typeof raw!=="object")return o;
+  PEOPLE.forEach(function(p){
+    var arr=raw[p];
+    if(!arr||typeof arr.length!=="number")return;
+    o[p]=[];
+    for(var i=0;i<arr.length;i++){
+      var b=arr[i]; if(!b)continue;
+      var t=String(b.t||"").trim(); if(!t)continue;
+      o[p].push({t:t,a:num(b.a),k:!!b.k});
+    }
+  });
+  return o;
+}
+function buyIsEmpty(m){
+  return PEOPLE.every(function(p){return !(m[p]&&m[p].length)});
+}
+var buyWho=S.get("buyWho",PEOPLE[0]);
+if(PEOPLE.indexOf(buyWho)<0)buyWho=PEOPLE[0];
+var buyMap=normalizeBuyMap(S.get("buyMap",null));
+var cloudTs=S.get("cloudTs",S.get("buyTs",0));
+var buyTs=cloudTs;
+var cloudDirty=false,cloudBusy=false,cloudPushTimer=null,cloudLastPull=0,cloudGen=0;
+var cloudPullQueued=null;
+
+/* one-time: fold old phone-only list into whoever's selected */
+(function(){
+  var old=S.get("buy",null);
+  if(!old||typeof old.length!=="number"||!old.length)return;
+  if(!buyIsEmpty(buyMap)){S.del("buy");return}
+  buyMap[buyWho]=old.map(function(b){return {t:String(b.t||"").trim(),a:num(b.a),k:!!b.k}}).filter(function(b){return b.t});
+  S.set("buyMap",buyMap);S.del("buy");cloudDirty=true;cloudGen++;
+})();
+
+function buys(){return buyMap[buyWho]||(buyMap[buyWho]=[])}
+function saveBuysLocal(){S.set("buyMap",buyMap);S.set("buyTs",cloudTs);S.set("cloudTs",cloudTs);S.set("buyWho",buyWho)}
+
+function cloudPayload(){
+  var o={
+    ts:cloudTs,
+    exps:exps,
+    budget:budget,
+    checks:getChecksMap(),
+    fujiSwap:!!fujiSwapped,
+    lists:{
+      docs:getList("docs"),
+      pack:getList("pack"),
+      daily:getList("daily"),
+      before:getList("before"),
+      need:getList("need"),
+      gift:getList("gift"),
+      book:getList("book")
+    }
+  };
+  PEOPLE.forEach(function(p){o[p]=buyMap[p]||[]});
+  return o;
+}
+function buyPayload(){return cloudPayload()}
+
+function setCloudStatus(msg){
+  flash("#buyFlash",msg);
+  flash("#expFlash",msg);
+  flash("#listFlash",msg);
+}
+function setBuyStatus(msg){setCloudStatus(msg)}
+
+function touchCloud(){
+  cloudDirty=true;cloudGen++;cloudTs=Date.now();
+  saveBuysLocal();
+  scheduleCloudPush();
+}
+function touchBuys(){touchCloud()}
+
+function scheduleCloudPush(){
+  clearTimeout(cloudPushTimer);
+  cloudPushTimer=setTimeout(function(){cloudPush()},300);
+}
+function scheduleBuyPush(){scheduleCloudPush()}
+
+function cloudHeaders(write){
+  var h={"X-Access-Key":CLOUD_KEY};
+  if(write)h["Content-Type"]="application/json";
+  return h;
+}
+function buyHeaders(write){return cloudHeaders(write)}
+
+function cloudRunQueued(){
+  if(cloudPullQueued===null||cloudBusy)return;
+  var force=!!cloudPullQueued;
+  cloudPullQueued=null;
+  cloudPull(force);
+}
+function buyRunQueued(){cloudRunQueued()}
+
+function cloudPush(cb){
+  if(typeof fetch!=="function"){setCloudStatus("No network API here — items stay on this phone.");if(cb)cb(false);return}
+  if(cloudBusy){scheduleCloudPush();if(cb)cb(false);return}
+  var gen=cloudGen;
+  var body=JSON.stringify(cloudPayload());
+  cloudBusy=true;
+  setCloudStatus("Saving…");
+  fetch(CLOUD_URL,{method:"PUT",headers:cloudHeaders(true),body:body,cache:"no-store"})
+    .then(function(r){
+      return r.text().then(function(t){
+        if(!r.ok)throw new Error(r.status+(t?" "+t.slice(0,120):""));
+        try{return JSON.parse(t)}catch(e){return {}}
+      });
+    })
+    .then(function(){
+      cloudBusy=false;
+      if(gen===cloudGen){
+        cloudDirty=false;
+        saveBuysLocal();
+        S.set("exps",exps);
+        S.set("budget",budget);
+        S.set("fujiSwap",fujiSwapped);
+        setCloudStatus("Synced.");
+      }
+      else{setCloudStatus("Saving…");scheduleCloudPush()}
+      if(cb)cb(true);
+      cloudRunQueued();
+    })
+    .catch(function(err){
+      cloudBusy=false;
+      var m=String(err&&err.message||err||"");
+      if(/401|403/.test(m))
+        setCloudStatus("Cloud refused the save — Access Key needs update permission on JSONBin.");
+      else
+        setCloudStatus("Couldn't sync — kept on this phone. Try Refresh when you're online.");
+      if(cb)cb(false);
+      cloudRunQueued();
+    });
+}
+function buyPush(cb){cloudPush(cb)}
+
+function cloudPull(force,cb){
+  if(typeof fetch!=="function"){if(cb)cb(false);return}
+  if(cloudBusy){
+    cloudPullQueued=force||cloudPullQueued;
+    if(force)setCloudStatus("Waiting for save to finish…");
+    if(cb)cb(false);return;
+  }
+  if(!force&&cloudLastPull&&Date.now()-cloudLastPull<8000){if(cb)cb(true);return}
+  if(cloudDirty){
+    if(force){
+      setCloudStatus("Saving local edits first…");
+      cloudPush(function(ok){if(ok)cloudPull(true,cb);else if(cb)cb(false)});
+      return;
+    }
+    scheduleCloudPush();if(cb)cb(false);return;
+  }
+  var gen=cloudGen;
+  cloudBusy=true;
+  if(force)setCloudStatus("Refreshing…");
+  fetch(CLOUD_URL+"/latest",{headers:cloudHeaders(false),cache:"no-store"})
+    .then(function(r){
+      return r.text().then(function(t){
+        if(!r.ok)throw new Error(r.status);
+        try{return JSON.parse(t)}catch(e){throw new Error("bad json")}
+      });
+    })
+    .then(function(d){
+      cloudBusy=false;cloudLastPull=Date.now();
+      if(cloudDirty||cloudGen!==gen){
+        setCloudStatus("Local edits waiting to sync…");
+        scheduleCloudPush();
+        if(cb)cb(true);cloudRunQueued();return;
+      }
+      var rec=(d&&d.record)?d.record:d;
+      var remote=normalizeBuyMap(rec);
+      var rts=(rec&&typeof rec.ts==="number")?rec.ts:0;
+      buyMap=remote;cloudTs=rts||Date.now();buyTs=cloudTs;
+      saveBuysLocal();
+      renderBuys();
+
+      if(Array.isArray(rec.exps)){
+        exps=normalizeExps(rec.exps);
+        S.set("exps",exps);
+        renderExps();
+      } else if(exps.length>0){
+        cloudDirty=true;
+      }
+
+      if(typeof rec.budget==="number"&&!isNaN(rec.budget)&&rec.budget>0){
+        budget=rec.budget;
+        S.set("budget",budget);
+        renderPace();
+      } else if(budget>0){
+        cloudDirty=true;
+      }
+
+      if(rec.lists&&typeof rec.lists==="object"){
+        ["docs","pack","daily","before","need","gift","book"].forEach(function(name){
+          if(Array.isArray(rec.lists[name])){
+            setList(name,rec.lists[name]);
+          }
+        });
+        renderAllChecks();
+      } else if(rec.checks&&typeof rec.checks==="object"){
+        CHECK_KEYS.forEach(function(k){
+          if(rec.checks[k]&&typeof rec.checks[k]==="object")
+            S.set(k,rec.checks[k]);
+        });
+        renderAllChecks();
+        cloudDirty=true;
+      } else {
+        cloudDirty=true;
+      }
+
+      if(typeof rec.fujiSwap==="boolean"){
+        if(fujiSwapped!==rec.fujiSwap){
+          fujiSwapped=rec.fujiSwap;
+          S.set("fujiSwap",fujiSwapped);
+          doSwap();
+          renderStatus();renderToday();renderDays();renderWxToday();renderFuji();
+        }
+      } else if(fujiSwapped){
+        cloudDirty=true;
+      }
+
+      if(cloudDirty){
+        scheduleCloudPush();
+      } else if(force){
+        setCloudStatus("Synced with cloud.");
+      }
+      if(cb)cb(true);
+      cloudRunQueued();
+    })
+    .catch(function(){
+      cloudBusy=false;
+      setCloudStatus("Couldn't reach cloud. Showing what's saved on this phone.");
+      if(cb)cb(false);
+      cloudRunQueued();
+    });
+}
+function buyPull(force,cb){cloudPull(force,cb)}
+
+var cloudPollTimer=null;
+function startCloudPoll(){
+  stopCloudPoll();
+  cloudPollTimer=setInterval(function(){
+    if(document.visibilityState==="hidden"||cloudDirty||cloudBusy)return;
+    cloudPull(false);
+  },15000);
+}
+function stopCloudPoll(){
+  if(cloudPollTimer){clearInterval(cloudPollTimer);cloudPollTimer=null}
+}
+function startBuyPoll(){startCloudPoll()}
+function stopBuyPoll(){stopCloudPoll()}
+
+function renderBuyWho(){
+  var box=$("#buyWho");if(!box)return;
+  box.innerHTML="";
+  PEOPLE.forEach(function(p){
+    var b=el("button",null,p);b.type="button";
+    b.setAttribute("aria-pressed",p===buyWho?"true":"false");
+    b.addEventListener("click",function(){buyWho=p;S.set("buyWho",p);renderBuys()});
+    box.appendChild(b);
+  });
+}
+function renderBuyTotal(){
+  var box=$("#buyTotal"); if(!box)return;
+  var list=buys(),got=0,plan=0;
+  list.forEach(function(b){plan+=b.a||0;if(b.k)got+=b.a||0});
+  box.innerHTML="";
+  box.appendChild(el("div","big",yen(got)));
+  box.appendChild(el("div","sub",buyWho+" · spent so far  ·  ≈ ₹"+Math.round(got*rate).toLocaleString("en-IN")));
+  var left=plan-got;
+  var r=el("div","rest");
+  if(!list.length)r.textContent="Nothing on "+buyWho+"'s list yet.";
+  else if(left>0)r.textContent="Still to buy: "+yen(left)+" across "+list.filter(function(b){return !b.k}).length+" things";
+  else r.textContent="Everything on "+buyWho+"'s list is bought.";
+  box.appendChild(r);
+}
+function renderBuys(){
+  renderBuyWho();
+  var box=$("#buyList"); if(!box)return;
+  var list=buys();
+  box.innerHTML="";
+  if(!list.length)box.appendChild(el("p","note","Empty. Add the first thing "+buyWho+" wants."));
+  list.forEach(function(b,i){
+    var r=el("div","buy"+(b.k?" got":""));
+    var cb=document.createElement("input");cb.type="checkbox";cb.checked=!!b.k;
+    cb.setAttribute("aria-label","Bought "+(b.t||"item"));
+    cb.addEventListener("change",function(){
+      b.k=cb.checked;
+      r.className="buy"+(b.k?" got":"");
+      touchCloud();
+      renderBuyTotal();
+    });
+    r.appendChild(cb);
+    r.appendChild(el("span","txt",b.t||"Item"));
+    if(b.a>0){
+      var a=el("span","amt",yen(b.a));
+      a.appendChild(el("small",null,"≈ ₹"+Math.round(b.a*rate).toLocaleString("en-IN")));
+      r.appendChild(a);
+    }
+    var x=el("button","x","×");x.type="button";x.setAttribute("aria-label","Remove "+(b.t||"item"));
+    x.addEventListener("click",function(){buys().splice(i,1);touchCloud();renderBuys()});
+    r.appendChild(x);
+    box.appendChild(r);
+  });
+  renderBuyTotal();
+}
+
+function initBuy(){
+  $("#bAdd").addEventListener("click",function(){
+    var t=$("#bDesc").value.trim(); if(!t){$("#bDesc").focus();return}
+    buys().push({t:t,a:num($("#bAmt").value),k:false});
+    touchCloud();$("#bDesc").value="";$("#bAmt").value="";renderBuys();$("#bDesc").focus();
+  });
+  [$("#bDesc"),$("#bAmt")].forEach(function(f){
+    f.addEventListener("keydown",function(e){if(e.key==="Enter")$("#bAdd").click()});
+  });
+  $("#buyRefresh").addEventListener("click",function(){
+    cloudPull(true);
+  });
+  renderBuys();
+}
+
+/* ---------- weather, and the Fuji decision ---------- */
+var WX_CODES={0:"clear",1:"mostly clear",2:"partly cloudy",3:"overcast",45:"fog",48:"freezing fog",
+ 51:"light drizzle",53:"drizzle",55:"heavy drizzle",56:"freezing drizzle",57:"freezing drizzle",
+ 61:"light rain",63:"rain",65:"heavy rain",66:"freezing rain",67:"freezing rain",
+ 71:"light snow",73:"snow",75:"heavy snow",77:"snow grains",
+ 80:"showers",81:"showers",82:"heavy showers",85:"snow showers",86:"snow showers",
+ 95:"thunderstorms",96:"thunderstorms",99:"thunderstorms"};
+function wxText(c){return WX_CODES[c]||"unsettled"}
+var wxCache=S.get("wxCache",{});
+var wxBusy={};
+
+function wxKey(ll){return ll[0].toFixed(2)+","+ll[1].toFixed(2)}
+function wxGet(ll,cb){
+  var k=wxKey(ll),hit=wxCache[k];
+  /* Always draw once, right now, with whatever we already have — otherwise a
+     redraw that lands mid-request (tapping Swap, say) never repaints at all. */
+  cb(hit?hit.data:null, hit?hit.ts:0);
+  var fresh=hit&&Date.now()-hit.ts<3*3600000;
+  if(fresh||wxBusy[k]||typeof fetch!=="function")return;
+  wxBusy[k]=true;
+  var u="https://api.open-meteo.com/v1/forecast?latitude="+ll[0]+"&longitude="+ll[1]+
+        "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max"+
+        "&hourly=cloud_cover&timezone=Asia%2FTokyo&forecast_days=16";
+  var ctl=(typeof AbortController==="function")?new AbortController():null;
+  var timer=setTimeout(function(){if(ctl)ctl.abort()},8000);
+  fetch(u,ctl?{signal:ctl.signal}:undefined)
+    .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
+    .then(function(d){
+      clearTimeout(timer);wxBusy[k]=false;
+      if(!d||!d.daily||!d.daily.time)throw new Error("bad shape");
+      wxCache[k]={ts:Date.now(),data:d};S.set("wxCache",wxCache);
+      cb(d,Date.now());
+    })
+    .catch(function(){clearTimeout(timer);wxBusy[k]=false;cb(hit?hit.data:null,hit?hit.ts:0)});
+}
+function wxForDate(d,iso){
+  if(!d||!d.daily||!d.daily.time)return null;
+  var i=d.daily.time.indexOf(iso);
+  if(i<0)return null;
+  var o={code:d.daily.weather_code[i],max:d.daily.temperature_2m_max[i],
+         min:d.daily.temperature_2m_min[i],pop:d.daily.precipitation_probability_max[i],
+         cloud:null,lastDay:d.daily.time[d.daily.time.length-1]};
+  if(d.hourly&&d.hourly.time&&d.hourly.cloud_cover){
+    var sum=0,n=0;
+    for(var j=0;j<d.hourly.time.length;j++){
+      var t=d.hourly.time[j];
+      if(t.slice(0,10)!==iso)continue;
+      var h=parseInt(t.slice(11,13),10);
+      if(h<6||h>13)continue;
+      var c=d.hourly.cloud_cover[j];
+      if(typeof c==="number"){sum+=c;n++}
+    }
+    if(n)o.cloud=sum/n;
+  }
+  return o;
+}
+function fujiVerdict(w){
+  var pop=typeof w.pop==="number"?w.pop:0, cl=w.cloud;
+  if(pop>=60||(w.code>=51&&w.code!==77))
+    return {cls:"no",say:"Swap it.",why:"Rain or snow on the forecast. You will stand in a car park looking at cloud."};
+  if(cl!==null&&cl<=30&&pop<30)
+    return {cls:"go",say:"Go.",why:"Clear morning. This is the day you booked it for."};
+  if(cl!==null&&cl<=60)
+    return {cls:"mid",say:"Probably fine.",why:"Broken cloud in the morning. Fuji comes and goes — check the webcam at 06:00 before you commit."};
+  if(cl!==null)
+    return {cls:"no",say:"Swap it.",why:"Heavy cloud through the morning. Kamakura does not care what the sky is doing."};
+  return {cls:"mid",say:"Toss-up.",why:"No cloud data, only the summary. Check the webcam before you leave."};
+}
+
+function wxLine(w){
+  return wxText(w.code)+" · "+Math.round(w.max)+"° / "+Math.round(w.min)+"°"+
+    (typeof w.pop==="number"?" · "+w.pop+"% rain":"")+
+    (w.cloud!==null?" · "+Math.round(w.cloud)+"% cloud, morning":"");
+}
+
+function renderWxToday(){
+  var box=$("#wxToday");if(!box)return;
+  if(idx<0||!DAYS[idx].ll){box.innerHTML="";return}
+  var d=DAYS[idx];
+  wxGet(d.ll,function(data,ts){
+    var w=data?wxForDate(data,d.d):null;
+    box.innerHTML="";
+    if(!w)return;
+    var c=el("div","wx");
+    var hd=el("div","hd");
+    hd.appendChild(el("b",null,d.city+" today"));
+    hd.appendChild(el("span","dy",ts?ago(ts):""));
+    c.appendChild(hd);
+    c.appendChild(el("div","nums",wxLine(w)));
+    if(w.min<=8)c.appendChild(el("div","why","Cold after dark. Take the jacket you were going to leave behind."));
+    else if(typeof w.pop==="number"&&w.pop>=50)c.appendChild(el("div","why","Take the umbrella."));
+    box.appendChild(c);
+  });
+}
+
+function renderFuji(){
+  var box=$("#fujiCard");if(!box)return;
+  var fd=fujiDay(),other=DAYS[fujiSwapped?FUJI_I:KAMA_I];
+  var draw=function(data,ts){
+    box.innerHTML="";
+    var c=el("div","wx"+(fujiSwapped?" swapped":""));
+    var hd=el("div","hd");
+    hd.appendChild(el("b",null,"The Fuji day — "+fmtDate(fd.d)+", "+fd.dow));
+    var n=dayDiff(today,fd.d);
+    hd.appendChild(el("span","dy",n>0?n+" days away":n===0?"today":"gone"));
+    c.appendChild(hd);
+
+    var w=data?wxForDate(data,fd.d):null;
+    if(n<0){
+      c.appendChild(el("div","why","Already done. Hope it was clear."));
+    }else if(w){
+      var v=fujiVerdict(w);
+      c.appendChild(el("div","verdict "+v.cls,v.say));
+      c.appendChild(el("div","nums",wxLine(w)));
+      c.appendChild(el("div","why",v.why+(ts?"  Forecast "+ago(ts)+".":"")));
+    }else{
+      var reach=data?wxForDate(data,DAYS[0].d):null;
+      c.appendChild(el("div","why","The forecast only reaches about 16 days out, so it doesn't cover "+fmtDate(fd.d)+" yet. Check back from around "+fmtDate(shiftISO(fd.d,-14))+". Until then the webcam and the JMA page are what you have."));
+    }
+    if(fujiSwapped)c.appendChild(el("div","why","Swapped: Fuji is now "+fmtDate(fd.d)+" and "+other.city+" is "+fmtDate(other.d)+". Your Fuji Excursion seats were booked for 26 Nov — change them on Eki-Net or you are paying twice."));
+
+    var acts=el("div","acts");
+    var cam=document.createElement("a");
+    cam.href="https://www.google.com/search?q=Mt+Fuji+live+camera+Kawaguchiko";
+    cam.target="_blank";cam.rel="noopener";cam.textContent="Webcam";acts.appendChild(cam);
+    var jma=document.createElement("a");
+    jma.href="https://www.jma.go.jp/bosai/forecast/#area_type=offices&area_code=190000";
+    jma.target="_blank";jma.rel="noopener";jma.textContent="JMA forecast";acts.appendChild(jma);
+    var sw=el("button","primary",fujiSwapped?"Swap them back":"Swap with "+other.city);
+    sw.type="button";sw.addEventListener("click",toggleFuji);
+    acts.appendChild(sw);
+    c.appendChild(acts);
+    box.appendChild(c);
+  };
+  if(fd.ll)wxGet(fd.ll,draw); else draw(null,0);
+}
+function shiftISO(iso,n){
+  var d=new Date(iso+"T12:00:00");d.setDate(d.getDate()+n);
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function toggleFuji(){
+  var to=fujiSwapped?"back the way they were":"round";
+  if(!confirm("Swap the Fuji day and the "+DAYS[fujiSwapped?FUJI_I:KAMA_I].city+" day "+to+"?\n\nThis only moves them in here. Any seats you have reserved for a particular date still need changing with the railway."))return;
+  fujiSwapped=!fujiSwapped;S.set("fujiSwap",fujiSwapped);
+  doSwap();
+  renderStatus();renderToday();renderDays();renderWxToday();renderFuji();
+  touchCloud();
+}
+
+/* ---------- dynamic lists and bookings (with add/delete/tick) ---------- */
+function dueAt(b){return b.when?new Date(b.when+"+05:30").getTime():null}
+function dueInfo(b){
+  var t=dueAt(b);
+  if(t===null)return {cls:"open",label:"book now",sort:0};
+  var ms=t-Date.now();
+  if(ms<0)return {cls:"over",label:"passed",sort:t};
+  var days=Math.floor(ms/86400000);
+  var lab=days===0?"today":days===1?"tomorrow":days+" days";
+  return {cls:days<=1?"soon":days<=7?"near":"",label:lab,sort:t};
+}
+function icsEscape(t){return String(t).replace(/([,;\\\\])/g,"\\$1").replace(/\n/g,"\\n")}
+function icsStamp(ms){
+  var d=new Date(ms),z=function(n){return String(n).padStart(2,"0")};
+  return d.getUTCFullYear()+z(d.getUTCMonth()+1)+z(d.getUTCDate())+"T"+
+         z(d.getUTCHours())+z(d.getUTCMinutes())+z(d.getUTCSeconds())+"Z";
+}
+function downloadICS(b){
+  var t=dueAt(b);if(t===null)return;
+  var L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Japan 2026//Trip//EN","CALSCALE:GREGORIAN",
+    "BEGIN:VEVENT","UID:japan2026-b"+b.id+"@local","DTSTAMP:"+icsStamp(Date.now()),
+    "DTSTART:"+icsStamp(t),"DTEND:"+icsStamp(t+30*60000),
+    "SUMMARY:"+icsEscape("Book: "+b.t),
+    "DESCRIPTION:"+icsEscape((b.w||"")+"\nJapan 2026, 24 Nov – 6 Dec."),
+    "BEGIN:VALARM","TRIGGER:-PT30M","ACTION:DISPLAY","DESCRIPTION:"+icsEscape(b.t),"END:VALARM",
+    "BEGIN:VALARM","TRIGGER:-PT5M","ACTION:DISPLAY","DESCRIPTION:"+icsEscape(b.t),"END:VALARM",
+    "END:VEVENT","END:VCALENDAR"];
+  var body=L.join("\r\n");
+  try{
+    var blob=new Blob([body],{type:"text/calendar;charset=utf-8"});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement("a");
+    a.href=url;a.download="japan2026-"+b.id+".ics";
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url)},4000);
+  }catch(e){
+    window.open("data:text/calendar;charset=utf-8,"+encodeURIComponent(body));
+  }
+}
+
+var LIST_DEFAULTS={
+  docs:DOCS,
+  pack:PACK,
+  daily:DAILY,
+  before:BEFORE,
+  need:NEED,
+  gift:GIFTS,
+  book:BOOKINGS
+};
+
+function initListItems(name){
+  var saved=S.get("items_"+name,null);
+  if(saved&&Array.isArray(saved))return saved;
+  var checkKey=name==="book"?"ck_book":("ck_"+name);
+  var oldChecks=S.get(checkKey,{});
+  var defaults=LIST_DEFAULTS[name]||[];
+  var list=defaults.map(function(item,i){
+    var id=name[0]+i;
+    return {
+      id:id,
+      t:item.t,
+      w:item.w||"",
+      u:!!item.u,
+      when:item.when||null,
+      k:!!oldChecks[id]
+    };
+  });
+  S.set("items_"+name,list);
+  return list;
+}
+
+var allLists={
+  docs:initListItems("docs"),
+  pack:initListItems("pack"),
+  daily:initListItems("daily"),
+  before:initListItems("before"),
+  need:initListItems("need"),
+  gift:initListItems("gift"),
+  book:initListItems("book")
+};
+
+function getList(name){
+  return allLists[name]||(allLists[name]=initListItems(name));
+}
+function setList(name,items){
+  allLists[name]=items;
+  S.set("items_"+name,items);
+}
+
+function renderBookings(){
+  var box=$("#list-book");if(!box)return;
+  var items=getList("book");
+  box.innerHTML="";
+  if(!items.length){
+    box.appendChild(el("p","note","No bookings yet. Add one above."));
+  }
+  var sorted=items.slice().sort(function(a,b){
+    if(!!a.k!==!!b.k)return a.k?1:-1;
+    var sa=dueInfo(a).sort,sb=dueInfo(b).sort;
+    if(sa!==sb)return sa-sb;
+    return (a.t||"").localeCompare(b.t||"");
+  });
+
+  sorted.forEach(function(b){
+    var on=!!b.k;
+    var r=el("div","bk"+(on?" done":""));
+    var cb=document.createElement("input");cb.type="checkbox";cb.checked=on;cb.id="cb-"+b.id;
+    cb.setAttribute("aria-label","Booking "+(b.t||"item")+" done");
+    cb.addEventListener("change",function(){
+      b.k=cb.checked;
+      setList("book",items);
+      renderBookings();
+      renderNext();
+      touchCloud();
+    });
+    r.appendChild(cb);
+
+    var lab=document.createElement("label");lab.className="txt";lab.setAttribute("for","cb-"+b.id);
+    lab.textContent=b.t;
+    if(b.w)lab.appendChild(el("span","when"+(b.u?" u":""),b.w));
+    r.appendChild(lab);
+
+    var side=el("div","side");
+    var d=dueInfo(b);
+    if(d.label)side.appendChild(el("span","due "+d.cls,d.label));
+    if(b.when&&!on){
+      var cal=el("button","cal","Alarm");cal.type="button";
+      cal.setAttribute("aria-label","Add calendar alarm for "+b.t);
+      cal.addEventListener("click",function(){downloadICS(b)});
+      side.appendChild(cal);
+    }
+    r.appendChild(side);
+
+    var x=el("button","x","×");x.type="button";
+    x.setAttribute("aria-label","Remove "+(b.t||"booking"));
+    x.addEventListener("click",function(){
+      var idx=items.indexOf(b);
+      if(idx>=0){
+        items.splice(idx,1);
+        setList("book",items);
+        renderBookings();
+        renderNext();
+        touchCloud();
+      }
+    });
+    r.appendChild(x);
+    box.appendChild(r);
+  });
+
+  var n=items.filter(function(x){return x.k}).length;
+  var pb=$("#prog-book");
+  if(pb)pb.textContent=n+" of "+items.length+" done";
+}
+
+function renderChecklist(name,mount,progMount){
+  var box=$(mount);if(!box)return;
+  var items=getList(name);
+  box.innerHTML="";
+  if(!items.length){
+    box.appendChild(el("p","note","Empty. Add an item above."));
+  }
+  items.forEach(function(it,i){
+    var r=el("div","chk"+(it.k?" got":""));
+    var cb=document.createElement("input");cb.type="checkbox";cb.checked=!!it.k;
+    cb.setAttribute("aria-label","Mark "+(it.t||"item")+" as done");
+    cb.addEventListener("change",function(){
+      it.k=cb.checked;
+      r.className="chk"+(it.k?" got":"");
+      setList(name,items);
+      touchCloud();
+      updateProg();
+    });
+    r.appendChild(cb);
+
+    var tx=el("span","txt",it.t);
+    if(it.w){
+      var wn=el("span","when"+(it.u?" u":""),it.w);
+      tx.appendChild(wn);
+    }
+    r.appendChild(tx);
+
+    var x=el("button","x","×");x.type="button";
+    x.setAttribute("aria-label","Remove "+(it.t||"item"));
+    x.addEventListener("click",function(){
+      items.splice(i,1);
+      setList(name,items);
+      touchCloud();
+      renderChecklist(name,mount,progMount);
+    });
+    r.appendChild(x);
+    box.appendChild(r);
+  });
+
+  function updateProg(){
+    if(!progMount)return;
+    var n=items.filter(function(x){return x.k}).length;
+    var elP=$(progMount);
+    if(elP)elP.textContent=n+" of "+items.length+" done";
+  }
+  updateProg();
+}
+
+function setupListAdder(name,inputId,btnId,mount,progMount){
+  var inp=$(inputId),btn=$(btnId);
+  if(!inp||!btn)return;
+  function add(){
+    var t=inp.value.trim();
+    if(!t){inp.focus();return}
+    var list=getList(name);
+    list.push({
+      id:name[0]+"_"+Date.now(),
+      t:t,
+      w:"",
+      k:false
+    });
+    setList(name,list);
+    inp.value="";
+    if(name==="book"){
+      renderBookings();
+      renderNext();
+    }else{
+      renderChecklist(name,mount,progMount);
+    }
+    touchCloud();
+    inp.focus();
+  }
+  btn.addEventListener("click",add);
+  inp.addEventListener("keydown",function(e){if(e.key==="Enter")add()});
+}
+
+function setupAllListAdders(){
+  setupListAdder("daily","#addDailyInput","#addDailyBtn","#dailyChecks",null);
+  setupListAdder("book","#addBookInput","#addBookBtn","#list-book","#prog-book");
+  setupListAdder("docs","#addDocsInput","#addDocsBtn","#list-docs","#prog-docs");
+  setupListAdder("pack","#addPackInput","#addPackBtn","#list-pack","#prog-pack");
+  setupListAdder("before","#addBeforeInput","#addBeforeBtn","#list-before","#prog-before");
+  setupListAdder("need","#addNeedInput","#addNeedBtn","#list-need","#prog-need");
+  setupListAdder("gift","#addGiftInput","#addGiftBtn","#list-gift","#prog-gift");
+}
+
+/* ---------- phrases and driver cards ---------- */
+function renderPhrases(){
+  var box=$("#phraseList");if(!box)return;
+  box.innerHTML="";
+  PHRASES.forEach(function(f){
+    var b=el("button","ph");b.type="button";
+    var tx=el("div","tx");
+    tx.appendChild(el("div","jp",f.jp));
+    tx.appendChild(el("div","en",f.r+" — "+f.e));
+    b.appendChild(tx);
+    b.appendChild(el("span","zoom","大"));
+    b.setAttribute("aria-label","Show "+f.r+" full screen");
+    b.addEventListener("click",function(){
+      openShow({kicker:"Show this to someone",jp:f.jp,romaji:f.r,en:f.e,foot:f.n||""});
+    });
+    box.appendChild(b);
+  });
+}
+function renderDrivers(){
+  var box=$("#driverList");if(!box)return;
+  box.innerHTML="";
+  ["tok","kyo","osa","hon"].forEach(function(k){
+    var s=STAY[k],w=el("div","stay");
+    w.style.marginBottom="10px";
+    var b=el("button","ph");b.type="button";
+    var tx=el("div","tx");
+    tx.appendChild(el("div","jp",s.hostJp));
+    tx.appendChild(el("div","en",s.name+" · "+s.addrJp));
+    b.appendChild(tx);
+    b.appendChild(el("span","zoom","大"));
+    b.setAttribute("aria-label","Show "+s.name+" address in Japanese");
+    b.addEventListener("click",function(){
+      openShow({kicker:"Show this to the taxi driver",jp:s.hostJp+"\n"+s.addrJp,romaji:s.addr,en:s.name+" · "+s.tel,foot:s.notes||""});
+    });
+    w.appendChild(b);
+    box.appendChild(w);
+  });
+}
+
+function renderNext(){
+  var box=$("#nextUp");if(!box)return;
+  box.innerHTML="";
+  var items=getList("book");
+  var pending=items.filter(function(b){return !b.k&&b.when})
+                   .sort(function(a,b){return dueInfo(a).sort-dueInfo(b).sort});
+  if(!pending.length)return;
+  var b=pending[0];
+  var c=el("div","card next");
+  c.appendChild(el("div","kicker","Next to book"));
+  c.appendChild(el("div","title",b.t));
+  c.appendChild(el("div","desc",b.w));
+  var d=dueInfo(b);
+  c.appendChild(el("div","due "+d.cls,"Due "+d.label));
+  box.appendChild(c);
 }
 
 /* ---------- tabs ---------- */
@@ -1933,8 +3406,7 @@ function initTabs(){
       window.scrollTo(0,0);
       S.set("tab",b.dataset.p);
       if(b.dataset.p==="money")maybeRefresh();
-      if(b.dataset.p==="buy"){buyPull(true);startBuyPoll()}
-      else stopBuyPoll();
+      if(!cloudDirty)cloudPull(false);
     });
   });
   var last=S.get("tab","now");
@@ -1960,6 +3432,17 @@ function initSW(){
 }
 
 /* ---------- go ---------- */
+function renderAllChecks(){
+  renderBookings();
+  renderChecklist("docs","#list-docs","#prog-docs");
+  renderChecklist("pack","#list-pack","#prog-pack");
+  renderChecklist("daily","#dailyChecks",null);
+  renderChecklist("before","#list-before","#prog-before");
+  renderChecklist("need","#list-need","#prog-need");
+  renderChecklist("gift","#list-gift","#prog-gift");
+  renderNext();
+}
+
 initTheme();
 initShow();
 renderStatus();
@@ -1967,40 +3450,45 @@ renderToday();
 renderDays();
 initMoney();
 initSplit();
-renderBookings();
-buildList(DOCS,"#list-docs","ck_docs","#prog-docs","d");
-buildList(PACK,"#list-pack","ck_pack","#prog-pack","p");
-buildList(DAILY,"#dailyChecks","ck_daily",null,"y");
-buildList(BEFORE,"#list-before","ck_before","#prog-before","f");
-buildList(NEED,"#list-need","ck_need","#prog-need","n");
-buildList(GIFTS,"#list-gift","ck_gift","#prog-gift","g");
+renderAllChecks();
+setupAllListAdders();
 initBuy();
 renderPhrases();
 renderDrivers();
 initDocs();
-renderNext();
 renderWxToday();
 renderFuji();
 initTabs();
 initSW();
 
 $("#resetAll").addEventListener("click",function(){
-  if(!confirm("Clear every tick on this phone? Expenses and the shared shopping lists are kept."))return;
-  ["ck_book","ck_docs","ck_pack","ck_daily","ck_before","ck_need","ck_gift"].forEach(S.del);
-  renderBookings();
-  buildList(DOCS,"#list-docs","ck_docs","#prog-docs","d");
-  buildList(PACK,"#list-pack","ck_pack","#prog-pack","p");
-  buildList(DAILY,"#dailyChecks","ck_daily",null,"y");
-  buildList(BEFORE,"#list-before","ck_before","#prog-before","f");
-buildList(NEED,"#list-need","ck_need","#prog-need","n");
-  buildList(GIFTS,"#list-gift","ck_gift","#prog-gift","g");
-  renderNext();
+  if(!confirm("Clear every tick across all phones? All list items, expenses and shopping lists are kept."))return;
+  ["docs","pack","daily","before","need","gift","book"].forEach(function(name){
+    var list=getList(name);
+    list.forEach(function(item){item.k=false});
+    setList(name,list);
+  });
+  renderAllChecks();
+  touchCloud();
 });
 
-/* the weather is worth a second look when you come back to the app */
+var lr=$("#listRefresh");
+if(lr)lr.addEventListener("click",function(){cloudPull(true)});
+
+/* visibility: push unsaved edits on leave, pull fresh updates on return */
 document.addEventListener("visibilitychange",function(){
-  if(document.visibilityState==="visible"){renderWxToday();renderFuji()}
+  if(document.visibilityState==="hidden"){
+    if(cloudDirty)cloudPush();
+    stopCloudPoll();
+    return;
+  }
+  renderWxToday();renderFuji();
+  if(!cloudDirty)cloudPull(true);
+  startCloudPoll();
 });
+
+cloudPull(false);
+startCloudPoll();
 </script>
 </body>
 </html>
