@@ -2,10 +2,11 @@
 
 Trip utility for Arnav, Ayush and Manan. 24 Nov – 6 Dec 2026.
 
-Static site, no build step, no dependencies, no backend. Most ticks and notes stay
-in each phone's local storage. The Buy shopping lists are the exception: those
-sync through a shared JSONBin record so all three of you see the same lists.
-Expenses can be shared by copying a code into WhatsApp.
+Static site, no build step, no dependencies, no backend. Shared trip data —
+the Buy shopping lists, Split-the-bill expenses, booking deadlines, checklists,
+and the Fuji day swap — automatically sync across Arnav, Ayush, and Manan's phones
+through a shared cloud JSON record (JSONBin). Personal passport scans remain strictly
+private on each phone's local IndexedDB.
 
 ## The six tabs
 
@@ -190,8 +191,10 @@ actually wake you — the web page can't.
 
 ## Money between the three of you
 
-The splitter assumes all three of you won't enter the same data, because you
-won't. So:
+Expenses and the budget automatically sync across all three phones through the cloud JSON record whenever you are online. Whenever someone logs or removes an expense, it updates for everyone.
+
+You also have:
+- **Refresh from cloud** to pull fresh additions from the others on demand.
 
 - **Copy summary** puts a plain-text who-owes-what on the clipboard for the group chat.
 - **Send to the others** uses the phone's share sheet where there is one.
