@@ -29,6 +29,7 @@
   --moss:#5D6A4E;
   --moss-bg:#5D6A4E;
   --on-bg:#EDEEE9;
+  --s0:#6F726C;--s1:#2a78d6;--s2:#1baf7a;--s3:#6250d6;--s4:#eb6834;
   --gothic:"Zen Kaku Gothic New","Hiragino Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mincho:"Zen Old Mincho","Hiragino Mincho ProN","Yu Mincho",Georgia,"Times New Roman",serif;
 }
@@ -47,6 +48,7 @@
     --moss:#9AAE84;
     --moss-bg:#4C5940;
     --on-bg:#EDEEE9;
+    --s0:#7C838A;--s1:#3987e5;--s2:#199e70;--s3:#9085e9;--s4:#d95926;
   }
 }
 :root[data-theme="dark"]{
@@ -63,8 +65,10 @@
   --moss:#9AAE84;
   --moss-bg:#4C5940;
   --on-bg:#EDEEE9;
+  --s0:#7C838A;--s1:#3987e5;--s2:#199e70;--s3:#9085e9;--s4:#d95926;
 }
 *{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 body{
   font-family:var(--gothic);
@@ -255,7 +259,7 @@ a.tel.g,button.tel.g{background:var(--moss-bg)}
 .buy .x{background:none;border:0;color:var(--sand);font-size:18px;cursor:pointer;line-height:1;padding:0 2px}
 .buy .x:hover{color:var(--momiji)}
 .tip{background:var(--card);border-left:4px solid var(--moss);padding:13px 15px;margin:14px 0 20px;font-size:14px;line-height:1.55}
-.tip b{display:block;font-size:13px;color:var(--moss);margin-bottom:3px}
+.tip>b:first-child{display:block;font-size:13px;color:var(--moss);margin-bottom:3px}
 
 /* info */
 .row{display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--sand);font-size:15px;align-items:baseline}
@@ -298,14 +302,144 @@ a.tel.g,button.tel.g{background:var(--moss-bg)}
 .show .foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--sand);font-size:14px;color:var(--ink-soft)}
 .show .close{position:fixed;top:calc(14px + env(safe-area-inset-top));right:16px;background:var(--card);border:1px solid var(--sand);color:var(--ink);border-radius:3px;font:500 15px var(--gothic);padding:8px 15px;cursor:pointer;z-index:61}
 
+/* watch guide */
+.wck{padding:14px 16px}
+.wck-in{display:flex;gap:12px;flex-wrap:wrap}
+.wck-in label{flex:1 1 130px;font-size:13px;color:var(--ink-soft)}
+.wck-in label small{font-size:12px}
+.wck-in input{display:block;width:100%;margin-top:3px;font:700 20px/1.2 var(--gothic);font-variant-numeric:tabular-nums;border:0;border-bottom:2px solid var(--sand);background:none;color:var(--ink);padding:3px 0}
+.wck-in input:focus{outline:none;border-bottom-color:var(--momiji)}
+.wck-out{font-size:14px;color:var(--ink-soft);margin-top:12px;padding-top:10px;border-top:1px solid var(--sand);line-height:1.5}
+.wck-out b{font-family:var(--mincho);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums}
+.wck-out .warn{color:var(--momiji)}
+.wf{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}
+.wf select{flex:1 1 120px;min-width:0;font:400 15px var(--gothic);border:1px solid var(--sand);border-radius:3px;padding:8px 9px;background:var(--field);color:var(--ink)}
+.wtog{display:flex;align-items:center;gap:7px;font-size:14px;border:1px solid var(--sand);border-radius:3px;padding:7px 11px;cursor:pointer;background:var(--field)}
+.wtog input{accent-color:var(--momiji-bg);width:16px;height:16px}
+.wbud{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-soft);margin-bottom:12px}
+.wbud input{flex:1;accent-color:var(--momiji-bg);min-width:0}
+.wbud span{font-weight:700;color:var(--ink);min-width:64px;text-align:right}
+.wcount{font-size:13px;color:var(--ink-soft);margin:-2px 0 6px}
+.w,.whd{display:grid;grid-template-columns:minmax(0,1fr) 66px 66px 42px;gap:8px;align-items:baseline}
+.whd{font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;padding:6px 0;border-bottom:2px solid var(--sand);position:sticky;top:0;background:var(--washi);z-index:2}
+.whd span:not(:first-child){text-align:right}
+h3.wband{font-family:var(--mincho);font-weight:600;font-size:16px;color:var(--ai);margin:18px 0 0;padding-bottom:4px;border-bottom:1px solid var(--sand)}
+h3.wband small{font-family:var(--gothic);font-weight:400;font-size:12px;color:var(--ink-soft);margin-left:6px}
+.w{padding:10px 0;border-bottom:1px solid var(--sand);font-size:14px}
+.w .wm{font-weight:700;font-size:15px;line-height:1.35;color:var(--ink)}
+.w .wmeta{font-size:12.5px;color:var(--ink-soft);line-height:1.4;margin-top:1px}
+.w .wmeta a{color:var(--ai)}
+.w .wnote{font-size:12.5px;color:var(--ink-soft);line-height:1.4;margin-top:3px}
+.w .wv{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1.3}
+.w .wv small{display:block;font-size:11.5px;color:var(--ink-soft)}
+.w .wv.jp{font-weight:700}
+.w .ws{font-weight:700;color:var(--moss)}
+.w .ws.neg{color:var(--momiji)}
+.w .wv.na{color:var(--ink-soft)}
+.wb{display:inline-block;font-size:11px;font-weight:700;line-height:1;border-radius:3px;padding:3px 6px;margin:4px 4px 0 0;white-space:nowrap}
+.wb.jp{color:var(--momiji);border:1px solid var(--momiji)}
+.wb.pick{background:var(--moss-bg);color:#fff}
+.wb.ok{color:var(--moss);border:1px solid var(--moss)}
+.wb.nr{color:var(--ink-soft);border:1px solid var(--sand)}
+.wline{padding:10px 0;border-bottom:1px solid var(--sand);font-size:14px}
+.wline .hd{display:flex;gap:10px;align-items:baseline}
+.wline .hd b{flex:1;font-size:15px;line-height:1.35}
+.wline .hd .r{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.wline .sub{font-size:12.5px;color:var(--ink-soft);line-height:1.45;margin-top:2px}
+.wline .sub a{color:var(--ai)}
+.wdisc{font-size:12.5px;color:var(--ink-soft);margin-top:18px;padding-top:12px;border-top:1px solid var(--sand);line-height:1.5}
+
+/* bakugai */
+
+.baku-hd h2 span{font-weight:700}
+.cartbar{background:var(--card);border-radius:3px;padding:10px 14px;margin:-4px 0 14px;font-size:13.5px;line-height:1.5}
+.cartbar .cb-t{color:var(--ink-soft)}
+.cartbar .cb-t b{color:var(--ink)}
+.cartbar .meter{margin:7px 0 6px}
+.meter{height:6px;border-radius:3px;background:var(--sand);overflow:hidden}
+.meter span{display:block;height:100%;background:var(--moss-bg);border-radius:3px}
+.meter.full span{background:var(--momiji-bg)}
+.tab-total .meter{background:rgba(255,255,255,.2);margin:6px 0 8px}
+.tab-total .meter span{background:#fff}
+.tab-total .meter.full span{background:#F2A493}
+.subtabs{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -20px 22px;padding:0 20px 2px;border-bottom:1px solid var(--sand)}
+.subtabs::-webkit-scrollbar{display:none}
+.subtabs button{flex:none;background:none;border:0;border-bottom:3px solid transparent;padding:9px 6px 8px;font:500 14.5px var(--gothic);color:var(--ink-soft);cursor:pointer;white-space:nowrap}
+.subtabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--momiji)}
+.subtabs button:focus-visible{outline:2px solid var(--momiji);outline-offset:-2px}
+.wadd{display:inline-block;margin-top:6px;background:none;border:1px solid var(--sand);border-radius:3px;color:var(--ai);font:500 12px var(--gothic);padding:3px 8px;cursor:pointer}
+.wadd:hover{border-color:var(--ai)}
+.wb.warn{color:var(--momiji);border:1px solid var(--momiji);white-space:normal;line-height:1.3}
+.bkline{font-size:14px;background:var(--card);border-left:4px solid var(--momiji);padding:10px 13px;margin-bottom:12px;line-height:1.5}
+.sc{padding:12px 0;border-bottom:1px solid var(--sand);font-size:14px}
+.sc .hd{display:flex;gap:10px;align-items:baseline}
+.sc .hd b{flex:1;font-size:15.5px}
+.sc .hd .r{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sc .sub{font-size:13px;color:var(--ink-soft);line-height:1.45;margin-top:2px}
+.sbar{position:relative;height:8px;border-radius:4px;background:var(--sand);margin:6px 0 6px}
+.sbar .f{position:absolute;top:0;bottom:0;background:var(--ai);border-radius:4px}
+.sbar .be{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--momiji);border-left:1px solid var(--washi)}
+.sc-act{display:flex;align-items:center;gap:12px;margin-top:8px;font-size:13px}
+.sc-act a{color:var(--ai)}
+.sc-act .chip{margin-left:auto;padding:6px 11px}
+.sc-add{margin-top:8px}
+.bkbox{background:var(--ai-bg);color:var(--on-bg);border-radius:3px;padding:18px 18px 16px;margin-bottom:10px}
+.bkbox .big{font-family:var(--mincho);font-weight:700;font-size:54px;line-height:.95;font-variant-numeric:tabular-nums}
+.bkbox .cap{font-size:15px;margin-top:8px}
+.bkbox .why{font-size:13.5px;opacity:.88;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.22);line-height:1.55}
+.ratenote{font-size:13px;color:var(--ink-soft);border-left:3px solid #B8860B;padding:2px 0 2px 10px;margin:10px 0 16px;line-height:1.5}
+.tip.warnbox{border-left-color:var(--momiji)}
+.tip.warnbox>b:first-child{color:var(--momiji)}
+.calcopt{margin:16px 0 14px}
+.calcopt .lbl{display:block;font-size:13px;color:var(--ink-soft);margin-bottom:4px}
+.calcopt .seg{margin-bottom:4px}
+.calcopt .ratenote{margin:6px 0 12px}
+.ql{display:flex;flex-direction:column;flex:1 1 140px;font-size:13px;color:var(--ink-soft);gap:3px}
+.ql small{font-size:12px}
+.ql.sv{flex-direction:row;align-items:center;gap:8px}
+.ql.sv input{width:64px}
+.ql input{font:400 15px var(--gothic);font-variant-numeric:tabular-nums;border:1px solid var(--sand);border-radius:3px;padding:8px 9px;background:var(--field);color:var(--ink);min-width:0}
+#calcCart .addrow .wtog{padding:7px 9px}
+.cl-sub{display:block;font-size:12px;color:var(--ink-soft)}
+.cl-hint{font-size:12.5px;color:var(--ink-soft);margin:6px 0 12px}
+#calcWarn .alert{margin:0 0 10px;padding:10px 14px}
+#calcWarn .alert .v{font-size:14px;margin:0}
+.scsp{flex-wrap:wrap}
+.scchart{background:var(--card);border-radius:3px;padding:14px 14px 12px;margin:4px 0 12px}
+.sc-row{margin-bottom:10px}
+.sc-lb{font-size:12.5px;color:var(--ink-soft);margin-bottom:3px}
+.sc-track{display:flex;align-items:center;gap:8px}
+.sc-stack{display:flex;gap:2px;height:22px;min-width:4px}
+.sc-seg{border:0;padding:0;min-width:3px;cursor:pointer;height:100%}
+.sc-seg:first-child{border-radius:4px 0 0 4px}
+.sc-seg:last-child{border-radius:0 4px 4px 0}
+.sc-seg:only-child{border-radius:4px}
+.sc-seg:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.sc-val{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.s0{background:var(--s0)}.s1{background:var(--s1)}.s2{background:var(--s2)}.s3{background:var(--s3)}.s4{background:var(--s4)}
+.sc-read{font-size:12.5px;color:var(--ink-soft);min-height:18px;margin:2px 0 8px}
+.sc-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--ink);font-variant-numeric:tabular-nums}
+.sc-legend .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.scinsight{font-size:15px;line-height:1.5;border-left:4px solid var(--moss);padding:4px 0 4px 12px;margin:0 0 14px}
+.sctable .row .l{width:auto;flex:1}
+.sctable .row .r{flex:none;text-align:right;font-weight:700}
+.sca{display:grid;grid-template-columns:52px 22px 1fr 1fr 1fr;gap:6px;padding:7px 0;border-bottom:1px solid var(--sand);font-size:13px;font-variant-numeric:tabular-nums}
+.sca span:nth-child(n+3){text-align:right}
+.sca.hd{font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;border-bottom-width:2px}
+.sca.on{font-weight:700;background:var(--card)}
+.baku-disc{margin-top:28px}
+
 /* tab bar */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--ai-bg);padding-bottom:env(safe-area-inset-bottom);z-index:20}
-nav.tabs .in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
-nav.tabs button{background:none;border:0;color:rgba(237,238,233,.6);padding:13px 2px 15px;font:500 12px var(--gothic);cursor:pointer;border-top:3px solid transparent}
+nav.tabs .in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(7,1fr)}
+nav.tabs button{background:none;border:0;color:rgba(237,238,233,.6);padding:13px 1px 15px;font:500 11.5px var(--gothic);cursor:pointer;border-top:3px solid transparent}
 nav.tabs button .g{display:block;font-family:var(--mincho);font-size:17px;line-height:1.15;margin-bottom:2px}
 nav.tabs button[aria-selected="true"]{color:#fff;border-top-color:var(--momiji)}
 nav.tabs button:focus-visible{outline:2px solid #fff;outline-offset:-4px}
 
+.credits{margin-top:30px;padding:14px 16px;background:var(--card);border-left:4px solid var(--momiji);border-radius:3px;font-size:13.5px;line-height:1.55}
+.credits div+div{margin-top:5px}
+.credits b{color:var(--momiji)}
 footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.5}
 .offline{font-size:12.5px;color:var(--ink-soft);padding-top:14px;border-top:1px solid var(--sand);margin-top:22px;line-height:1.5}
 @media (prefers-reduced-motion:no-preference){
@@ -484,6 +618,159 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
   <div class="tip"><b>Before the big purchases</b>Check what your ANA fare actually allows in checked baggage, and weigh the case on the 5th, not at the airport. Knives, scissors and liquids over 100ml go in checked bags only. Whisky and sake are easier bought airside at KIX than carried from Osaka.</div>
 </section>
 
+<!-- ============ BAKUGAI ============ -->
+<!-- 爆買い, "explosive buying". Data and maths live in bakugai.js -->
+<section class="panel" id="p-baku" role="tabpanel" aria-labelledby="t-baku">
+  <div class="baku-hd">
+    <h2 class="sec"><span lang="ja">爆買い</span> Bakugai</h2>
+    <p class="note">The shopping-spree tab: what's worth buying, what Indian customs will charge, and the point where Japan stops being cheaper.</p>
+    <div class="cartbar" id="cartBar"></div>
+  </div>
+  <div class="subtabs" role="tablist" aria-label="Bakugai sections">
+    <button type="button" role="tab" id="st-watches" data-s="watches" aria-controls="sp-watches">Watches</button>
+    <button type="button" role="tab" id="st-buys" data-s="buys" aria-controls="sp-buys">Buys</button>
+    <button type="button" role="tab" id="st-customs" data-s="customs" aria-controls="sp-customs">Customs</button>
+    <button type="button" role="tab" id="st-calc" data-s="calc" aria-controls="sp-calc">Calculator</button>
+    <button type="button" role="tab" id="st-scen" data-s="scen" aria-controls="sp-scen">Scenarios</button>
+  </div>
+
+  <div class="subpanel" id="sp-watches" role="tabpanel" aria-labelledby="st-watches">
+    <h2 class="sec">Watch guide</h2>
+    <p class="note" id="wRateNote"></p>
+
+    <div class="conv wck">
+      <div class="wck-in">
+        <label>Shelf price, ¥<input id="wcTag" class="num" type="text" inputmode="numeric" placeholder="50,000"></label>
+        <label>India price, ₹ <small>optional</small><input id="wcIn" class="num" type="text" inputmode="numeric" placeholder="47,000"></label>
+      </div>
+      <div class="wck-out" id="wcOut"></div>
+    </div>
+
+    <div class="wf">
+      <select id="wfBrand" aria-label="Brand"><option value="">All brands</option></select>
+      <select id="wfCat" aria-label="Category"><option value="">All styles</option></select>
+      <select id="wfMove" aria-label="Movement">
+        <option value="">Any movement</option><option value="automatic">Automatic</option>
+        <option value="solar">Solar</option><option value="quartz">Quartz</option>
+      </select>
+      <label class="wtog"><input type="checkbox" id="wfJp"> Japan-only</label>
+    </div>
+    <div class="wbud">
+      <label for="wfMax">Up to</label>
+      <input type="range" id="wfMax" min="5000" max="50000" step="1000">
+      <span class="num" id="wfMaxV"></span>
+    </div>
+    <div class="seg" id="wSort" role="group" aria-label="Sort by">
+      <button type="button" data-s="jp">Japan ₹</button>
+      <button type="button" data-s="in">India ₹</button>
+      <button type="button" data-s="save">Saving</button>
+    </div>
+    <div class="wcount" id="wCount"></div>
+    <div id="wList"></div>
+
+    <h2 class="sec">Only sold in Japan</h2>
+    <p class="note">Ranges are what you pay after the refund, at the rate above.</p>
+    <div id="wJapan"></div>
+    <div class="tip"><b>Buying Japan-market</b>Seiko's Japan references usually start with SA or SB; Casio's end in JF. The warranty is usually valid only in Japan. Radio-controlled watches sync to Japan's time signal and won't auto-sync in India — they still keep accurate time, you just set them by hand or by the phone app.</div>
+
+    <h2 class="sec">Above the budget</h2>
+    <p class="note"><b>Stretch</b> could still fit inside your own ₹75,000 duty-free allowance if it's the only big thing you bring home. <b>Browse</b> is for looking. Yen figures are official list prices; discount shops are often lower.</p>
+    <div id="wAbove"></div>
+    <p class="wdisc" id="wDisc"></p>
+  </div>
+
+  <div class="subpanel" id="sp-buys" role="tabpanel" aria-labelledby="st-buys" hidden>
+    <h2 class="sec">Worth buying in Japan</h2>
+    <p class="note">Rough savings against Indian retail. Tap <b>+ Cart</b> to send something to the duty calculator.</p>
+    <div class="bkline" id="buysBreak"></div>
+    <div class="wf">
+      <label class="wtog"><input type="checkbox" id="sfCatch"> Has a catch</label>
+      <label class="wtog"><input type="checkbox" id="sfCounts"> Counts toward ₹75k</label>
+    </div>
+    <div id="shopList"></div>
+    <h2 class="sec">Shops worth knowing</h2>
+    <div class="links" id="shopLinks"></div>
+  </div>
+
+  <div class="subpanel" id="sp-customs" role="tabpanel" aria-labelledby="st-customs" hidden>
+    <h2 class="sec">The break-even rule</h2>
+    <div class="bkbox" id="bkBox"></div>
+    <p class="ratenote" id="rateNote1"></p>
+
+    <h2 class="sec">Leaving Japan, at Haneda</h2>
+    <div class="tip"><b>Pay the tax, claim it back</b>From 1 Nov 2026 shops charge the full price with the 10% consumption tax. You get it back after a customs check at the airport you leave Japan from — for you that's <b>Haneda</b>, before NH837, not KIX. The National Tax Agency's Q&amp;A (Q32, note 4) says domestic-to-international connections do it at the departure airport. Do it before bag drop, within 90 days of buying.</div>
+    <div class="tip"><b>Everything on you</b>The check needs every tax-free item in hand, with the receipts. Your bags are checked through to Delhi at KIX, so watches, electronics and their receipts ride in your cabin bag. Leave extra time at Haneda.</div>
+    <div class="tip warnbox"><b>Knives and big liquids</b>These have to go in checked baggage — but the refund wants them in hand at Haneda, and your checked bags won't be. Ask at the KIX counter how they handle it, and assume you may lose the 10% on these.</div>
+    <div class="tip"><b>Visit Japan Web</b>At Haneda you can do the customs check on your phone over the departure-lobby Wi-Fi instead of a kiosk, if you've registered on Visit Japan Web beforehand. Do it at home.</div>
+    <div class="tip"><b>Small buys and paying</b>Under ¥5,000 before tax at one shop on one day gets no refund. Always pay in yen — if the terminal offers rupees, say no.</div>
+
+    <h2 class="sec">Arriving in Delhi</h2>
+    <div class="row"><div class="l">Allowance</div><div class="r"><b>₹75,000 per person</b>, Baggage Rules 2026 (in force 2 Feb 2026). It can't be pooled — Arnav can't use Manan's.</div></div>
+    <div class="row"><div class="l">Laptop</div><div class="r">One new laptop or notepad each (18+), duty-free (Rule 5 proviso). Read as <b>on top of</b> the ₹75k — the 2016 rules said "over and above" in words, the 2026 text doesn't, so keep the receipt handy. A second laptop, or an iPad as well, counts against the ₹75k.</div></div>
+    <div class="row"><div class="l">Alcohol, tobacco</div><div class="r">Up to <span id="alcFree"></span> litres of alcohol and <span id="cigFree"></span> cigarettes. Beyond that it's dutied at much higher rates, outside this calculator.</div></div>
+    <div class="row"><div class="l">Duty</div><div class="r"><b><span id="dutyStd"></span>% on the value above your allowance</b> — not on everything. No surcharge on baggage since 2 Feb 2025.</div></div>
+    <div class="row"><div class="l">Over the limit</div><div class="r">Red Channel. Declare, show receipts, pay on the spot.</div></div>
+    <div class="row"><div class="l">Opened boxes</div><div class="r">Opening or using something doesn't make it duty-free. Customs looks at whether it's a new purchase.</div></div>
+    <div class="row"><div class="l">Not declaring</div><div class="r">Goods can be seized and released only on duty plus a redemption fine plus a penalty; large amounts can mean prosecution. Declaring is almost always cheaper.</div></div>
+    <div class="row"><div class="l">Cash</div><div class="r">Declare foreign currency notes over US$5,000, or over US$10,000 in all forms. Leaving Japan, declare cash over ¥1,000,000.</div></div>
+
+    <h2 class="sec">Sources</h2>
+    <div class="links" id="customsLinks"></div>
+  </div>
+
+  <div class="subpanel" id="sp-calc" role="tabpanel" aria-labelledby="st-calc" hidden>
+    <h2 class="sec">Duty calculator</h2>
+    <div class="seg" id="calcMode" role="group" aria-label="Calculator mode">
+      <button type="button" data-m="cart">Cart</button>
+      <button type="button" data-m="quick">Quick total</button>
+    </div>
+    <div id="calcCart">
+      <p class="note">Amounts are what you pay after the Japan tax refund. Type a shelf price in yen and it's converted at the live rate.</p>
+      <div id="cartList"></div>
+      <div class="addrow">
+        <input class="desc" id="ciName" placeholder="What is it?" aria-label="Item">
+        <input class="amt num" id="ciAmt" type="text" inputmode="numeric" placeholder="Amount" aria-label="Amount">
+        <select id="ciUnit" aria-label="Unit"><option value="jpy">¥ shelf price</option><option value="inr">₹ after refund</option></select>
+        <label class="wtog"><input type="checkbox" id="ciLaptop"> Laptop</label>
+        <button class="btn" id="ciAdd" type="button">Add</button>
+      </div>
+      <div class="toolbar"><button type="button" id="cartClear">Empty the cart</button></div>
+    </div>
+    <div id="calcQuick" hidden>
+      <div class="addrow">
+        <label class="ql">Total spend, ₹ <small>laptop included</small><input class="num" id="qTotal" type="text" inputmode="numeric" placeholder="1,50,000"></label>
+        <label class="ql">Laptop, ₹ <small>optional</small><input class="num" id="qLaptop" type="text" inputmode="numeric" placeholder="95,000"></label>
+      </div>
+    </div>
+    <div class="calcopt">
+      <span class="lbl">Duty rate</span>
+      <div class="seg" id="rateOpt" role="group" aria-label="Duty rate"></div>
+      <p class="ratenote" id="rateOptNote"></p>
+      <label class="ql sv">Average Japan saving<input class="num" id="avgSave" type="number" min="0" max="90" step="1"> %</label>
+    </div>
+    <div class="tab-total" id="calcOut"></div>
+    <div id="calcWarn"></div>
+    <p class="ratenote" id="rateNote2"></p>
+  </div>
+
+  <div class="subpanel" id="sp-scen" role="tabpanel" aria-labelledby="st-scen" hidden>
+    <h2 class="sec">Spending scenarios</h2>
+    <p class="note">Total spend in Japan after the tax refund, everything included. B adds a <span id="scLapNote"></span> laptop. India comparison at the average saving set in the calculator.</p>
+    <div class="seg scsp" id="scSpend" role="group" aria-label="Total spend"></div>
+    <div class="seg" id="scVar" role="group" aria-label="Variant">
+      <button type="button" data-v="A">A · no laptop</button>
+      <button type="button" data-v="B">B · with laptop</button>
+    </div>
+    <div class="scchart" id="scChart"></div>
+    <p class="scinsight" id="scInsight"></p>
+    <div class="sctable" id="scTable"></div>
+    <h3 class="wband">All scenarios at <span id="scAllRate"></span>%</h3>
+    <div class="sctable" id="scAll"></div>
+  </div>
+
+  <p class="wdisc baku-disc" id="bakuDisc"></p>
+</section>
+
 <!-- ============ INFO ============ -->
 <section class="panel" id="p-info" role="tabpanel" aria-labelledby="t-info">
   <h2 class="sec">Emergency</h2>
@@ -551,6 +838,10 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
   <div class="row"><div class="l">Offline</div><div class="r" id="swState">Checking…</div></div>
   <p class="offline">Everything here works with the phone in aeroplane mode once it has loaded on your wifi once. The exchange rate and the weather are the only parts that need a connection, and both keep showing the last thing they got.</p>
 
+  <div class="credits">
+    <div><b>Created by</b> Arnav, fuelled by konbini coffee and a deep distrust of airport prices.</div>
+    <div><b>Managed by</b> Arnav and Ayush, who argue about the itinerary so you don't have to.</div>
+  </div>
   <footer>Built for Arnav, Ayush and Manan. Everything you tick or type is saved on your own phone and shared with nobody. Check fares and opening hours against the official sites before you rely on them.</footer>
 </section>
 
@@ -579,10 +870,12 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
     <button role="tab" id="t-money" aria-selected="false" aria-controls="p-money" data-p="money"><span class="g">¥</span>Money</button>
     <button role="tab" id="t-list"  aria-selected="false" aria-controls="p-list"  data-p="list"><span class="g">要</span>To do</button>
     <button role="tab" id="t-buy"   aria-selected="false" aria-controls="p-buy"   data-p="buy"><span class="g">買</span>Buy</button>
+    <button role="tab" id="t-baku"  aria-selected="false" aria-controls="p-baku"  data-p="baku"><span class="g">爆</span>Bakugai</button>
     <button role="tab" id="t-info"  aria-selected="false" aria-controls="p-info"  data-p="info"><span class="g">報</span>Info</button>
   </div>
 </nav>
 
+<script src="bakugai.js"></script>
 <script>
 /* ---------- storage that never throws ---------- */
 var mem={};
@@ -848,7 +1141,7 @@ var GIFTS=[
  {t:"Whisky or sake",w:"buy it airside at KIX on the 6th · duty free and you do not carry it for a week"},
  {t:"Matcha, from Uji not a souvenir shop",w:"1 Dec or 2 Dec · a good tin is ¥1,000–2,000"},
  {t:"MacBook",w:"Yodobashi Akiba 28 Nov, or Apple Shinjuku/Ginza · check it is the US keyboard, not JIS (the one with かな keys). Pay the tax, claim it at Haneda; keep it boxed in your cabin bag. One laptop each is duty-free into India",u:true},
- {t:"Watches",w:"Seiko and Grand Seiko boutiques in Ginza 29 Nov, Bic Camera and Komehyo in Shinjuku, Yodobashi Akiba 28 Nov · anything that takes you past ₹50,000 each gets declared at Delhi",u:true},
+ {t:"Watches",w:"Seiko and Grand Seiko boutiques in Ginza 29 Nov, Bic Camera and Komehyo in Shinjuku, Yodobashi Akiba 28 Nov · anything that takes you past ₹75,000 each gets declared at Delhi · the Bakugai tab has a watch guide and a duty calculator",u:true},
  {t:"Onitsuka Tiger",w:"Omotesando 25 Nov, Ginza 29 Nov, Shinsaibashi 3 Dec · popular colourways sell out, so go at opening and know your size in cm",u:true}
 ];
 
@@ -1180,7 +1473,7 @@ function renderFxStatus(){
 
 function applyRate(v){
   rate=v; var f=$("#rate"); if(f)f.value=showRate(v);
-  fromYen(); refreshChips(); renderBuyTotal(); renderFxStatus();
+  fromYen(); refreshChips(); renderBuyTotal(); renderFxStatus(); renderBaku();
 }
 
 function fetchRate(){
@@ -1224,7 +1517,7 @@ function initMoney(){
   $("#inr").addEventListener("input",fromInr);
   $("#rate").addEventListener("input",function(){
     var r=num(this.value);
-    if(r>0){fx.manual=true;fx.rate=r;S.set("fx",fx);rate=r;fromYen();refreshChips();renderBuyTotal();renderFxStatus()}
+    if(r>0){fx.manual=true;fx.rate=r;S.set("fx",fx);rate=r;fromYen();refreshChips();renderBuyTotal();renderFxStatus();renderBaku()}
   });
   $("#fxRefresh").addEventListener("click",function(){
     if(fxBusy)return;
@@ -1764,6 +2057,541 @@ function initBuy(){
   renderBuys();
 }
 
+/* ---------- watch guide ---------- */
+var WG=window.Bakugai||null;
+var wf=S.get("wf",{brand:"",cat:"",move:"",jp:false,max:50000,sort:"jp"});
+
+function rupees(n){return "₹"+Math.round(n).toLocaleString("en-IN")}
+/* the live rate once there is one, the config fallback until then */
+function watchRate(){return (fx.manual||fx.ts)?rate:WG.CONFIG.jpy_to_inr}
+
+function renderWatchRate(){
+  var c=WG.CONFIG, r=watchRate(), src;
+  if(fx.manual)src="your own rate from the Money tab";
+  else if(fx.ts)src="live from "+esc(fx.src)+", "+ago(fx.ts);
+  else src="a placeholder until the live rate loads";
+  $("#wRateNote").innerHTML="What each watch really costs you: the shelf price minus the 10% tax you get back at Haneda, at <b>₹"+
+    showRate(r)+"</b> per yen ("+src+")."+(c.card_markup_pct?" Includes a "+c.card_markup_pct+"% card markup.":"");
+  $("#wDisc").textContent="Prices are approximate as of "+fmtDate(c.data_as_of)+" "+c.data_as_of.slice(0,4)+
+    ". Japan tags are typical shop prices; India prices are approximate MRP. A Verified badge means the India price or the link was checked on the brand's own site — everything else, check in the shop.";
+}
+
+function renderWatchCheck(){
+  var out=$("#wcOut"), c=WG.CONFIG;
+  var tag=num($("#wcTag").value), ind=num($("#wcIn").value);
+  if(!tag){out.textContent="Type a shelf price to see what it really costs you after the refund.";return}
+  var eff=WG.effectiveInr(tag,watchRate(),c), refund=WG.refundApplies(tag,c);
+  var h="<b>"+rupees(eff)+"</b> "+(refund?"after the tax refund":"— no refund, it's under ¥"+c.tax_refund_min_jpy.toLocaleString("en-US")+" before tax");
+  if(ind){
+    var s=WG.savingPct(eff,ind);
+    h+="<br>"+(s>=0?"Saves "+s+"% ("+rupees(ind-eff)+") against India.":'<span class="warn">Costs '+(-s)+"% more than in India.</span>");
+  }
+  if(eff>c.india_duty_free_inr)h+='<br><span class="warn">Over your ₹'+c.india_duty_free_inr.toLocaleString("en-IN")+" duty-free allowance on its own.</span>";
+  else if(eff>c.budget_inr)h+='<br><span class="warn">Over the ₹'+c.budget_inr.toLocaleString("en-IN")+" budget.</span>";
+  out.innerHTML=h;
+}
+
+function watchRow(w){
+  var r=el("div","w"), n=el("div","wn");
+  n.appendChild(el("div","wm",w.model));
+  var meta=el("div","wmeta",w.brand+" · "+w.category+" · "+w.movement);
+  if(w.link&&w.link_verified){
+    meta.appendChild(document.createTextNode(" · "));
+    var a=el("a",null,"official page ↗");a.href=w.link;a.target="_blank";a.rel="noopener";
+    meta.appendChild(a);
+  }
+  n.appendChild(meta);
+  var tags=[];
+  if(w.top_pick)tags.push(["pick","Top pick"]);
+  if(w.japan_only)tags.push(["jp","Japan only"]);
+  if(w.india_price_verified)tags.push(["ok","✓ India price"]);
+  if(w.link_verified)tags.push(["ok","✓ Link"]);
+  if(!w.refund)tags.push(["nr","No refund"]);
+  if(tags.length){var t=el("div");tags.forEach(function(x){t.appendChild(el("span","wb "+x[0],x[1]))});n.appendChild(t)}
+  if(w.notes)n.appendChild(el("div","wnote",w.notes));
+  var add=el("button","wadd","+ Cart");add.type="button";
+  add.setAttribute("aria-label","Add "+w.brand+" "+w.model+" to the cart");
+  add.addEventListener("click",function(){addToCart({name:w.brand+" "+w.model,jpy:w.jp_tag_jpy,inr:null,is_laptop:false,saving_pct:w.saving_pct,src:w.id})});
+  n.appendChild(add);
+  r.appendChild(n);
+  var jp=el("div","wv jp",rupees(w.jp_effective_inr));jp.appendChild(el("small",null,yen(w.jp_tag_jpy)));
+  r.appendChild(jp);
+  r.appendChild(w.india_inr?el("div","wv",rupees(w.india_inr)):el("div","wv na","—"));
+  r.appendChild(w.saving_pct==null?el("div","wv na","—"):el("div","wv ws"+(w.saving_pct<0?" neg":""),w.saving_pct+"%"));
+  return r;
+}
+
+function renderWatchList(){
+  var c=WG.CONFIG, r=watchRate();
+  var all=WG.WATCHES.map(function(w){return WG.priced(w,r,c)});
+  var list=all.filter(function(w){
+    return (!wf.brand||w.brand===wf.brand)&&(!wf.cat||w.category===wf.cat)&&
+      (!wf.move||w.movement_kind===wf.move)&&(!wf.jp||w.japan_only)&&w.jp_effective_inr<=wf.max;
+  });
+  /* nulls sink to the bottom whichever way it sorts */
+  var key={jp:function(w){return w.jp_effective_inr},in:function(w){return w.india_inr==null?Infinity:w.india_inr},
+           save:function(w){return w.saving_pct==null?Infinity:-w.saving_pct}}[wf.sort]||function(w){return w.jp_effective_inr};
+  list.sort(function(a,b){return key(a)-key(b)||a.jp_effective_inr-b.jp_effective_inr});
+  $("#wCount").textContent=list.length+" of "+all.length+" watches";
+  var box=$("#wList");box.innerHTML="";
+  if(!list.length){box.appendChild(el("p","note","Nothing matches. Loosen a filter or raise the budget."));return}
+  var hd=el("div","whd");["Watch","Japan","India","Save"].forEach(function(s){hd.appendChild(el("span",null,s))});
+  box.appendChild(hd);
+  var bands={},order=[];
+  list.forEach(function(w){
+    if(!bands[w.live_band]){bands[w.live_band]=[];order.push(w.live_band)}
+    bands[w.live_band].push(w);
+  });
+  order.sort(function(a,b){return parseFloat(a)-parseFloat(b)});
+  order.forEach(function(b){
+    var lo=parseFloat(b), h=el("h3","wband","₹"+lo+"–"+(lo+c.band_inr/1000)+"k");
+    h.appendChild(el("small",null,bands[b].length===1?"1 watch":bands[b].length+" watches"));
+    box.appendChild(h);
+    bands[b].forEach(function(w){box.appendChild(watchRow(w))});
+  });
+}
+
+/* "Orient Orient Star" reads badly; drop the brand when the line already says it */
+function lineName(x){return x.line.indexOf(x.brand)>-1?x.line:x.brand+" "+x.line}
+function lineSub(text,link,linkOk){
+  var s=el("div","sub",text);
+  if(link&&linkOk){
+    s.appendChild(document.createTextNode(" · "));
+    var a=el("a",null,"official page ↗");a.href=link;a.target="_blank";a.rel="noopener";s.appendChild(a);
+  }
+  return s;
+}
+
+function renderWatchLines(){
+  var c=WG.CONFIG, r=watchRate(), k=r/WG.JAPAN_ONLY_RATE;
+  var box=$("#wJapan");box.innerHTML="";
+  WG.JAPAN_ONLY.forEach(function(x){
+    var d=el("div","wline"), hd=el("div","hd");
+    hd.appendChild(el("b",null,lineName(x)));
+    hd.appendChild(el("span","r",rupees(x.effective_inr_min*k)+"–"+rupees(x.effective_inr_max*k).slice(1)));
+    d.appendChild(hd);d.appendChild(lineSub(x.notes,x.link,x.link_verified));
+    box.appendChild(d);
+  });
+  box=$("#wAbove");box.innerHTML="";
+  ["stretch","browse"].forEach(function(tier){
+    box.appendChild(el("h3","wband",tier==="stretch"?"Stretch":"Browse only"));
+    WG.ABOVE_BUDGET.filter(function(x){return x.tier===tier}).forEach(function(x){
+      var d=el("div","wline"), hd=el("div","hd"), price="";
+      hd.appendChild(el("b",null,lineName(x)));
+      if(x.jp_min_jpy){
+        price=rupees(WG.effectiveInr(x.jp_min_jpy,r,c));
+        if(x.jp_max_jpy)price+="–"+rupees(WG.effectiveInr(x.jp_max_jpy,r,c)).slice(1);
+        else price="from "+price;
+      }
+      if(price)hd.appendChild(el("span","r",price));
+      d.appendChild(hd);
+      var bits=[];
+      if(x.jp_min_jpy)bits.push("list "+yen(x.jp_min_jpy)+(x.jp_max_jpy?"–"+yen(x.jp_max_jpy).slice(1):"+"));
+      if(x.india_note)bits.push("India "+x.india_note);
+      bits.push(x.notes);
+      d.appendChild(lineSub(bits.join(" · "),x.link,x.link_verified));
+      box.appendChild(d);
+    });
+  });
+}
+
+function renderWatches(){
+  if(!WG)return;
+  renderWatchRate();renderWatchCheck();renderWatchList();renderWatchLines();
+}
+
+function initWatches(){
+  if(!WG){$("#wRateNote").textContent="The watch guide didn't load. Open the app once on a connection.";return}
+  function fill(sel,vals){
+    vals.filter(function(v,i){return vals.indexOf(v)===i}).sort().forEach(function(v){
+      var o=el("option",null,v);o.value=v;sel.appendChild(o);
+    });
+  }
+  fill($("#wfBrand"),WG.WATCHES.map(function(w){return w.brand}));
+  fill($("#wfCat"),WG.WATCHES.map(function(w){return w.category}));
+  function save(){S.set("wf",wf);renderWatchList()}
+  [["#wfBrand","brand"],["#wfCat","cat"],["#wfMove","move"]].forEach(function(p){
+    var s=$(p[0]);s.value=wf[p[1]];
+    s.addEventListener("change",function(){wf[p[1]]=s.value;save()});
+  });
+  var jp=$("#wfJp");jp.checked=!!wf.jp;
+  jp.addEventListener("change",function(){wf.jp=jp.checked;save()});
+  var mx=$("#wfMax");mx.value=wf.max;
+  function showMax(){$("#wfMaxV").textContent=rupees(wf.max)}
+  mx.addEventListener("input",function(){wf.max=num(mx.value);showMax();save()});
+  showMax();
+  function showSort(){
+    document.querySelectorAll("#wSort button").forEach(function(b){
+      b.setAttribute("aria-pressed",b.dataset.s===wf.sort?"true":"false");
+    });
+  }
+  document.querySelectorAll("#wSort button").forEach(function(b){
+    b.addEventListener("click",function(){wf.sort=b.dataset.s;showSort();save()});
+  });
+  showSort();
+  $("#wcTag").addEventListener("input",renderWatchCheck);
+  $("#wcIn").addEventListener("input",renderWatchCheck);
+  renderWatches();
+}
+
+/* ---------- Bakugai: cart, buys, customs, calculator, scenarios ---------- */
+/* The cart lives on this phone only — the ₹75k allowance is per person. */
+var cart=S.get("cart",[]);
+var bk=S.get("bk",{tab:"watches",mode:"cart",rate:"std",save:null,spend:150000,variant:"A"});
+var RATE_OPTS=[
+ {k:"std",note:"Baggage duty under Notification 26/2016, as amended in 2026. No surcharge on baggage since 2 Feb 2025."},
+ {k:"alt",note:"The post and courier rate for personal imports (heading 9804). It doesn't apply to baggage — here for comparison."},
+ {k:"sws",note:"35% plus the old 10% surcharge. Baggage has been exempt from it since Notification 07/2025 — a worst case."}
+];
+
+function saveBk(){S.set("bk",bk)}
+function saveCart(){S.set("cart",cart)}
+function cartInr(it){return it.jpy?WG.effectiveInr(it.jpy,watchRate(),WG.CONFIG):(it.inr||0)}
+function cartCalc(){return WG.dutyCalc({items:cart.map(function(it){return {inr:cartInr(it),is_laptop:it.is_laptop}})},curRate(),WG.CONFIG)}
+function curRate(){return WG.dutyRate(bk.rate,WG.CONFIG)}
+function ratePct(r){return Math.round(r*1000)/10}
+function pct1(n){return (Math.round(n*10)/10)+"%"}
+function linkTo(href,text){var a=el("a",null,text);a.href=href;a.target="_blank";a.rel="noopener";return a}
+
+function meter(used,cap){
+  var m=el("div","meter"),f=el("span");
+  f.style.width=Math.min(100,used/cap*100)+"%";
+  if(used>=cap)m.classList.add("full");
+  m.appendChild(f);return m;
+}
+
+var cartMsg="";
+function addToCart(it){
+  cart.push(it);saveCart();
+  cartMsg="Added "+it.name+".";
+  renderBaku();
+  setTimeout(function(){cartMsg="";renderCartBar()},2500);
+}
+
+function renderCartBar(){
+  var box=$("#cartBar"),c=WG.CONFIG;box.innerHTML="";
+  if(!cart.length){
+    box.appendChild(el("div","cb-t",cartMsg||"Cart empty — add things from Watches or Buys, or try the calculator."));
+    return;
+  }
+  var r=cartCalc();
+  var t=el("div","cb-t");
+  t.appendChild(el("b",null,cart.length===1?"1 thing":cart.length+" things"));
+  t.appendChild(document.createTextNode(" · "+rupees(r.total)+" · "+rupees(r.allowance_used)+" of your "+rupees(c.india_duty_free_inr)+
+    (r.excess>0?" · duty "+rupees(r.duty):"")));
+  box.appendChild(t);
+  box.appendChild(meter(r.dutiable_base,c.india_duty_free_inr));
+  var go=el("button","linkbtn",cartMsg||"Open the calculator");go.type="button";
+  go.addEventListener("click",function(){setSubtab("calc")});
+  box.appendChild(go);
+}
+
+function setSubtab(t){
+  bk.tab=t;saveBk();
+  document.querySelectorAll("#p-baku .subtabs button").forEach(function(b){
+    var on=b.dataset.s===t;
+    b.setAttribute("aria-selected",on?"true":"false");
+    $("#sp-"+b.dataset.s).hidden=!on;
+  });
+  if(S.get("tab","now")==="baku")writePath();
+}
+
+/* ---- buys ---- */
+var sf=S.get("sf",{catch:false,counts:false});
+function shopAdder(item){
+  var f=el("div","addrow sc-add");f.hidden=true;
+  var amt=document.createElement("input");amt.className="amt num";amt.type="text";amt.inputMode="numeric";
+  amt.placeholder="Amount";amt.setAttribute("aria-label","Amount for "+item.category);
+  var unit=document.createElement("select");unit.setAttribute("aria-label","Unit");
+  unit.innerHTML='<option value="jpy">¥ shelf price</option><option value="inr">₹ after refund</option>';
+  var add=el("button","btn","Add");add.type="button";
+  add.addEventListener("click",function(){
+    var v=num(amt.value);if(!v){amt.focus();return}
+    var mid=item.saving_pct_min==null?null:(item.saving_pct_min+item.saving_pct_max)/2;
+    addToCart({name:item.category,jpy:unit.value==="jpy"?v:null,inr:unit.value==="inr"?v:null,
+      is_laptop:!!item.is_laptop,saving_pct:mid,src:item.id});
+    amt.value="";f.hidden=true;
+  });
+  amt.addEventListener("keydown",function(e){if(e.key==="Enter")add.click()});
+  f.appendChild(amt);f.appendChild(unit);f.appendChild(add);
+  return f;
+}
+function renderBuys(){
+  var be=WG.breakEvenPct(curRate()),box=$("#shopList");
+  $("#buysBreak").innerHTML="Past your ₹75k, only things saving more than <b>"+pct1(be)+"</b> beat India once dutied at "+ratePct(curRate())+"%.";
+  box.innerHTML="";
+  var list=WG.SHOP_ITEMS.filter(function(x){return (!sf.catch||x.catch)&&(!sf.counts||x.counts_toward_allowance)});
+  list.sort(function(a,b){return (b.saving_pct_max==null?-1:b.saving_pct_max)-(a.saving_pct_max==null?-1:a.saving_pct_max)});
+  list.forEach(function(x){
+    var c=el("div","sc"),hd=el("div","hd");
+    hd.appendChild(el("b",null,x.category));
+    hd.appendChild(el("span","r",x.saving_pct_min==null?"gifts & finds":x.saving_pct_min+"–"+x.saving_pct_max+"%"));
+    c.appendChild(hd);
+    if(x.saving_pct_min!=null){
+      /* saving range on a 0–70% track, with the break-even marked */
+      var bar=el("div","sbar"),fill=el("span","f"),mk=el("span","be");
+      fill.style.left=(x.saving_pct_min/70*100)+"%";fill.style.width=((x.saving_pct_max-x.saving_pct_min)/70*100)+"%";
+      mk.style.left=(be/70*100)+"%";mk.title="Break-even "+pct1(be);
+      bar.appendChild(fill);bar.appendChild(mk);
+      bar.setAttribute("role","img");bar.setAttribute("aria-label","Saving "+x.saving_pct_min+" to "+x.saving_pct_max+" percent; break-even "+pct1(be));
+      c.appendChild(bar);
+    }
+    c.appendChild(el("div","sub",x.examples));
+    c.appendChild(el("div","sub","Where: "+x.where_to_buy));
+    var tags=el("div");
+    if(x.catch)tags.appendChild(el("span","wb warn","⚠ "+x.catch));
+    if(x.is_laptop)tags.appendChild(el("span","wb ok","Own exemption — one laptop"));
+    else if(x.saving_pct_max!=null&&x.saving_pct_max<be)tags.appendChild(el("span","wb nr","Below break-even — buy inside the ₹75k"));
+    else if(x.saving_pct_min!=null&&x.saving_pct_min>be)tags.appendChild(el("span","wb pick","Worth it even past ₹75k"));
+    if(tags.childNodes.length)c.appendChild(tags);
+    var act=el("div","sc-act");
+    if(x.link&&x.link_verified)act.appendChild(linkTo(x.link,"official page ↗"));
+    var adder=shopAdder(x),b=el("button","chip","+ Cart");b.type="button";
+    b.addEventListener("click",function(){adder.hidden=!adder.hidden;if(!adder.hidden)adder.querySelector("input").focus()});
+    act.appendChild(b);c.appendChild(act);c.appendChild(adder);
+    box.appendChild(c);
+  });
+  if(!list.length)box.appendChild(el("p","note","Nothing matches both filters."));
+  renderLinks("#shopLinks",WG.SHOP_LINKS);
+}
+function renderLinks(sel,list){
+  var lk=$(sel);lk.innerHTML="";
+  list.forEach(function(l){
+    if(!l.url||!l.verified)return;
+    var a=linkTo(l.url,l.title);a.appendChild(el("span",null,l.note));lk.appendChild(a);
+  });
+}
+
+/* ---- customs ---- */
+function rateNoteText(){
+  return "Baggage duty is "+WG.CONFIG.baggage_duty_rate_pct+"% on the value over your allowance, with no surcharge since Feb 2025 (Notification 07/2025). Some 2026 reports quote 10% — that's the post and courier rate, not baggage. Confirm at customs.gov.in or the Red Channel.";
+}
+function renderCustoms(){
+  var c=WG.CONFIG,r=curRate(),be=WG.breakEvenPct(r);
+  var box=$("#bkBox");box.innerHTML="";
+  box.appendChild(el("div","big",pct1(be)));
+  box.appendChild(el("div","cap","Past your ₹75k, buy it in Japan only if it's more than this much cheaper than in India."));
+  var why=el("div","why");
+  why.innerHTML="Duty <i>d</i> turns a Japan price into price × (1 + <i>d</i>), so Japan wins only when the saving beats <i>d</i> ÷ (1 + <i>d</i>). At 35% that's "+
+    pct1(WG.breakEvenPct(WG.dutyRate("std",c)))+"; with the old surcharge (38.5%) "+pct1(WG.breakEvenPct(WG.dutyRate("sws",c)))+
+    ". At an average 30% saving, each rupee past the allowance still saves only "+pct1(WG.marginalSavingPct(r,30))+".";
+  box.appendChild(why);
+  var lo=WG.SHOP_ITEMS.filter(function(x){return !x.is_laptop&&x.saving_pct_max!=null&&x.saving_pct_max<be}).map(function(x){return x.category});
+  var hi=WG.SHOP_ITEMS.filter(function(x){return x.saving_pct_min!=null&&x.saving_pct_min>be}).map(function(x){return x.category});
+  var plan=el("div","why");
+  plan.innerHTML="<b>Inside the allowance:</b> "+esc(lo.concat(["Casio"]).join(", "))+".<br><b>Spend the excess on:</b> "+esc(hi.concat(["Seiko watches"]).join(", "))+".";
+  box.appendChild(plan);
+  $("#rateNote1").textContent=rateNoteText();
+  $("#alcFree").textContent=c.alcohol_free_litres;
+  $("#cigFree").textContent=c.cigarettes_free_sticks;
+  $("#dutyStd").textContent=c.baggage_duty_rate_pct;
+  renderLinks("#customsLinks",WG.CUSTOMS_LINKS);
+}
+
+/* ---- calculator ---- */
+function renderRateOpt(){
+  var box=$("#rateOpt");box.innerHTML="";
+  RATE_OPTS.forEach(function(o){
+    var b=el("button",null,ratePct(WG.dutyRate(o.k,WG.CONFIG))+"%");b.type="button";
+    b.setAttribute("aria-pressed",o.k===bk.rate?"true":"false");
+    b.addEventListener("click",function(){bk.rate=o.k;saveBk();renderBaku()});
+    box.appendChild(b);
+    if(o.k===bk.rate)$("#rateOptNote").textContent=o.note;
+  });
+}
+function renderCartList(){
+  var box=$("#cartList");box.innerHTML="";
+  if(!cart.length){box.appendChild(el("p","note","Nothing yet. Add from Watches or Buys, or type something below."));return}
+  cart.forEach(function(it,i){
+    var r=el("div","buy");
+    var cb=document.createElement("input");cb.type="checkbox";cb.checked=!!it.is_laptop;
+    cb.title="Laptop";cb.setAttribute("aria-label",(it.name||"Item")+" is a laptop");
+    cb.addEventListener("change",function(){it.is_laptop=cb.checked;saveCart();renderBaku()});
+    r.appendChild(cb);
+    var t=el("span","txt",it.name||"Item");
+    var sub=[];
+    if(it.is_laptop)sub.push("laptop");
+    if(it.saving_pct!=null)sub.push("saves ~"+Math.round(it.saving_pct)+"%");
+    if(sub.length)t.appendChild(el("small","cl-sub",sub.join(" · ")));
+    r.appendChild(t);
+    var a=el("span","amt",rupees(cartInr(it)));
+    if(it.jpy)a.appendChild(el("small",null,yen(it.jpy)+" shelf"));
+    r.appendChild(a);
+    var x=el("button","x","×");x.type="button";x.setAttribute("aria-label","Remove "+(it.name||"item"));
+    x.addEventListener("click",function(){cart.splice(i,1);saveCart();renderBaku()});
+    r.appendChild(x);
+    box.appendChild(r);
+  });
+  var box2=el("p","cl-hint","Tick the box for a laptop — only the first one is exempt.");
+  box.appendChild(box2);
+}
+function calcResult(){
+  var c=WG.CONFIG,r=curRate();
+  if(bk.mode==="quick")return WG.dutyCalc({total:num($("#qTotal").value),laptop:num($("#qLaptop").value)},r,c);
+  return cartCalc();
+}
+function renderCalcOut(){
+  var c=WG.CONFIG,r=calcResult(),box=$("#calcOut");box.innerHTML="";
+  var ie=WG.indiaEquivalent(r.total,bk.save),net=ie==null?null:ie-r.landed;
+  box.appendChild(el("div","big",rupees(r.duty)));
+  box.appendChild(el("div","sub","duty at Delhi · landed cost "+rupees(r.landed)));
+  var m=el("div","rest");
+  m.appendChild(el("span",null,"Allowance used: "+rupees(r.allowance_used)+" of "+rupees(c.india_duty_free_inr)));
+  m.appendChild(meter(r.dutiable_base,c.india_duty_free_inr));
+  if(r.laptop_value)m.appendChild(el("span",null,"Laptop, exempt on top: "+rupees(r.laptop_value)));
+  m.appendChild(el("span",null,r.excess>0?"Over the allowance: "+rupees(r.excess)+" × "+ratePct(r.rate)+"%":"Nothing over the allowance — no duty"));
+  box.appendChild(m);
+  var cmp=el("div","rest");
+  if(ie!=null&&r.total){
+    cmp.appendChild(el("span",null,"Same things in India: "+rupees(ie)+" (at "+bk.save+"% average saving)"));
+    cmp.appendChild(el("span",null,net>=0?"Net saving: "+rupees(net):"Costs "+rupees(-net)+" more than India"));
+  }
+  if(cmp.childNodes.length)box.appendChild(cmp);
+  /* warnings */
+  var w=$("#calcWarn"),be=WG.breakEvenPct(r.rate);w.innerHTML="";
+  function warn(t){w.appendChild(el("div","alert",null)).appendChild(el("div","v",t))}
+  if(r.excess>0){
+    warn("You're over the allowance — use the Red Channel at Delhi and have the receipts ready.");
+    if(bk.mode==="cart")cart.forEach(function(it){
+      if(!it.is_laptop&&WG.belowBreakEven(it.saving_pct,r.rate))
+        warn((it.name||"An item")+" saves about "+Math.round(it.saving_pct)+"% — below the "+pct1(be)+" break-even. Buy it inside the allowance, or skip it.");
+    });
+    if(bk.save<be)warn("At an average "+bk.save+"% saving, everything past ₹75k costs more than buying it in India.");
+  }
+  if(bk.mode==="cart"){
+    var laps=cart.filter(function(it){return it.is_laptop}).length;
+    if(laps>1)warn("Only one laptop is exempt. The other "+(laps-1===1?"one counts":(laps-1)+" count")+" as ordinary goods.");
+    if(cart.some(function(it){return it.src==="whisky"}))warn("Alcohol: keep to "+c.alcohol_free_litres+" litres per adult. Beyond that it's dutied at much higher rates than this calculator uses.");
+  }
+  $("#rateNote2").textContent=rateNoteText();
+}
+function renderCalc(){
+  document.querySelectorAll("#calcMode button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.m===bk.mode?"true":"false")});
+  $("#calcCart").hidden=bk.mode!=="cart";$("#calcQuick").hidden=bk.mode!=="quick";
+  renderRateOpt();renderCartList();renderCalcOut();
+}
+
+/* ---- scenarios ---- */
+var SC_SERIES=[
+ {k:"allowance_used",n:"Covered by ₹75k",c:"s1"},
+ {k:"laptop_value",n:"Laptop, exempt",c:"s2"},
+ {k:"excess",n:"Over the allowance",c:"s3"},
+ {k:"duty",n:"Duty",c:"s4"}
+];
+function scLabel(v){return v>=100000?"₹"+(v/100000)+"L":"₹"+(v/1000)+"k"}
+function renderScen(){
+  var c=WG.CONFIG,r=curRate(),lap=bk.variant==="B"?c.scenario_laptop_inr:0;
+  $("#scLapNote").textContent=rupees(c.scenario_laptop_inr);
+  var sp=$("#scSpend");sp.innerHTML="";
+  c.scenario_spends_inr.forEach(function(v){
+    var b=el("button",null,scLabel(v));b.type="button";
+    b.setAttribute("aria-pressed",v===bk.spend?"true":"false");
+    b.addEventListener("click",function(){bk.spend=v;saveBk();renderScen()});
+    sp.appendChild(b);
+  });
+  document.querySelectorAll("#scVar button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.v===bk.variant?"true":"false")});
+  var s=WG.scenario(bk.spend,lap,r,bk.save,c);
+  s.allowance_used=Math.min(s.dutiable_base,c.india_duty_free_inr);
+  var max=Math.max(s.landed,s.india_equivalent||0);
+  /* chart: Japan landed (stacked) against the India price, one shared scale */
+  var ch=$("#scChart");ch.innerHTML="";
+  var read=el("div","sc-read","Tap a segment for its value.");
+  function row(label,total,segs){
+    var rw=el("div","sc-row");
+    rw.appendChild(el("div","sc-lb",label));
+    var tr=el("div","sc-track"),stack=el("div","sc-stack");
+    stack.style.width=(total/max*100)+"%";
+    segs.forEach(function(g){
+      if(!(g.v>0))return;
+      var seg=el("button","sc-seg "+g.c);seg.type="button";
+      seg.style.flexGrow=g.v;
+      var txt=g.n+": "+rupees(g.v);
+      seg.title=txt;seg.setAttribute("aria-label",txt);
+      ["mouseenter","focus","click"].forEach(function(ev){seg.addEventListener(ev,function(){read.textContent=txt})});
+      stack.appendChild(seg);
+    });
+    tr.appendChild(stack);tr.appendChild(el("span","sc-val",rupees(total)));
+    rw.appendChild(tr);ch.appendChild(rw);
+  }
+  row("Japan, landed",s.landed,SC_SERIES.map(function(x){return {v:s[x.k],n:x.n,c:x.c}}));
+  if(s.india_equivalent)row("India price",s.india_equivalent,[{v:s.india_equivalent,n:"Same things in India",c:"s0"}]);
+  ch.appendChild(read);
+  var lg=el("div","sc-legend");
+  SC_SERIES.forEach(function(x){
+    if(!(s[x.k]>0))return;
+    var it=el("span");it.appendChild(el("i","sw "+x.c));it.appendChild(document.createTextNode(x.n+" "+rupees(s[x.k])));lg.appendChild(it);
+  });
+  ch.appendChild(lg);
+  /* insight */
+  var be=WG.breakEvenPct(r),ms=WG.marginalSavingPct(r,bk.save),ins;
+  if(s.excess<=0)ins="All inside the allowance"+(lap?" plus the laptop":"")+" — no duty. You keep the full saving: "+rupees(s.net_saving)+".";
+  else if(ms<=0)ins="Past ₹75k you're losing money: at "+ratePct(r)+"% duty and a "+bk.save+"% saving, each extra rupee costs more than in India. Only buy things saving over "+pct1(be)+".";
+  else ins="Beyond ₹75k, each extra rupee saves only ~"+pct1(ms)+" against India at "+ratePct(r)+"% duty. Prioritise high-saving items — anything under "+pct1(be)+" is better left for India.";
+  if(bk.variant==="A"&&s.excess>0&&bk.spend>=c.scenario_laptop_inr)ins+=" If a laptop is part of it, B shows how much the exemption saves.";
+  $("#scInsight").textContent=ins;
+  /* numbers, both duty rates */
+  var a=WG.scenario(bk.spend,lap,WG.dutyRate("std",c),bk.save,c),b=WG.scenario(bk.spend,lap,WG.dutyRate("alt",c),bk.save,c);
+  var rows=[["Excess over ₹75k",a.excess],["Duty at "+c.baggage_duty_rate_pct+"%",a.duty],["Landed at "+c.baggage_duty_rate_pct+"%",a.landed],
+    ["Duty at "+c.baggage_duty_rate_alt_pct+"% (post rate)",b.duty],["Landed at "+c.baggage_duty_rate_alt_pct+"%",b.landed],
+    ["India equivalent",a.india_equivalent],["Net saving at "+c.baggage_duty_rate_pct+"%",a.net_saving]];
+  var t=$("#scTable");t.innerHTML="";
+  rows.forEach(function(x){
+    var rr=el("div","row");rr.appendChild(el("div","l",x[0]));
+    rr.appendChild(el("div","r num",x[1]==null?"—":(x[1]<0?"−":"")+rupees(Math.abs(x[1]))));t.appendChild(rr);
+  });
+  /* every scenario at a glance — also the table view of the chart */
+  $("#scAllRate").textContent=ratePct(r);
+  var all=$("#scAll");all.innerHTML="";
+  var hd=el("div","sca hd");["Spend","","Duty","Landed","Saving"].forEach(function(x){hd.appendChild(el("span",null,x))});all.appendChild(hd);
+  c.scenario_spends_inr.forEach(function(v){
+    [0,c.scenario_laptop_inr].forEach(function(l){
+      var q=WG.scenario(v,l,r,bk.save,c),ln=el("div","sca"+(v===bk.spend&&(l>0)===(bk.variant==="B")?" on":""));
+      [scLabel(v),l?"B":"A",rupees(q.duty),rupees(q.landed),q.net_saving==null?"—":(q.net_saving<0?"−":"")+rupees(Math.abs(q.net_saving))].forEach(function(x){ln.appendChild(el("span",null,x))});
+      all.appendChild(ln);
+    });
+  });
+}
+
+function renderBaku(){
+  if(!WG)return;
+  renderWatches();renderCartBar();renderBuys();renderCustoms();renderCalc();renderScen();
+}
+
+function initBaku(){
+  if(!WG)return;
+  if(bk.save==null)bk.save=WG.CONFIG.default_saving_pct;
+  document.querySelectorAll("#p-baku .subtabs button").forEach(function(b){
+    b.addEventListener("click",function(){setSubtab(b.dataset.s);window.scrollTo(0,$("#p-baku .subtabs").offsetTop-8)});
+  });
+  setSubtab(readPath().sub||bk.tab||"watches");
+  ["catch","counts"].forEach(function(k){
+    var cb=$(k==="catch"?"#sfCatch":"#sfCounts");cb.checked=!!sf[k];
+    cb.addEventListener("change",function(){sf[k]=cb.checked;S.set("sf",sf);renderBuys()});
+  });
+  document.querySelectorAll("#calcMode button").forEach(function(b){
+    b.addEventListener("click",function(){bk.mode=b.dataset.m;saveBk();renderCalc()});
+  });
+  $("#ciAdd").addEventListener("click",function(){
+    var v=num($("#ciAmt").value),u=$("#ciUnit").value;
+    if(!v){$("#ciAmt").focus();return}
+    addToCart({name:$("#ciName").value.trim()||"Item",jpy:u==="jpy"?v:null,inr:u==="inr"?v:null,is_laptop:$("#ciLaptop").checked,saving_pct:null,src:"manual"});
+    $("#ciName").value="";$("#ciAmt").value="";$("#ciLaptop").checked=false;$("#ciName").focus();
+  });
+  [$("#ciName"),$("#ciAmt")].forEach(function(f){f.addEventListener("keydown",function(e){if(e.key==="Enter")$("#ciAdd").click()})});
+  $("#cartClear").addEventListener("click",function(){
+    if(!cart.length||!confirm("Empty the cart on this phone?"))return;
+    cart=[];saveCart();renderBaku();
+  });
+  ["#qTotal","#qLaptop"].forEach(function(id){$(id).addEventListener("input",renderCalcOut)});
+  var sv=$("#avgSave");sv.value=bk.save;
+  sv.addEventListener("input",function(){var v=Math.min(90,Math.max(0,num(sv.value)));bk.save=v;saveBk();renderCalcOut();renderScen()});
+  document.querySelectorAll("#scVar button").forEach(function(b){
+    b.addEventListener("click",function(){bk.variant=b.dataset.v;saveBk();renderScen()});
+  });
+  $("#bakuDisc").textContent="Approximate figures as of "+WG.CONFIG.data_as_of+". Duty rates and allowances can change. Confirm with Indian Customs before you travel. Not legal or financial advice.";
+  renderBaku();
+}
+
 /* ---------- weather, and the Fuji decision ---------- */
 var WX_CODES={0:"clear",1:"mostly clear",2:"partly cloudy",3:"overcast",45:"fog",48:"freezing fog",
  51:"light drizzle",53:"drizzle",55:"heavy drizzle",56:"freezing drizzle",57:"freezing drizzle",
@@ -2301,13 +3129,37 @@ function initTabs(){
       $("#p-"+b.dataset.p).classList.add("on");
       window.scrollTo(0,0);
       S.set("tab",b.dataset.p);
+      writePath();
       if(b.dataset.p==="money")maybeRefresh();
       if(!cloudDirty)cloudPull(false);
     });
   });
-  var last=S.get("tab","now");
+  /* a link like #bakugai/scenarios wins over the tab you had open last */
+  var last=readPath().tab||S.get("tab","now");
   var t=document.querySelector('nav.tabs button[data-p="'+last+'"]');
   if(t&&last!=="now")t.click();
+  else{S.set("tab","now");writePath()}
+  window.addEventListener("hashchange",function(){
+    var p=readPath();
+    if(p.sub)setSubtab(p.sub);
+    var b=p.tab&&document.querySelector('nav.tabs button[data-p="'+p.tab+'"]');
+    if(b&&b.getAttribute("aria-selected")!=="true")b.click();
+  });
+}
+
+/* ---------- the tab in the address bar: #bakugai/scenarios ---------- */
+var TAB_SLUG={now:"now",days:"days",money:"money",list:"todo",buy:"buy",baku:"bakugai",info:"info"};
+var SUB_SLUG={watches:"watches",buys:"buys",customs:"customs",calc:"calculator",scen:"scenarios"};
+function fromSlug(map,slug){for(var k in map)if(map[k]===slug)return k;return null}
+function readPath(){
+  var h=decodeURIComponent(location.hash||"").replace(/^#\/?/,"").toLowerCase().split("/");
+  return {tab:fromSlug(TAB_SLUG,h[0]),sub:fromSlug(SUB_SLUG,h[1]||"")};
+}
+/* replaceState, not a new history entry: Back still leaves the app, as before */
+function writePath(){
+  var t=S.get("tab","now"),h="#"+(TAB_SLUG[t]||"now");
+  if(t==="baku"&&bk.tab)h+="/"+SUB_SLUG[bk.tab];
+  if(location.hash!==h&&history.replaceState)history.replaceState(null,"",h);
 }
 
 /* ---------- offline ---------- */
@@ -2349,6 +3201,8 @@ initSplit();
 renderAllChecks();
 setupAllListAdders();
 initBuy();
+initWatches();
+initBaku();
 renderPhrases();
 renderDrivers();
 initDocs();

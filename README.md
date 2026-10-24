@@ -8,7 +8,7 @@ and the Fuji day swap — automatically sync across Arnav, Ayush, and Manan's ph
 through a shared cloud JSON record (JSONBin). Personal passport scans remain strictly
 private on each phone's local IndexedDB.
 
-## The six tabs
+## The seven tabs
 
 | Tab | What's in it |
 |---|---|
@@ -17,6 +17,7 @@ private on each phone's local IndexedDB.
 | **¥ Money** | Converter on a live rate, what you've spent and how fast, and the bill splitter |
 | **要 To do** | Bookings sorted by deadline, documents, packing |
 | **買 Buy** | Shared shopping lists for Arnav, Ayush and Manan (synced via JSONBin), what to buy before you fly, early in Japan, and to take home |
+| **爆 Bakugai** | The shopping-spree tab: watch guide, other buys, India customs, duty calculator, spending scenarios |
 | **報 Info** | Emergency numbers, your passport copies, flights, passes, phrases you can hold up, addresses in Japanese for a taxi driver |
 
 ## Passport copies
@@ -147,9 +148,48 @@ Everything else lives in `index.html`. The data is near the top of the
 | Things to buy | `var BEFORE`, `var NEED`, `var GIFTS` |
 | Phrases | `var PHRASES` |
 | Rate sources, in order | `var FX_SOURCES` |
+| Watches, other buys, customs rules, scenarios, links | `bakugai.js` (`CONFIG` at the top) |
 
 Colours and type are CSS variables in `:root`, defined once for light and again
 for dark.
+
+## 爆 Bakugai — the shopping-spree tab
+
+爆買い (*bakugai*, "explosive buying") is the seventh tab. Five sub-tabs:
+
+| Sub-tab | What's in it |
+|---|---|
+| **Watches** | About 60 watches up to ₹50,000 in ₹5,000 bands, Japan cost after the refund next to the India price, filters, a shelf-price checker, Japan-only lines, a few above budget |
+| **Buys** | Other things cheaper in Japan, with saving ranges against the break-even, catches, where to buy, and shops worth knowing |
+| **Customs** | The break-even rule, the Haneda tax-refund steps, India's Baggage Rules 2026, penalties, cash limits, sources |
+| **Calculator** | A cart (fed by **+ Cart** on watches and buys, or typed in) or a quick total, the duty rate, landed cost and the India comparison |
+| **Scenarios** | ₹50k to ₹2.5L, with and without a laptop, as a chart and a table |
+
+Everything lives in `bakugai.js`: one `CONFIG`, the data, and the maths. No
+rupee figure is stored — they're worked out from yen at the live rate from the
+Money tab (no card markup; your cards are zero-forex). Change a rate in
+`CONFIG` and every screen follows.
+
+The rules it uses, and where they come from:
+
+- **Tax refund** — the tag includes 10% tax, so the refund is tag ÷ 1.1, only
+  when the price before tax is ¥5,000 or more at one shop. It's claimed at
+  **Haneda**, the airport you leave Japan from (National Tax Agency Q&A, Q32).
+- **₹75,000 allowance** per person, not poolable — Baggage Rules 2026.
+- **One laptop** per adult on top of it — Rule 5 proviso. Only the first laptop
+  in the cart is exempt.
+- **35% duty** on the excess — Notification 26/2016, as amended in 2026. No
+  surcharge on baggage since Notification 07/2025. The 10% and 38.5% options
+  are for comparison only.
+- **Break-even** — past the allowance, Japan only wins if the saving beats
+  duty ÷ (1 + duty), about 25.9% at 35%.
+
+The cart is kept on each phone, not synced, because the allowance is per
+person. A link only appears if it was checked; otherwise it's `null`. `sw.js`
+fetches `bakugai.js` network-first, so edits land without bumping `VERSION`.
+
+Tests for all the maths, including the scenario table: `node --test` (Node 18+,
+nothing to install).
 
 ## The exchange rate
 
