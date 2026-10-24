@@ -3,8 +3,8 @@
    and the weather are never cached here; they have their own saved values in
    local storage and say how old they are. */
 
-var VERSION = "jp2026-v17";
-var SHELL = ["./", "./index.html", "./bakugai.js", "./manifest.json", "./icon-192.png", "./icon-512.png"];
+var VERSION = "jp2026-v18";
+var SHELL = ["./", "./index.html", "./bakugai.js", "./sync.js", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", function (e) {
   e.waitUntil(
@@ -62,18 +62,20 @@ self.addEventListener("fetch", function (e) {
     return;
   }
 
-  /* The Bakugai data, same as the page: network first so an edit to
-     bakugai.js lands without bumping VERSION, the cached copy when offline. */
-  if (/\/bakugai\.js(\?|$)/.test(url)) {
+  /* The data and sync scripts, same as the page: network first so an edit
+     lands without bumping VERSION, the cached copy when offline. */
+  var data = url.match(/\/(bakugai|sync)\.js(\?|$)/);
+  if (data) {
+    var key = "./" + data[1] + ".js";
     e.respondWith(
       fetch(req).then(function (res) {
         if (res && res.status === 200) {
           var copy = res.clone();
-          caches.open(VERSION).then(function (c) { c.put("./bakugai.js", copy); });
+          caches.open(VERSION).then(function (c) { c.put(key, copy); });
         }
         return res;
       }).catch(function () {
-        return caches.match("./bakugai.js").then(function (hit) { return hit || Response.error(); });
+        return caches.match(key).then(function (hit) { return hit || Response.error(); });
       })
     );
     return;

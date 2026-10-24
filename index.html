@@ -88,6 +88,12 @@ header.mast{border-bottom:2px solid var(--ai);margin-bottom:28px}
 .mast h1{font-family:var(--mincho);font-weight:700;font-size:25px;letter-spacing:.02em;line-height:1.1}
 .mast h1 span{color:var(--ai)}
 .mast .dates{font-size:13px;color:var(--ink-soft);white-space:nowrap}
+.mast-r{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.syncpill{background:none;border:1px solid var(--sand);border-radius:10px;padding:2px 8px 2px 18px;font:500 11.5px var(--gothic);color:var(--ink-soft);cursor:pointer;position:relative;white-space:nowrap}
+.syncpill::before{content:"";position:absolute;left:7px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:var(--moss)}
+.syncpill.wait::before{background:#B8860B}
+.syncpill.err{color:var(--momiji);border-color:var(--momiji)}
+.syncpill.err::before{background:var(--momiji)}
 
 /* panels */
 .panel{display:none}
@@ -383,6 +389,15 @@ h3.wband small{font-family:var(--gothic);font-weight:400;font-size:12px;color:va
 .sc-act a{color:var(--ai)}
 .sc-act .chip{margin-left:auto;padding:6px 11px}
 .sc-add{margin-top:8px}
+.cattabs{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -20px 14px;padding:2px 20px 4px}
+.cattabs::-webkit-scrollbar{display:none}
+.cattabs button{flex:none;background:var(--card);border:1px solid var(--sand);border-radius:16px;padding:6px 12px;font:500 13.5px var(--gothic);color:var(--ink-soft);cursor:pointer;white-space:nowrap}
+.cattabs button[aria-selected="true"]{background:var(--ai-bg);border-color:var(--ai-bg);color:#fff}
+.cattabs button:focus-visible{outline:2px solid var(--momiji);outline-offset:1px}
+#buysCat .sc{border-bottom:0;background:var(--card);border-radius:3px;padding:12px 14px;margin-bottom:6px}
+.w .pact{display:flex;align-items:center;gap:10px;margin-top:6px;font-size:12.5px}
+.w .pact a{color:var(--ai)}
+.w .pact .wadd{margin-top:0}
 .bkbox{background:var(--ai-bg);color:var(--on-bg);border-radius:3px;padding:18px 18px 16px;margin-bottom:10px}
 .bkbox .big{font-family:var(--mincho);font-weight:700;font-size:54px;line-height:.95;font-variant-numeric:tabular-nums}
 .bkbox .cap{font-size:15px;margin-top:8px}
@@ -390,6 +405,8 @@ h3.wband small{font-family:var(--gothic);font-weight:400;font-size:12px;color:va
 .ratenote{font-size:13px;color:var(--ink-soft);border-left:3px solid #B8860B;padding:2px 0 2px 10px;margin:10px 0 16px;line-height:1.5}
 .tip.warnbox{border-left-color:var(--momiji)}
 .tip.warnbox>b:first-child{color:var(--momiji)}
+.tip .plan{margin:8px 0 8px 18px;padding:0}
+.tip .plan li{margin:5px 0}
 .calcopt{margin:16px 0 14px}
 .calcopt .lbl{display:block;font-size:13px;color:var(--ink-soft);margin-bottom:4px}
 .calcopt .seg{margin-bottom:4px}
@@ -453,7 +470,10 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
 <header class="mast">
   <div class="wrap">
     <h1>日本 <span>2026</span></h1>
-    <div class="dates">24 Nov – 6 Dec</div>
+    <div class="mast-r">
+      <div class="dates">24 Nov – 6 Dec</div>
+      <button type="button" class="syncpill" id="syncPill" aria-live="polite"></button>
+    </div>
   </div>
 </header>
 
@@ -507,7 +527,7 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
   <div class="tab-total" id="pace"></div>
 
   <h2 class="sec">Split the bill</h2>
-  <p class="note">Everyone pays their own way, so this just tracks who covered what and evens it out at the end. Synced across phones via cloud — last save wins if two of you edit at once.</p>
+  <p class="note">Everyone pays their own way, so this just tracks who covered what and evens it out at the end. Synced across all three phones. Edits merge, so nobody overwrites anyone, and anything added offline goes up when you're back online.</p>
   <div class="addrow">
     <input class="desc" id="eDesc" placeholder="What was it for?" aria-label="Description">
     <input class="amt num" id="eAmt" type="text" inputmode="decimal" placeholder="¥ amount" aria-label="Amount in yen">
@@ -572,7 +592,7 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
 <!-- ============ BUY ============ -->
 <section class="panel" id="p-buy" role="tabpanel" aria-labelledby="t-buy">
   <h2 class="sec">Shopping lists</h2>
-  <p class="note">Shared between Arnav, Ayush and Manan. Pick whose list you're editing, add things, tick when bought. Needs a connection to sync — last save wins if two of you edit at once.</p>
+  <p class="note">Shared between Arnav, Ayush and Manan. Pick whose list you're editing, add things, tick when bought. Edits merge across phones, so nobody overwrites anyone. Offline? It's kept on this phone and syncs when you're back.</p>
   <div class="seg" id="buyWho" role="group" aria-label="Whose list"></div>
   <div class="tab-total" id="buyTotal"></div>
   <div class="addrow">
@@ -681,15 +701,19 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
 
   <div class="subpanel" id="sp-buys" role="tabpanel" aria-labelledby="st-buys" hidden>
     <h2 class="sec">Worth buying in Japan</h2>
-    <p class="note">Rough savings against Indian retail. Tap <b>+ Cart</b> to send something to the duty calculator.</p>
+    <p class="note">Pick a category for the specific things worth buying. Tap <b>+ Cart</b> to send one to the duty calculator.</p>
     <div class="bkline" id="buysBreak"></div>
-    <div class="wf">
-      <label class="wtog"><input type="checkbox" id="sfCatch"> Has a catch</label>
-      <label class="wtog"><input type="checkbox" id="sfCounts"> Counts toward ₹75k</label>
+    <div class="cattabs" id="catTabs" role="tablist" aria-label="Categories"></div>
+    <div id="buysAll">
+      <div class="wf">
+        <label class="wtog"><input type="checkbox" id="sfCatch"> Has a catch</label>
+        <label class="wtog"><input type="checkbox" id="sfCounts"> Counts toward ₹75k</label>
+      </div>
+      <div id="shopList"></div>
+      <h2 class="sec">Shops worth knowing</h2>
+      <div class="links" id="shopLinks"></div>
     </div>
-    <div id="shopList"></div>
-    <h2 class="sec">Shops worth knowing</h2>
-    <div class="links" id="shopLinks"></div>
+    <div id="buysCat" hidden></div>
   </div>
 
   <div class="subpanel" id="sp-customs" role="tabpanel" aria-labelledby="st-customs" hidden>
@@ -700,7 +724,17 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
     <h2 class="sec">Leaving Japan, at Haneda</h2>
     <div class="tip"><b>Pay the tax, claim it back</b>From 1 Nov 2026 shops charge the full price with the 10% consumption tax. You get it back after a customs check at the airport you leave Japan from — for you that's <b>Haneda</b>, before NH837, not KIX. The National Tax Agency's Q&amp;A (Q32, note 4) says domestic-to-international connections do it at the departure airport. Do it before bag drop, within 90 days of buying.</div>
     <div class="tip"><b>Everything on you</b>The check needs every tax-free item in hand, with the receipts. Your bags are checked through to Delhi at KIX, so watches, electronics and their receipts ride in your cabin bag. Leave extra time at Haneda.</div>
-    <div class="tip warnbox"><b>Knives and big liquids</b>These have to go in checked baggage — but the refund wants them in hand at Haneda, and your checked bags won't be. Ask at the KIX counter how they handle it, and assume you may lose the 10% on these.</div>
+    <div class="tip warnbox" id="liquids"><b>Cosmetics, liquids and knives — the refund plan</b>
+      Two rules decide this (National Tax Agency Q&amp;A). <strong>Q37:</strong> customs checks each receipt as a whole — if one item from it isn't with you at the Haneda kiosk, nothing on that receipt is refunded. <strong>Q39:</strong> open or use any cosmetic and it no longer counts.
+      <ol class="plan">
+        <li><strong>Keep everything sealed.</strong> Use what you brought from India until you're home.</li>
+        <li><strong>Small things go in your 1-litre liquids bag</strong> — each container 100 ml or less: Melano CC, Pair, the eye cream, the makeup mist. Spot patches are dry, so no rules at all. They stay with you the whole way, you show them at the Haneda kiosk, and they go through security with you.</li>
+        <li><strong>Bigger tubes and bottles</strong> (fino and TSUBAKI hair masks and refills, Naturie gel, Hada Labo, sheet-mask packs — they're soaked in serum): Japanese domestic flights have no 100 ml rule — cosmetics up to 0.5 L a container, 2 L each. Carry them in a separate bag on the KIX → Haneda flight, go out to the international departure lobby, do the customs check, then check that bag in at the ANA counter before security. You have about 2 h 40 at Haneda.</li>
+        <li><strong>Pay for the big ones separately.</strong> Ask the cashier for two receipts — small things on one, big tubes on the other — so if the big-tube plan falls through, only that receipt is lost.</li>
+        <li><strong>Or skip the refund on them.</strong> 10% of ¥5,000 of hair masks is about ₹270. Buy those without your passport, pack them in the KIX checked bag, and keep the refund for the things that ride with you.</li>
+        <li><strong>Knives</strong> must be checked, so they can't be shown at Haneda: buy them as a separate receipt, or without tax-free.</li>
+      </ol>
+      Ask ANA before you fly whether you can add a bag at Haneda when the rest is checked through from KIX — it's on your To-do.</div>
     <div class="tip"><b>Visit Japan Web</b>At Haneda you can do the customs check on your phone over the departure-lobby Wi-Fi instead of a kiosk, if you've registered on Visit Japan Web beforehand. Do it at home.</div>
     <div class="tip"><b>Small buys and paying</b>Under ¥5,000 before tax at one shop on one day gets no refund. Always pay in yen — if the terminal offers rupees, say no.</div>
 
@@ -720,12 +754,13 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
 
   <div class="subpanel" id="sp-calc" role="tabpanel" aria-labelledby="st-calc" hidden>
     <h2 class="sec">Duty calculator</h2>
+    <div class="seg" id="cartWhoSeg" role="group" aria-label="Whose cart"></div>
     <div class="seg" id="calcMode" role="group" aria-label="Calculator mode">
       <button type="button" data-m="cart">Cart</button>
       <button type="button" data-m="quick">Quick total</button>
     </div>
     <div id="calcCart">
-      <p class="note">Amounts are what you pay after the Japan tax refund. Type a shelf price in yen and it's converted at the live rate.</p>
+      <p class="note">One cart each — the ₹75k allowance is per person. Synced, so the others can see it. Amounts are after the Japan tax refund; a shelf price in yen is converted at the live rate.</p>
       <div id="cartList"></div>
       <div class="addrow">
         <input class="desc" id="ciName" placeholder="What is it?" aria-label="Item">
@@ -875,6 +910,7 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
   </div>
 </nav>
 
+<script src="sync.js"></script>
 <script src="bakugai.js"></script>
 <script>
 /* ---------- storage that never throws ---------- */
@@ -1038,7 +1074,7 @@ var BOOKINGS=[
  {id:"sagano1dec",t:"Sagano Romantic Train, 1 Dec",w:"31 Oct, 20:30 IST — a Tuesday, so it runs",when:"2026-10-31T20:30"},
  {id:"shibuya25",t:"Shibuya Sky, 25 Nov, 15:20–15:40 slot",w:"10 Nov, 20:30 IST — sales open 14 days out at midnight JST, sunset slots go first",when:"2026-11-10T20:30",u:true},
  {id:"macbook",t:"MacBook: pick the model, check US-keyboard stock",w:"Japanese stock is mostly JIS layout. Ask Bic Camera, Yodobashi or Apple Shinjuku before you fly",when:"2026-11-10T10:00"},
- {id:"taxfree",t:"Tax-free refund with bags checked through to Delhi",w:"ask ANA how the Haneda customs step works when your bags are checked through from KIX",when:"2026-11-20T10:00"},
+ {id:"taxfree",t:"Tax-free refund with bags checked through to Delhi",w:"ask ANA how the Haneda customs step works when your bags are checked through from KIX, and whether you can add a bag of tax-free cosmetics at the Haneda counter",when:"2026-11-20T10:00"},
  {id:"shortlist",t:"Watches and shoes: shortlist models, sizes in cm, Indian prices to compare",w:"so you buy in minutes in Japan, not hours",when:"2026-11-15T10:00"},
  {id:"vjw",t:"Visit Japan Web for all three",w:"around 20 Nov",when:"2026-11-20T10:00"}
 ];
@@ -1654,7 +1690,7 @@ function initSplit(){
   $("#eAdd").addEventListener("click",function(){
     var a=num($("#eAmt").value);
     if(a<=0){$("#eAmt").focus();return}
-    exps.push({d:$("#eDesc").value.trim(),a:a,p:$("#ePayer").value,ts:Date.now()});
+    exps.push({id:TS?TS.uid():undefined,d:$("#eDesc").value.trim(),a:a,p:$("#ePayer").value,ts:Date.now()});
     S.set("exps",exps);$("#eDesc").value="";$("#eAmt").value="";renderExps();
     touchCloud();
   });
@@ -1728,7 +1764,9 @@ function normalizeExps(raw){
       d:String(x.d||"").slice(0,80),
       a:amt,
       p:PEOPLE.indexOf(x.p)>=0?x.p:PEOPLE[0],
-      ts:typeof x.ts==="number"?x.ts:undefined
+      ts:typeof x.ts==="number"?x.ts:undefined,
+      id:typeof x.id==="string"?x.id:undefined,
+      m:typeof x.m==="number"?x.m:undefined
     });
   }
   return clean;
@@ -1745,7 +1783,10 @@ function normalizeBuyMap(raw){
     for(var i=0;i<arr.length;i++){
       var b=arr[i]; if(!b)continue;
       var t=String(b.t||"").trim(); if(!t)continue;
-      o[p].push({t:t,a:num(b.a),k:!!b.k});
+      var it={t:t,a:num(b.a),k:!!b.k};
+      if(typeof b.id==="string")it.id=b.id;
+      if(typeof b.m==="number")it.m=b.m;
+      o[p].push(it);
     }
   });
   return o;
@@ -1773,27 +1814,99 @@ var cloudPullQueued=null;
 function buys(){return buyMap[buyWho]||(buyMap[buyWho]=[])}
 function saveBuysLocal(){S.set("buyMap",buyMap);S.set("buyTs",cloudTs);S.set("cloudTs",cloudTs);S.set("buyWho",buyWho)}
 
-function cloudPayload(){
-  var o={
-    ts:cloudTs,
-    exps:exps,
-    budget:budget,
-    checks:getChecksMap(),
-    fujiSwap:!!fujiSwapped,
-    lists:{
-      docs:getList("docs"),
-      pack:getList("pack"),
-      daily:getList("daily"),
-      before:getList("before"),
-      need:getList("need"),
-      gift:getList("gift"),
-      book:getList("book")
-    }
-  };
-  PEOPLE.forEach(function(p){o[p]=buyMap[p]||[]});
+/* ---------- what gets synced, and how (merge rules live in sync.js) ----------
+   Every save is pull → merge → push, so nobody's edits overwrite anyone
+   else's. syncMeta is kept on the phone: the snapshot of the last state (how
+   edits are noticed), tombstones for deletions, and whether anything is still
+   waiting to go up — so an edit made offline survives closing the app. */
+var TS=window.TripSync||null;
+var SYNC_LISTS=["docs","pack","daily","before","need","gift","book"];
+var syncMeta=S.get("syncMeta",{snap:null,del:{},sm:{},pending:false,last:0});
+cloudDirty=!!syncMeta.pending;
+var syncBusy=false,syncAgain=false,syncRetry=null,syncFails=0;
+
+function saveSyncMeta(){S.set("syncMeta",syncMeta)}
+
+function localState(){
+  var s={colls:{},scal:{},del:syncMeta.del||{}};
+  TS.ensureIds("exp",exps,["d","a","p","ts"]);
+  s.colls.exps=exps;
+  PEOPLE.forEach(function(p){
+    var b=buyMap[p]||(buyMap[p]=[]);TS.ensureIds("buy:"+p,b,["t","a"]);s.colls["buy:"+p]=b;
+    var c=cartMap[p]||(cartMap[p]=[]);TS.ensureIds("cart:"+p,c,["name","jpy","inr"]);s.colls["cart:"+p]=c;
+  });
+  SYNC_LISTS.forEach(function(n){var l=getList(n);TS.ensureIds("list:"+n,l,["t","w"]);s.colls["list:"+n]=l});
+  s.scal.budget={v:budget,m:syncMeta.sm.budget||0};
+  s.scal.fujiSwap={v:!!fujiSwapped,m:syncMeta.sm.fujiSwap||0};
+  return s;
+}
+
+function remoteState(rec){
+  rec=(rec&&typeof rec==="object")?rec:{};
+  var s={colls:{},scal:{},del:(rec.del&&typeof rec.del==="object")?rec.del:{}};
+  var e=normalizeExps(rec.exps);TS.ensureIds("exp",e,["d","a","p","ts"]);s.colls.exps=e;
+  var bm=normalizeBuyMap(rec),cm=normalizeCartMap(rec.cart);
+  PEOPLE.forEach(function(p){
+    TS.ensureIds("buy:"+p,bm[p],["t","a"]);s.colls["buy:"+p]=bm[p];
+    TS.ensureIds("cart:"+p,cm[p],["name","jpy","inr"]);s.colls["cart:"+p]=cm[p];
+  });
+  SYNC_LISTS.forEach(function(n){
+    if(!rec.lists||!Array.isArray(rec.lists[n]))return;
+    var l=rec.lists[n].filter(function(x){return x&&typeof x==="object"});
+    TS.ensureIds("list:"+n,l,["t","w"]);s.colls["list:"+n]=l;
+  });
+  /* an old record's 0 budget means "never set", not "set to nothing" */
+  if(typeof rec.budget==="number"&&!isNaN(rec.budget)&&(rec.budget>0||rec.budgetM))s.scal.budget={v:rec.budget,m:rec.budgetM||0};
+  if(typeof rec.fujiSwap==="boolean")s.scal.fujiSwap={v:rec.fujiSwap,m:rec.fujiSwapM||0};
+  return s;
+}
+
+function recordOf(s){
+  var o={v:2,ts:Date.now(),exps:s.colls.exps||[],
+    budget:s.scal.budget?s.scal.budget.v:0,budgetM:s.scal.budget?s.scal.budget.m:0,
+    fujiSwap:s.scal.fujiSwap?!!s.scal.fujiSwap.v:false,fujiSwapM:s.scal.fujiSwap?s.scal.fujiSwap.m:0,
+    lists:{},cart:{},del:s.del||{},checks:getChecksMap()};
+  SYNC_LISTS.forEach(function(n){o.lists[n]=s.colls["list:"+n]||getList(n)});
+  PEOPLE.forEach(function(p){o[p]=s.colls["buy:"+p]||[];o.cart[p]=s.colls["cart:"+p]||[]});
   return o;
 }
-function buyPayload(){return cloudPayload()}
+
+function persistLocal(){
+  S.set("exps",exps);S.set("budget",budget);S.set("fujiSwap",fujiSwapped);
+  saveBuysLocal();
+  SYNC_LISTS.forEach(function(n){S.set("items_"+n,getList(n))});
+  S.set("cartMap",cartMap);
+}
+
+/* notice and stamp whatever changed since the last snapshot */
+function stampLocal(){
+  var s=localState();
+  if(TS.stamp(s,syncMeta.snap,Date.now()))syncMeta.pending=true;
+  syncMeta.sm={budget:s.scal.budget.m,fujiSwap:s.scal.fujiSwap.m};
+  syncMeta.del=s.del;
+  syncMeta.snap=TS.snapshot(s);
+  persistLocal();saveSyncMeta();
+  return s;
+}
+
+function applyState(s){
+  exps=s.colls.exps||[];
+  PEOPLE.forEach(function(p){buyMap[p]=s.colls["buy:"+p]||[];cartMap[p]=s.colls["cart:"+p]||[]});
+  SYNC_LISTS.forEach(function(n){if(s.colls["list:"+n])setList(n,s.colls["list:"+n])});
+  if(s.scal.budget)budget=s.scal.budget.v;
+  syncMeta.del=s.del;
+  syncMeta.sm={budget:s.scal.budget?s.scal.budget.m:0,fujiSwap:s.scal.fujiSwap?s.scal.fujiSwap.m:0};
+  var swap=s.scal.fujiSwap?!!s.scal.fujiSwap.v:fujiSwapped;
+  if(swap!==fujiSwapped){
+    fujiSwapped=swap;doSwap();
+    renderStatus();renderToday();renderDays();renderWxToday();renderFuji();
+  }
+  useCart();
+  persistLocal();
+  syncMeta.snap=TS.snapshot(localState());saveSyncMeta();
+  renderBuys();renderExps();renderPace();renderAllChecks();
+  if(WG)renderBaku();
+}
 
 function setCloudStatus(msg){
   flash("#buyFlash",msg);
@@ -1802,17 +1915,32 @@ function setCloudStatus(msg){
 }
 function setBuyStatus(msg){setCloudStatus(msg)}
 
+function renderSyncPill(){
+  var b=$("#syncPill");if(!b)return;
+  var cls="ok",txt;
+  if(!TS){cls="err";txt="Sync off"}
+  else if(syncBusy)txt="Syncing…";
+  else if(syncMeta.pending&&syncFails){cls="err";txt="Not synced · retrying"}
+  else if(syncMeta.pending){cls="wait";txt="Saving…"}
+  else if(syncMeta.last){
+    var d=new Date(syncMeta.last);
+    txt="Synced "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+  }
+  else{cls="wait";txt="Not synced yet"}
+  b.className="syncpill "+cls;b.textContent=txt;
+  b.title=syncMeta.pending?"Changes are saved on this phone and will go up as soon as there's a connection. Tap to try now.":"Everything is in the cloud. Tap to check for changes.";
+}
+
 function touchCloud(){
-  cloudDirty=true;cloudGen++;cloudTs=Date.now();
-  saveBuysLocal();
-  scheduleCloudPush();
+  if(!TS){persistLocal();return}
+  stampLocal();
+  cloudGen++;cloudDirty=true;syncMeta.pending=true;saveSyncMeta();
+  renderSyncPill();
+  clearTimeout(cloudPushTimer);
+  cloudPushTimer=setTimeout(function(){cloudSync()},400);
 }
 function touchBuys(){touchCloud()}
-
-function scheduleCloudPush(){
-  clearTimeout(cloudPushTimer);
-  cloudPushTimer=setTimeout(function(){cloudPush()},300);
-}
+function scheduleCloudPush(){clearTimeout(cloudPushTimer);cloudPushTimer=setTimeout(function(){cloudSync()},400)}
 function scheduleBuyPush(){scheduleCloudPush()}
 
 function cloudHeaders(write){
@@ -1822,74 +1950,19 @@ function cloudHeaders(write){
 }
 function buyHeaders(write){return cloudHeaders(write)}
 
-function cloudRunQueued(){
-  if(cloudPullQueued===null||cloudBusy)return;
-  var force=!!cloudPullQueued;
-  cloudPullQueued=null;
-  cloudPull(force);
+function scheduleRetry(){
+  clearTimeout(syncRetry);
+  var wait=Math.min(300000,5000*Math.pow(2,Math.min(syncFails-1,6)));
+  syncRetry=setTimeout(function(){if(syncMeta.pending)cloudSync()},wait);
 }
-function buyRunQueued(){cloudRunQueued()}
 
-function cloudPush(cb){
-  if(typeof fetch!=="function"){setCloudStatus("No network API here — items stay on this phone.");if(cb)cb(false);return}
-  if(cloudBusy){scheduleCloudPush();if(cb)cb(false);return}
-  var gen=cloudGen;
-  var body=JSON.stringify(cloudPayload());
-  cloudBusy=true;
-  setCloudStatus("Saving…");
-  fetch(CLOUD_URL,{method:"PUT",headers:cloudHeaders(true),body:body,cache:"no-store"})
-    .then(function(r){
-      return r.text().then(function(t){
-        if(!r.ok)throw new Error(r.status+(t?" "+t.slice(0,120):""));
-        try{return JSON.parse(t)}catch(e){return {}}
-      });
-    })
-    .then(function(){
-      cloudBusy=false;
-      if(gen===cloudGen){
-        cloudDirty=false;
-        saveBuysLocal();
-        S.set("exps",exps);
-        S.set("budget",budget);
-        S.set("fujiSwap",fujiSwapped);
-        setCloudStatus("Synced.");
-      }
-      else{setCloudStatus("Saving…");scheduleCloudPush()}
-      if(cb)cb(true);
-      cloudRunQueued();
-    })
-    .catch(function(err){
-      cloudBusy=false;
-      var m=String(err&&err.message||err||"");
-      if(/401|403/.test(m))
-        setCloudStatus("Cloud refused the save — Access Key needs update permission on JSONBin.");
-      else
-        setCloudStatus("Couldn't sync — kept on this phone. Try Refresh when you're online.");
-      if(cb)cb(false);
-      cloudRunQueued();
-    });
-}
-function buyPush(cb){cloudPush(cb)}
-
-function cloudPull(force,cb){
-  if(typeof fetch!=="function"){if(cb)cb(false);return}
-  if(cloudBusy){
-    cloudPullQueued=force||cloudPullQueued;
-    if(force)setCloudStatus("Waiting for save to finish…");
-    if(cb)cb(false);return;
-  }
-  if(!force&&cloudLastPull&&Date.now()-cloudLastPull<8000){if(cb)cb(true);return}
-  if(cloudDirty){
-    if(force){
-      setCloudStatus("Saving local edits first…");
-      cloudPush(function(ok){if(ok)cloudPull(true,cb);else if(cb)cb(false)});
-      return;
-    }
-    scheduleCloudPush();if(cb)cb(false);return;
-  }
-  var gen=cloudGen;
-  cloudBusy=true;
-  if(force)setCloudStatus("Refreshing…");
+function cloudSync(cb,quiet){
+  if(!TS||typeof fetch!=="function"){setCloudStatus("No sync here — everything stays on this phone.");if(cb)cb(false);return}
+  if(syncBusy){syncAgain=true;if(cb)cb(false);return}
+  stampLocal();
+  var gen=cloudGen,remote=null,merged=null;
+  syncBusy=true;cloudBusy=true;renderSyncPill();
+  if(!quiet&&syncMeta.pending)setCloudStatus("Saving…");
   fetch(CLOUD_URL+"/latest",{headers:cloudHeaders(false),cache:"no-store"})
     .then(function(r){
       return r.text().then(function(t){
@@ -1898,80 +1971,49 @@ function cloudPull(force,cb){
       });
     })
     .then(function(d){
-      cloudBusy=false;cloudLastPull=Date.now();
-      if(cloudDirty||cloudGen!==gen){
-        setCloudStatus("Local edits waiting to sync…");
-        scheduleCloudPush();
-        if(cb)cb(true);cloudRunQueued();return;
-      }
-      var rec=(d&&d.record)?d.record:d;
-      var remote=normalizeBuyMap(rec);
-      var rts=(rec&&typeof rec.ts==="number")?rec.ts:0;
-      buyMap=remote;cloudTs=rts||Date.now();buyTs=cloudTs;
-      saveBuysLocal();
-      renderBuys();
-
-      if(Array.isArray(rec.exps)){
-        exps=normalizeExps(rec.exps);
-        S.set("exps",exps);
-        renderExps();
-      } else if(exps.length>0){
-        cloudDirty=true;
-      }
-
-      if(typeof rec.budget==="number"&&!isNaN(rec.budget)&&rec.budget>0){
-        budget=rec.budget;
-        S.set("budget",budget);
-        renderPace();
-      } else if(budget>0){
-        cloudDirty=true;
-      }
-
-      if(rec.lists&&typeof rec.lists==="object"){
-        ["docs","pack","daily","before","need","gift","book"].forEach(function(name){
-          if(Array.isArray(rec.lists[name])){
-            setList(name,rec.lists[name]);
-          }
+      remote=remoteState((d&&d.record)?d.record:d);
+      var local=stampLocal();              /* picks up edits made while fetching */
+      gen=cloudGen;
+      merged=TS.merge(local,remote,Date.now());
+      if(!TS.same(merged,local))applyState(merged);
+      if(TS.same(merged,remote))return;
+      return fetch(CLOUD_URL,{method:"PUT",headers:cloudHeaders(true),body:JSON.stringify(recordOf(merged)),cache:"no-store"})
+        .then(function(r){
+          return r.text().then(function(t){if(!r.ok)throw new Error(r.status+(t?" "+t.slice(0,120):""))});
         });
-        renderAllChecks();
-      } else if(rec.checks&&typeof rec.checks==="object"){
-        CHECK_KEYS.forEach(function(k){
-          if(rec.checks[k]&&typeof rec.checks[k]==="object")
-            S.set(k,rec.checks[k]);
-        });
-        renderAllChecks();
-        cloudDirty=true;
-      } else {
-        cloudDirty=true;
-      }
-
-      if(typeof rec.fujiSwap==="boolean"){
-        if(fujiSwapped!==rec.fujiSwap){
-          fujiSwapped=rec.fujiSwap;
-          S.set("fujiSwap",fujiSwapped);
-          doSwap();
-          renderStatus();renderToday();renderDays();renderWxToday();renderFuji();
-        }
-      } else if(fujiSwapped){
-        cloudDirty=true;
-      }
-
-      if(cloudDirty){
-        scheduleCloudPush();
-      } else if(force){
-        setCloudStatus("Synced with cloud.");
-      }
-      if(cb)cb(true);
-      cloudRunQueued();
     })
-    .catch(function(){
-      cloudBusy=false;
-      setCloudStatus("Couldn't reach cloud. Showing what's saved on this phone.");
-      if(cb)cb(false);
-      cloudRunQueued();
+    .then(function(){
+      if(cloudGen===gen)syncMeta.pending=false;
+      syncMeta.last=Date.now();saveSyncMeta();
+      finish(true);
+      if(!quiet)setCloudStatus("Synced.");
+    })
+    .catch(function(err){
+      var m=String(err&&err.message||err||"");
+      syncFails++;
+      finish(false);
+      if(/401|403/.test(m))setCloudStatus("Cloud refused the save — the JSONBin Access Key needs update permission. Your changes are kept on this phone.");
+      else setCloudStatus("Couldn't reach the cloud — your changes are kept on this phone and will sync when you're back online.");
+      scheduleRetry();
     });
+  function finish(ok){
+    syncBusy=false;cloudBusy=false;cloudLastPull=Date.now();
+    if(ok)syncFails=0;
+    cloudDirty=!!syncMeta.pending;
+    renderSyncPill();
+    if(cb)cb(ok);
+    if(syncAgain||(ok&&syncMeta.pending)){syncAgain=false;setTimeout(function(){cloudSync(null,true)},50)}
+  }
+}
+
+function cloudPush(cb){cloudSync(cb)}
+function buyPush(cb){cloudSync(cb)}
+function cloudPull(force,cb){
+  if(!force&&cloudLastPull&&Date.now()-cloudLastPull<8000){if(cb)cb(true);return}
+  cloudSync(cb,!force);
 }
 function buyPull(force,cb){cloudPull(force,cb)}
+window.addEventListener("online",function(){if(syncMeta.pending)cloudSync()});
 
 var cloudPollTimer=null;
 function startCloudPoll(){
@@ -2045,7 +2087,7 @@ function renderBuys(){
 function initBuy(){
   $("#bAdd").addEventListener("click",function(){
     var t=$("#bDesc").value.trim(); if(!t){$("#bDesc").focus();return}
-    buys().push({t:t,a:num($("#bAmt").value),k:false});
+    buys().push({id:TS?TS.uid():undefined,t:t,a:num($("#bAmt").value),k:false});
     touchCloud();$("#bDesc").value="";$("#bAmt").value="";renderBuys();$("#bDesc").focus();
   });
   [$("#bDesc"),$("#bAmt")].forEach(function(f){
@@ -2236,7 +2278,38 @@ function initWatches(){
 
 /* ---------- Bakugai: cart, buys, customs, calculator, scenarios ---------- */
 /* The cart lives on this phone only — the ₹75k allowance is per person. */
-var cart=S.get("cart",[]);
+function normalizeCartMap(raw){
+  var o={};
+  PEOPLE.forEach(function(p){
+    o[p]=[];
+    var arr=raw&&raw[p];
+    if(!Array.isArray(arr))return;
+    arr.forEach(function(x){
+      if(!x||typeof x!=="object")return;
+      var it={name:String(x.name||"Item").slice(0,120),jpy:num(x.jpy)||null,inr:num(x.inr)||null,
+        is_laptop:!!x.is_laptop,saving_pct:typeof x.saving_pct==="number"?x.saving_pct:null,src:String(x.src||"manual")};
+      if(typeof x.id==="string")it.id=x.id;
+      if(typeof x.m==="number")it.m=x.m;
+      o[p].push(it);
+    });
+  });
+  return o;
+}
+var cartWho=S.get("cartWho",S.get("buyWho",PEOPLE[0]));
+if(PEOPLE.indexOf(cartWho)<0)cartWho=PEOPLE[0];
+var cartMap=normalizeCartMap(S.get("cartMap",null));
+/* one-time: the cart used to be one list per phone — give it to whoever's selected */
+(function(){
+  var old=S.get("cart",null);
+  if(Array.isArray(old)&&old.length&&!cartMap[cartWho].length){
+    var m={};m[cartWho]=old;cartMap[cartWho]=normalizeCartMap(m)[cartWho];
+    S.set("cartMap",cartMap);
+  }
+  if(old)S.del("cart");
+})();
+var cart;
+function useCart(){cart=cartMap[cartWho]||(cartMap[cartWho]=[])}
+useCart();
 var bk=S.get("bk",{tab:"watches",mode:"cart",rate:"std",save:null,spend:150000,variant:"A"});
 var RATE_OPTS=[
  {k:"std",note:"Baggage duty under Notification 26/2016, as amended in 2026. No surcharge on baggage since 2 Feb 2025."},
@@ -2245,7 +2318,7 @@ var RATE_OPTS=[
 ];
 
 function saveBk(){S.set("bk",bk)}
-function saveCart(){S.set("cart",cart)}
+function saveCart(){S.set("cartMap",cartMap);touchCloud()}
 function cartInr(it){return it.jpy?WG.effectiveInr(it.jpy,watchRate(),WG.CONFIG):(it.inr||0)}
 function cartCalc(){return WG.dutyCalc({items:cart.map(function(it){return {inr:cartInr(it),is_laptop:it.is_laptop}})},curRate(),WG.CONFIG)}
 function curRate(){return WG.dutyRate(bk.rate,WG.CONFIG)}
@@ -2262,6 +2335,7 @@ function meter(used,cap){
 
 var cartMsg="";
 function addToCart(it){
+  if(TS&&!it.id)it.id=TS.uid();
   cart.push(it);saveCart();
   cartMsg="Added "+it.name+".";
   renderBaku();
@@ -2271,12 +2345,12 @@ function addToCart(it){
 function renderCartBar(){
   var box=$("#cartBar"),c=WG.CONFIG;box.innerHTML="";
   if(!cart.length){
-    box.appendChild(el("div","cb-t",cartMsg||"Cart empty — add things from Watches or Buys, or try the calculator."));
+    box.appendChild(el("div","cb-t",cartMsg||cartWho+"'s cart is empty — add things from Watches or Buys, or try the calculator."));
     return;
   }
   var r=cartCalc();
   var t=el("div","cb-t");
-  t.appendChild(el("b",null,cart.length===1?"1 thing":cart.length+" things"));
+  t.appendChild(el("b",null,cartWho+"'s cart: "+(cart.length===1?"1 thing":cart.length+" things")));
   t.appendChild(document.createTextNode(" · "+rupees(r.total)+" · "+rupees(r.allowance_used)+" of your "+rupees(c.india_duty_free_inr)+
     (r.excess>0?" · duty "+rupees(r.duty):"")));
   box.appendChild(t);
@@ -2297,7 +2371,7 @@ function setSubtab(t){
 }
 
 /* ---- buys ---- */
-var sf=S.get("sf",{catch:false,counts:false});
+var sf=S.get("sf",{catch:false,counts:false,cat:""});
 function shopAdder(item){
   var f=el("div","addrow sc-add");f.hidden=true;
   var amt=document.createElement("input");amt.className="amt num";amt.type="text";amt.inputMode="numeric";
@@ -2316,43 +2390,121 @@ function shopAdder(item){
   f.appendChild(amt);f.appendChild(unit);f.appendChild(add);
   return f;
 }
-function renderBuys(){
-  var be=WG.breakEvenPct(curRate()),box=$("#shopList");
-  $("#buysBreak").innerHTML="Past your ₹75k, only things saving more than <b>"+pct1(be)+"</b> beat India once dutied at "+ratePct(curRate())+"%.";
-  box.innerHTML="";
-  var list=WG.SHOP_ITEMS.filter(function(x){return (!sf.catch||x.catch)&&(!sf.counts||x.counts_toward_allowance)});
-  list.sort(function(a,b){return (b.saving_pct_max==null?-1:b.saving_pct_max)-(a.saving_pct_max==null?-1:a.saving_pct_max)});
-  list.forEach(function(x){
-    var c=el("div","sc"),hd=el("div","hd");
-    hd.appendChild(el("b",null,x.category));
-    hd.appendChild(el("span","r",x.saving_pct_min==null?"gifts & finds":x.saving_pct_min+"–"+x.saving_pct_max+"%"));
-    c.appendChild(hd);
-    if(x.saving_pct_min!=null){
-      /* saving range on a 0–70% track, with the break-even marked */
-      var bar=el("div","sbar"),fill=el("span","f"),mk=el("span","be");
-      fill.style.left=(x.saving_pct_min/70*100)+"%";fill.style.width=((x.saving_pct_max-x.saving_pct_min)/70*100)+"%";
-      mk.style.left=(be/70*100)+"%";mk.title="Break-even "+pct1(be);
-      bar.appendChild(fill);bar.appendChild(mk);
-      bar.setAttribute("role","img");bar.setAttribute("aria-label","Saving "+x.saving_pct_min+" to "+x.saving_pct_max+" percent; break-even "+pct1(be));
-      c.appendChild(bar);
-    }
-    c.appendChild(el("div","sub",x.examples));
-    c.appendChild(el("div","sub","Where: "+x.where_to_buy));
-    var tags=el("div");
-    if(x.catch)tags.appendChild(el("span","wb warn","⚠ "+x.catch));
-    if(x.is_laptop)tags.appendChild(el("span","wb ok","Own exemption — one laptop"));
-    else if(x.saving_pct_max!=null&&x.saving_pct_max<be)tags.appendChild(el("span","wb nr","Below break-even — buy inside the ₹75k"));
-    else if(x.saving_pct_min!=null&&x.saving_pct_min>be)tags.appendChild(el("span","wb pick","Worth it even past ₹75k"));
-    if(tags.childNodes.length)c.appendChild(tags);
-    var act=el("div","sc-act");
-    if(x.link&&x.link_verified)act.appendChild(linkTo(x.link,"official page ↗"));
-    var adder=shopAdder(x),b=el("button","chip","+ Cart");b.type="button";
+function shopItem(id){return WG.SHOP_ITEMS.filter(function(x){return x.id===id})[0]||null}
+function productsOf(id){return WG.SHOP_PRODUCTS.filter(function(p){return p.cat===id})}
+function setCat(id){
+  sf.cat=id;S.set("sf",sf);renderShop();
+  if(S.get("tab","now")==="baku")writePath();
+}
+function renderCatTabs(){
+  var box=$("#catTabs");box.innerHTML="";
+  [{id:"",tab:"All"}].concat(WG.SHOP_ITEMS).forEach(function(x){
+    var b=el("button",null,x.tab);b.type="button";b.setAttribute("role","tab");
+    var on=(sf.cat||"")===x.id;
+    b.setAttribute("aria-selected",on?"true":"false");
+    b.addEventListener("click",function(){setCat(x.id)});
+    box.appendChild(b);
+    if(on)setTimeout(function(){b.scrollIntoView({block:"nearest",inline:"center"})},0);
+  });
+}
+/* the category summary card; on the All view it also links to its picks */
+function shopCard(x,be,overview){
+  var c=el("div","sc"),hd=el("div","hd");
+  hd.appendChild(el("b",null,x.category));
+  hd.appendChild(el("span","r",x.saving_pct_min==null?"gifts & finds":x.saving_pct_min+"–"+x.saving_pct_max+"%"));
+  c.appendChild(hd);
+  if(x.saving_pct_min!=null){
+    /* saving range on a 0–70% track, with the break-even marked */
+    var bar=el("div","sbar"),fill=el("span","f"),mk=el("span","be");
+    fill.style.left=(x.saving_pct_min/70*100)+"%";fill.style.width=((x.saving_pct_max-x.saving_pct_min)/70*100)+"%";
+    mk.style.left=(be/70*100)+"%";mk.title="Break-even "+pct1(be);
+    bar.appendChild(fill);bar.appendChild(mk);
+    bar.setAttribute("role","img");bar.setAttribute("aria-label","Saving "+x.saving_pct_min+" to "+x.saving_pct_max+" percent; break-even "+pct1(be));
+    c.appendChild(bar);
+  }
+  c.appendChild(el("div","sub",x.examples));
+  c.appendChild(el("div","sub","Where: "+x.where_to_buy));
+  var tags=el("div");
+  if(x.catch)tags.appendChild(el("span","wb warn","⚠ "+x.catch));
+  if(x.is_laptop)tags.appendChild(el("span","wb ok","Own exemption — one laptop"));
+  else if(x.saving_pct_max!=null&&x.saving_pct_max<be)tags.appendChild(el("span","wb nr","Below break-even — buy inside the ₹75k"));
+  else if(x.saving_pct_min!=null&&x.saving_pct_min>be)tags.appendChild(el("span","wb pick","Worth it even past ₹75k"));
+  if(tags.childNodes.length)c.appendChild(tags);
+  var act=el("div","sc-act");
+  if(x.link&&x.link_verified)act.appendChild(linkTo(x.link,"official page ↗"));
+  if(overview){
+    var n=productsOf(x.id).length,go=el("button","chip",n?n+" picks →":"Details →");go.type="button";
+    go.addEventListener("click",function(){setCat(x.id);$("#catTabs").scrollIntoView({block:"start"})});
+    act.appendChild(go);c.appendChild(act);
+  }else{
+    var adder=shopAdder(x),b=el("button","chip","+ Cart, own amount");b.type="button";
     b.addEventListener("click",function(){adder.hidden=!adder.hidden;if(!adder.hidden)adder.querySelector("input").focus()});
     act.appendChild(b);c.appendChild(act);c.appendChild(adder);
-    box.appendChild(c);
-  });
+  }
+  return c;
+}
+function productRow(p,item){
+  var r=el("div","w"),n=el("div","wn");
+  n.appendChild(el("div","wm",p.name));
+  if(p.why)n.appendChild(el("div","wmeta",p.why));
+  var tags=[];
+  if(p.jp_effective_inr!=null&&!p.refund)tags.push(["nr","Under ¥5,000 — combine at one shop"]);
+  if(p.link&&p.link_verified)tags.push(["ok","✓ Link"]);
+  if(p.liquid)tags.push(p.liquid==="small"?["ok","Fits the liquids bag"]:["warn","Over 100 ml — see the refund plan"]);
+  if(tags.length){
+    var t=el("div");
+    tags.forEach(function(x){
+      var bdg=el("span","wb "+x[0],x[1]);
+      if(x[0]==="warn"&&p.liquid){
+        bdg.setAttribute("role","link");bdg.tabIndex=0;bdg.style.cursor="pointer";
+        bdg.addEventListener("click",function(){setSubtab("customs");$("#liquids").scrollIntoView({block:"start"})});
+      }
+      t.appendChild(bdg);
+    });
+    n.appendChild(t);
+  }
+  if(p.tip)n.appendChild(el("div","wnote","Tip: "+p.tip));
+  var act=el("div","pact");
+  if(p.link&&p.link_verified)act.appendChild(linkTo(p.link,"official page ↗"));
+  if(p.jp_tag_jpy){
+    var add=el("button","wadd","+ Cart");add.type="button";add.setAttribute("aria-label","Add "+p.name+" to the cart");
+    add.addEventListener("click",function(){addToCart({name:p.name,jpy:p.jp_tag_jpy,inr:null,is_laptop:!!item.is_laptop,saving_pct:p.saving_pct,src:item.id})});
+    act.appendChild(add);
+  }
+  n.appendChild(act);
+  r.appendChild(n);
+  if(p.jp_effective_inr!=null){var jp=el("div","wv jp",rupees(p.jp_effective_inr));jp.appendChild(el("small",null,yen(p.jp_tag_jpy)));r.appendChild(jp)}
+  else r.appendChild(el("div","wv na","—"));
+  r.appendChild(p.india_inr?el("div","wv",rupees(p.india_inr)):el("div","wv na","—"));
+  r.appendChild(p.saving_pct==null?el("div","wv na","—"):el("div","wv ws"+(p.saving_pct<0?" neg":""),p.saving_pct+"%"));
+  return r;
+}
+function renderShop(){
+  var be=WG.breakEvenPct(curRate());
+  $("#buysBreak").innerHTML="Past your ₹75k, only things saving more than <b>"+pct1(be)+"</b> beat India once dutied at "+ratePct(curRate())+"%.";
+  if(sf.cat&&!shopItem(sf.cat))sf.cat="";
+  renderCatTabs();
+  $("#buysAll").hidden=!!sf.cat;$("#buysCat").hidden=!sf.cat;
+  if(sf.cat){renderShopCat(shopItem(sf.cat),be);return}
+  var box=$("#shopList");box.innerHTML="";
+  var list=WG.SHOP_ITEMS.filter(function(x){return (!sf.catch||x.catch)&&(!sf.counts||x.counts_toward_allowance)});
+  list.sort(function(a,b){return (b.saving_pct_max==null?-1:b.saving_pct_max)-(a.saving_pct_max==null?-1:a.saving_pct_max)});
+  list.forEach(function(x){box.appendChild(shopCard(x,be,true))});
   if(!list.length)box.appendChild(el("p","note","Nothing matches both filters."));
   renderLinks("#shopLinks",WG.SHOP_LINKS);
+}
+function renderShopCat(item,be){
+  var box=$("#buysCat"),c=WG.CONFIG,r=watchRate();box.innerHTML="";
+  box.appendChild(shopCard(item,be,false));
+  var ps=productsOf(item.id).map(function(p){return WG.pricedProduct(p,r,c)});
+  box.appendChild(el("h3","wband","What to buy"));
+  if(!ps.length){box.appendChild(el("p","note","No specific picks here — use “+ Cart, own amount” above."));return}
+  box.appendChild(el("p","note","Japan ₹ is after the tax refund at today's rate. Things under ¥5,000 are shown without it — but the minimum is per shop per day, so buy ¥5,000+ together at one shop and you get it back on all of them. Prices are approximate — check the shelf."));
+  var hd=el("div","whd");["Item","Japan","India","Save"].forEach(function(x){hd.appendChild(el("span",null,x))});
+  box.appendChild(hd);
+  ps.forEach(function(p){box.appendChild(productRow(p,item))});
+  var src=ps.filter(function(p){return p.jp_source||p.india_source}).map(function(p){return p.name+": "+[p.jp_source,p.india_source].filter(Boolean).join(" / ")});
+  if(src.length)box.appendChild(el("p","wdisc","Price sources — "+src.join("; ")+"."));
 }
 function renderLinks(sel,list){
   var lk=$(sel);lk.innerHTML="";
@@ -2465,7 +2617,17 @@ function renderCalcOut(){
   }
   $("#rateNote2").textContent=rateNoteText();
 }
+function renderCartWho(){
+  var box=$("#cartWhoSeg");box.innerHTML="";
+  PEOPLE.forEach(function(p){
+    var b=el("button",null,p);b.type="button";
+    b.setAttribute("aria-pressed",p===cartWho?"true":"false");
+    b.addEventListener("click",function(){cartWho=p;S.set("cartWho",p);useCart();renderBaku()});
+    box.appendChild(b);
+  });
+}
 function renderCalc(){
+  renderCartWho();
   document.querySelectorAll("#calcMode button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.m===bk.mode?"true":"false")});
   $("#calcCart").hidden=bk.mode!=="cart";$("#calcQuick").hidden=bk.mode!=="quick";
   renderRateOpt();renderCartList();renderCalcOut();
@@ -2554,7 +2716,7 @@ function renderScen(){
 
 function renderBaku(){
   if(!WG)return;
-  renderWatches();renderCartBar();renderBuys();renderCustoms();renderCalc();renderScen();
+  renderWatches();renderCartBar();renderShop();renderCustoms();renderCalc();renderScen();
 }
 
 function initBaku(){
@@ -2563,10 +2725,12 @@ function initBaku(){
   document.querySelectorAll("#p-baku .subtabs button").forEach(function(b){
     b.addEventListener("click",function(){setSubtab(b.dataset.s);window.scrollTo(0,$("#p-baku .subtabs").offsetTop-8)});
   });
-  setSubtab(readPath().sub||bk.tab||"watches");
+  var path=readPath();
+  if(path.cat!==null)sf.cat=path.cat;
+  setSubtab(path.sub||bk.tab||"watches");
   ["catch","counts"].forEach(function(k){
     var cb=$(k==="catch"?"#sfCatch":"#sfCounts");cb.checked=!!sf[k];
-    cb.addEventListener("change",function(){sf[k]=cb.checked;S.set("sf",sf);renderBuys()});
+    cb.addEventListener("change",function(){sf[k]=cb.checked;S.set("sf",sf);renderShop()});
   });
   document.querySelectorAll("#calcMode button").forEach(function(b){
     b.addEventListener("click",function(){bk.mode=b.dataset.m;saveBk();renderCalc()});
@@ -2579,8 +2743,8 @@ function initBaku(){
   });
   [$("#ciName"),$("#ciAmt")].forEach(function(f){f.addEventListener("keydown",function(e){if(e.key==="Enter")$("#ciAdd").click()})});
   $("#cartClear").addEventListener("click",function(){
-    if(!cart.length||!confirm("Empty the cart on this phone?"))return;
-    cart=[];saveCart();renderBaku();
+    if(!cart.length||!confirm("Empty "+cartWho+"'s cart? It empties on every phone."))return;
+    cart.length=0;saveCart();renderBaku();
   });
   ["#qTotal","#qLaptop"].forEach(function(id){$(id).addEventListener("input",renderCalcOut)});
   var sv=$("#avgSave");sv.value=bk.save;
@@ -2895,7 +3059,7 @@ function setupListAdder(name,inputId,btnId,mount,progMount){
     if(!t){inp.focus();return}
     var list=getList(name);
     list.push({
-      id:name[0]+"_"+Date.now(),
+      id:name[0]+"_"+(TS?TS.uid():Date.now()),
       t:t,
       w:"",
       k:false
@@ -3141,6 +3305,7 @@ function initTabs(){
   else{S.set("tab","now");writePath()}
   window.addEventListener("hashchange",function(){
     var p=readPath();
+    if(p.cat!==null&&p.cat!==(sf.cat||""))setCat(p.cat);
     if(p.sub)setSubtab(p.sub);
     var b=p.tab&&document.querySelector('nav.tabs button[data-p="'+p.tab+'"]');
     if(b&&b.getAttribute("aria-selected")!=="true")b.click();
@@ -3153,12 +3318,13 @@ var SUB_SLUG={watches:"watches",buys:"buys",customs:"customs",calc:"calculator",
 function fromSlug(map,slug){for(var k in map)if(map[k]===slug)return k;return null}
 function readPath(){
   var h=decodeURIComponent(location.hash||"").replace(/^#\/?/,"").toLowerCase().split("/");
-  return {tab:fromSlug(TAB_SLUG,h[0]),sub:fromSlug(SUB_SLUG,h[1]||"")};
+  return {tab:fromSlug(TAB_SLUG,h[0]),sub:fromSlug(SUB_SLUG,h[1]||""),cat:h[1]==="buys"?(h[2]||""):null};
 }
 /* replaceState, not a new history entry: Back still leaves the app, as before */
 function writePath(){
   var t=S.get("tab","now"),h="#"+(TAB_SLUG[t]||"now");
   if(t==="baku"&&bk.tab)h+="/"+SUB_SLUG[bk.tab];
+  if(t==="baku"&&bk.tab==="buys"&&sf.cat)h+="/"+sf.cat;
   if(location.hash!==h&&history.replaceState)history.replaceState(null,"",h);
 }
 
@@ -3203,6 +3369,8 @@ setupAllListAdders();
 initBuy();
 initWatches();
 initBaku();
+renderSyncPill();
+$("#syncPill").addEventListener("click",function(){cloudPull(true)});
 renderPhrases();
 renderDrivers();
 initDocs();

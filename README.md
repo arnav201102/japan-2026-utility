@@ -134,6 +134,32 @@ list (Arnav / Ayush / Manan) kept in one JSONBin record — any of you can add,
 tick or delete, and it syncs when there's a connection. Ticked items count as
 spent on that person's running tab.
 
+## Sync, and not losing anything
+
+Everything you add — expenses, the budget, the three shopping lists, every
+checklist and booking, the Fuji swap, and each person's Bakugai cart — is
+saved on the phone first and then merged into one shared JSONBin record.
+
+Every save is **pull → merge → push** (`sync.js`), so two of you editing at
+once never wipes the other's changes:
+
+- each item has an id and the time it last changed; the newer edit wins;
+- deleting leaves a tombstone (kept 90 days), so an item missing from the
+  cloud is never taken to mean "deleted" — a save that got overwritten just
+  comes back on the next sync;
+- what's waiting to go up is remembered on the phone, so an edit made with no
+  signal survives closing the app and syncs when you're back online (it
+  retries on its own, and again the moment the phone reconnects).
+
+The pill under the dates shows the state — *Synced 14:32*, *Saving…*, or
+*Not synced · retrying*. Tap it to sync now.
+
+Not synced, on purpose: passport copies (private to each phone, see above),
+and per-phone settings like theme, filters and your own exchange rate.
+
+Tests: `node --test` runs `tests/sync.test.js` — concurrent adds, deletes vs
+edits, overwritten saves, offline restarts, the first run after updating.
+
 ## Things to change
 
 Everything else lives in `index.html`. The data is near the top of the
@@ -160,12 +186,12 @@ for dark.
 | Sub-tab | What's in it |
 |---|---|
 | **Watches** | About 60 watches up to ₹50,000 in ₹5,000 bands, Japan cost after the refund next to the India price, filters, a shelf-price checker, Japan-only lines, a few above budget |
-| **Buys** | Other things cheaper in Japan, with saving ranges against the break-even, catches, where to buy, and shops worth knowing |
+| **Buys** | 16 category tabs (knives, Muji, shoes, Uniqlo, skincare, stationery, cameras, audio, whisky, MacBook, iPhone, Switch 2, snacks, anime, 100-yen, pre-owned), each with specific products: Japan cost after the refund, India price, saving, a tip and an official link. An All view compares the categories against the break-even |
 | **Customs** | The break-even rule, the Haneda tax-refund steps, India's Baggage Rules 2026, penalties, cash limits, sources |
 | **Calculator** | A cart (fed by **+ Cart** on watches and buys, or typed in) or a quick total, the duty rate, landed cost and the India comparison |
 | **Scenarios** | ₹50k to ₹2.5L, with and without a laptop, as a chart and a table |
 
-Everything lives in `bakugai.js`: one `CONFIG`, the data, and the maths. No
+Everything lives in `bakugai.js`: one `CONFIG`, the data (`WATCHES`, `SHOP_ITEMS`, `SHOP_PRODUCTS`), and the maths. No
 rupee figure is stored — they're worked out from yen at the live rate from the
 Money tab (no card markup; your cards are zero-forex). Change a rate in
 `CONFIG` and every screen follows.
@@ -188,7 +214,7 @@ The cart is kept on each phone, not synced, because the allowance is per
 person. A link only appears if it was checked; otherwise it's `null`. `sw.js`
 fetches `bakugai.js` network-first, so edits land without bumping `VERSION`.
 
-Tests for all the maths, including the scenario table: `node --test` (Node 18+,
+Tests for all the maths, the data, and a check that no function in `index.html` is declared twice: `node --test` (Node 18+,
 nothing to install).
 
 ## The exchange rate

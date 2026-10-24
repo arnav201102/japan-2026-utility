@@ -168,3 +168,26 @@ TABLE.forEach(function (r) {
     assert.ok(Math.abs(a.net_saving - r[8]) <= 100, "net " + a.net_saving);
   });
 });
+
+/* ---------- shop products ---------- */
+test("products price like the watches, and tolerate missing prices", function () {
+  var p = W.pricedProduct({ jp_tag_jpy: 11000, india_inr: 8000 }, R, cfg);
+  assert.equal(p.jp_effective_inr, 6300);
+  assert.equal(p.saving_pct, 21);
+  var q = W.pricedProduct({ jp_tag_jpy: null, india_inr: 8000 }, R, cfg);
+  assert.equal(q.jp_effective_inr, null);
+  assert.equal(q.saving_pct, null);
+  assert.equal(W.pricedProduct({ jp_tag_jpy: 330, india_inr: null }, R, cfg).refund, false);
+});
+
+test("every product belongs to a category and links are verified or null", function () {
+  var cats = {};
+  W.SHOP_ITEMS.forEach(function (x) { cats[x.id] = 1; assert.ok(x.tab, x.id + " needs a tab label"); });
+  var ids = {};
+  W.SHOP_PRODUCTS.forEach(function (p) {
+    assert.ok(cats[p.cat], p.name + ": unknown category " + p.cat);
+    assert.ok(!ids[p.id], "duplicate id " + p.id); ids[p.id] = 1;
+    assert.equal(p.link_verified, p.link !== null, p.name);
+    if (p.jp_tag_jpy !== null) assert.ok(p.jp_tag_jpy > 0, p.name);
+  });
+});
