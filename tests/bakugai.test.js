@@ -191,3 +191,11 @@ test("every product belongs to a category and links are verified or null", funct
     if (p.jp_tag_jpy !== null) assert.ok(p.jp_tag_jpy > 0, p.name);
   });
 });
+
+test("online-only products get no refund, whatever the price", function () {
+  var p = W.pricedProduct({ jp_tag_jpy: 110000, india_inr: 79900, no_refund: true }, R, cfg);
+  assert.equal(p.refund, false);
+  assert.equal(p.jp_effective_inr, Math.round(110000 * R));
+  assert.equal(Math.round(W.effectiveInr(110000, R, cfg, true)), Math.round(110000 * R));
+  assert.equal(Math.round(W.effectiveInr(110000, R, cfg)), Math.round(100000 * R));
+});

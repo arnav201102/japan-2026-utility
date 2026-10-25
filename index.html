@@ -2288,6 +2288,7 @@ function normalizeCartMap(raw){
       if(!x||typeof x!=="object")return;
       var it={name:String(x.name||"Item").slice(0,120),jpy:num(x.jpy)||null,inr:num(x.inr)||null,
         is_laptop:!!x.is_laptop,saving_pct:typeof x.saving_pct==="number"?x.saving_pct:null,src:String(x.src||"manual")};
+      if(x.no_refund)it.no_refund=true;
       if(typeof x.id==="string")it.id=x.id;
       if(typeof x.m==="number")it.m=x.m;
       o[p].push(it);
@@ -2319,7 +2320,7 @@ var RATE_OPTS=[
 
 function saveBk(){S.set("bk",bk)}
 function saveCart(){S.set("cartMap",cartMap);touchCloud()}
-function cartInr(it){return it.jpy?WG.effectiveInr(it.jpy,watchRate(),WG.CONFIG):(it.inr||0)}
+function cartInr(it){return it.jpy?WG.effectiveInr(it.jpy,watchRate(),WG.CONFIG,it.no_refund):(it.inr||0)}
 function cartCalc(){return WG.dutyCalc({items:cart.map(function(it){return {inr:cartInr(it),is_laptop:it.is_laptop}})},curRate(),WG.CONFIG)}
 function curRate(){return WG.dutyRate(bk.rate,WG.CONFIG)}
 function ratePct(r){return Math.round(r*1000)/10}
@@ -2448,7 +2449,8 @@ function productRow(p,item){
   n.appendChild(el("div","wm",p.name));
   if(p.why)n.appendChild(el("div","wmeta",p.why));
   var tags=[];
-  if(p.jp_effective_inr!=null&&!p.refund)tags.push(["nr","Under ¥5,000 — combine at one shop"]);
+  if(p.no_refund)tags.push(["nr","Online only — no tax refund"]);
+  else if(p.jp_effective_inr!=null&&!p.refund)tags.push(["nr","Under ¥5,000 — combine at one shop"]);
   if(p.link&&p.link_verified)tags.push(["ok","✓ Link"]);
   if(p.liquid)tags.push(p.liquid==="small"?["ok","Fits the liquids bag"]:["warn","Over 100 ml — see the refund plan"]);
   if(tags.length){
@@ -2468,7 +2470,7 @@ function productRow(p,item){
   if(p.link&&p.link_verified)act.appendChild(linkTo(p.link,"official page ↗"));
   if(p.jp_tag_jpy){
     var add=el("button","wadd","+ Cart");add.type="button";add.setAttribute("aria-label","Add "+p.name+" to the cart");
-    add.addEventListener("click",function(){addToCart({name:p.name,jpy:p.jp_tag_jpy,inr:null,is_laptop:!!item.is_laptop,saving_pct:p.saving_pct,src:item.id})});
+    add.addEventListener("click",function(){addToCart({name:p.name,jpy:p.jp_tag_jpy,inr:null,is_laptop:!!item.is_laptop,saving_pct:p.saving_pct,src:item.id,no_refund:!!p.no_refund})});
     act.appendChild(add);
   }
   n.appendChild(act);
