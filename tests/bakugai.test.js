@@ -199,3 +199,12 @@ test("online-only products get no refund, whatever the price", function () {
   assert.equal(Math.round(W.effectiveInr(110000, R, cfg, true)), Math.round(110000 * R));
   assert.equal(Math.round(W.effectiveInr(110000, R, cfg)), Math.round(100000 * R));
 });
+
+test("category guides have a title, steps and https sources", function () {
+  var withGuide = W.SHOP_ITEMS.filter(function (x) { return x.guide; });
+  assert.ok(withGuide.length >= 1);
+  withGuide.forEach(function (x) {
+    assert.ok(x.guide.title && x.guide.steps.length, x.id);
+    (x.guide.sources || []).forEach(function (src) { assert.match(src.url, /^https:\/\//, x.id); });
+  });
+});
