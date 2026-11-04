@@ -448,6 +448,33 @@ h3.wband small{font-family:var(--gothic);font-weight:400;font-size:12px;color:va
 .sca.on{font-weight:700;background:var(--card)}
 .baku-disc{margin-top:28px}
 
+/* places */
+#daysView{margin-bottom:18px}
+.pl-seg{flex-wrap:wrap;display:flex}
+.pl-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pl-bar .seg{margin-bottom:8px}
+#plNear{margin-bottom:8px}
+#plNear[aria-pressed="true"]{background:var(--ai-bg);color:#fff;border-color:var(--ai-bg)}
+.pl{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--sand);font-size:14px}
+.pl-k{flex:none;width:44px;font-size:11px;font-weight:700;text-align:center;border-radius:3px;padding:3px 0;margin-top:2px;border:1px solid var(--sand);color:var(--ink-soft)}
+.pl-k.k-eat{color:var(--momiji);border-color:var(--momiji)}
+.pl-k.k-shop{color:var(--ai);border-color:var(--ai)}
+.pl-k.k-visit{color:var(--moss);border-color:var(--moss)}
+.pl-m{flex:1;min-width:0}
+.pl-n{font-weight:700;font-size:15px;line-height:1.35;overflow-wrap:anywhere}
+.pl-s{font-size:12.5px;color:var(--ink-soft);line-height:1.4;margin-top:1px}
+.pl-side{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:5px;font-size:12.5px}
+.pl-side a{color:var(--ai)}
+.pl-day{background:var(--card);border:1px solid var(--sand);border-radius:3px;font:700 12px var(--gothic);color:var(--ink);padding:3px 8px;cursor:pointer}
+.pl-free{font-size:11.5px;color:var(--ink-soft)}
+.dayplaces{margin:2px 0 12px;padding-top:8px;border-top:1px dashed var(--sand)}
+.dp-h{font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:4px}
+.dp-row{display:flex;gap:8px;align-items:flex-start}
+.dp-k{flex:none;width:40px;font-size:12px;color:var(--ink-soft);padding-top:6px}
+.dp-row .spots{margin:0 0 6px}
+.dayplaces.op{border-top:0;padding-top:0;margin-bottom:16px}
+.dayplaces.op .dp-h{font-size:14px;color:var(--ai);font-family:var(--mincho);font-weight:600;margin-bottom:6px}
+
 /* tab bar */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--ai-bg);padding-bottom:env(safe-area-inset-bottom);z-index:20}
 nav.tabs .in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(7,1fr)}
@@ -505,9 +532,27 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
 
 <!-- ============ DAYS ============ -->
 <section class="panel" id="p-days" role="tabpanel" aria-labelledby="t-days">
-  <h2 class="sec">Itinerary</h2>
-  <p class="note">Tap a day for the plan, where you're staying and the host's number.</p>
-  <div id="dayList"></div>
+  <div class="seg" id="daysView" role="group" aria-label="Itinerary or places">
+    <button type="button" data-v="plan" aria-pressed="true">Itinerary</button>
+    <button type="button" data-v="places" aria-pressed="false">Places</button>
+  </div>
+  <div id="daysPlan">
+    <h2 class="sec">Itinerary</h2>
+    <p class="note">Tap a day for the plan, where you're staying and the host's number.</p>
+    <div id="dayList"></div>
+    <div id="otherPlaces"></div>
+  </div>
+  <div id="daysPlaces" hidden>
+    <h2 class="sec">Places</h2>
+    <p class="note">Everything on the shared Google Maps list “Japan”, sorted into things to see, eat and shop. Day N takes you to the day it fits; “Other place” means it's on the list but not on any day yet — they're also listed under the itinerary.</p>
+    <div class="seg pl-seg" id="plArea" role="group" aria-label="City"></div>
+    <div class="pl-bar">
+      <div class="seg" id="plKind" role="group" aria-label="Kind"></div>
+      <button type="button" class="chip" id="plNear" aria-pressed="false">Nearest first</button>
+    </div>
+    <div class="wcount" id="plCount"></div>
+    <div id="plList"></div>
+  </div>
 </section>
 
 <!-- ============ MONEY ============ -->
@@ -913,6 +958,7 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
 </nav>
 
 <script src="sync.js"></script>
+<script src="places.js"></script>
 <script src="bakugai.js"></script>
 <script>
 /* ---------- storage that never throws ---------- */
@@ -1451,6 +1497,7 @@ function renderDays(){
     var body=el("div","body");
     d.p.forEach(function(p){body.appendChild(el("p",null,p))});
     if(d.spots)body.appendChild(spotsBlock(d.spots));
+    var pb=placesBlock(d);if(pb)body.appendChild(pb);
     if(d.last)body.appendChild(lastBlock(d.last));
     if(d.stay)body.appendChild(stayBlock(d.stay));
     btn.addEventListener("click",function(){
@@ -3325,10 +3372,160 @@ function initTabs(){
   window.addEventListener("hashchange",function(){
     var p=readPath();
     if(p.cat!==null&&p.cat!==(sf.cat||""))setCat(p.cat);
+    if(p.dview&&p.dview!==pf.view)setDaysView(p.dview);
     if(p.sub)setSubtab(p.sub);
     var b=p.tab&&document.querySelector('nav.tabs button[data-p="'+p.tab+'"]');
     if(b&&b.getAttribute("aria-selected")!=="true")b.click();
   });
+}
+
+/* ---------- places from the shared Google Maps list (places.js) ---------- */
+var PL=window.TripPlaces||null;
+var pf=S.get("pf",{view:"plan",area:"",kind:"",near:false});
+var myPos=null;
+var KIND_LABEL={visit:"Visit",eat:"Eat",shop:"Shop",other:"Saved"};
+
+function dayNum(iso){for(var i=0;i<DAYS.length;i++)if(DAYS[i].d===iso)return i+1;return 0}
+function normName(s){return String(s).toLowerCase().replace(/[^a-z0-9]/g,"")}
+/* is this place already one of the day's map pins? */
+function inSpots(name,spots){
+  var n=normName(name).slice(0,10);if(n.length<5)return false;
+  return (spots||[]).some(function(q){
+    var s=normName(Array.isArray(q)?q[0]:q);
+    return s.indexOf(n)>-1||n.indexOf(s.slice(0,10))>-1&&s.length>=5;
+  });
+}
+function placeLink(p,label){
+  var a=document.createElement("a");a.href=PL.mapUrl(p);a.target="_blank";a.rel="noopener";
+  a.textContent=label||p.name;return a;
+}
+
+/* "From your Maps list" under a day: everything saved for it that isn't a pin already */
+function placesBlock(d){
+  if(!PL)return null;
+  var list=PL.forDay(d.d).filter(function(p){return !inSpots(p.name,d.spots)});
+  if(!list.length)return null;
+  var w=el("div","dayplaces");
+  w.appendChild(el("div","dp-h","From your Maps list"));
+  ["eat","shop","visit","other"].forEach(function(k){
+    var ps=list.filter(function(p){return p.kind===k});if(!ps.length)return;
+    var row=el("div","dp-row");row.appendChild(el("span","dp-k",KIND_LABEL[k]));
+    var sp=el("div","spots");
+    ps.forEach(function(p){var a=placeLink(p);if(p.tag)a.title=p.tag;sp.appendChild(a)});
+    row.appendChild(sp);w.appendChild(row);
+  });
+  return w;
+}
+
+/* the saved places that aren't on any day — listed under the itinerary */
+function renderOtherPlaces(){
+  var box=$("#otherPlaces");if(!box)return;box.innerHTML="";
+  if(!PL)return;
+  var rest=PL.PLACES.filter(function(p){return !p.day});
+  if(!rest.length)return;
+  box.appendChild(el("h2","sec","Other places"));
+  box.appendChild(el("p","note","On the shared Maps list but not on any day yet — for a free hour, or to swap in."));
+  PL.AREAS.forEach(function(a){
+    var ps=rest.filter(function(p){return p.area===a});if(!ps.length)return;
+    var w=el("div","dayplaces op");
+    w.appendChild(el("div","dp-h",a));
+    ["visit","eat","shop","other"].forEach(function(k){
+      var ks=ps.filter(function(p){return p.kind===k});if(!ks.length)return;
+      var row=el("div","dp-row");row.appendChild(el("span","dp-k",KIND_LABEL[k]));
+      var sp=el("div","spots");
+      ks.forEach(function(p){var a=placeLink(p);if(p.tag)a.title=p.tag;sp.appendChild(a)});
+      row.appendChild(sp);w.appendChild(row);
+    });
+    box.appendChild(w);
+  });
+}
+
+function setDaysView(v){
+  pf.view=v;S.set("pf",pf);
+  $("#daysPlan").hidden=v!=="plan";$("#daysPlaces").hidden=v!=="places";
+  document.querySelectorAll("#daysView button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.v===v?"true":"false")});
+  if(v==="places")renderPlaces();
+  if(S.get("tab","now")==="days")writePath();
+}
+function openDay(iso){
+  setDaysView("plan");
+  var i=dayNum(iso)-1,w=document.querySelectorAll("#dayList .day")[i];
+  if(!w)return;
+  if(!w.classList.contains("open"))w.querySelector(".head").click();
+  w.scrollIntoView({block:"start"});
+}
+
+function renderPlaces(){
+  if(!PL)return;
+  var seg=$("#plArea");seg.innerHTML="";
+  [""].concat(PL.AREAS).forEach(function(a){
+    var n=PL.PLACES.filter(function(p){return !a||p.area===a}).length;
+    var b=el("button",null,(a||"All")+" "+n);b.type="button";
+    b.setAttribute("aria-pressed",(pf.area||"")===a?"true":"false");
+    b.addEventListener("click",function(){pf.area=a;S.set("pf",pf);renderPlaces()});
+    seg.appendChild(b);
+  });
+  var ks=$("#plKind");ks.innerHTML="";
+  [["","All"],["visit","Visit"],["eat","Eat"],["shop","Shop"]].forEach(function(k){
+    var b=el("button",null,k[1]);b.type="button";
+    b.setAttribute("aria-pressed",(pf.kind||"")===k[0]?"true":"false");
+    b.addEventListener("click",function(){pf.kind=k[0];S.set("pf",pf);renderPlaces()});
+    ks.appendChild(b);
+  });
+  var nb=$("#plNear");nb.setAttribute("aria-pressed",pf.near?"true":"false");
+  var list=PL.PLACES.filter(function(p){return (!pf.area||p.area===pf.area)&&(!pf.kind||p.kind===pf.kind)});
+  var near=pf.near&&myPos;
+  if(near)list.forEach(function(p){p._km=PL.distanceKm(myPos.lat,myPos.lng,p.lat,p.lng)});
+  $("#plCount").textContent=list.length+" of "+PL.PLACES.length+" places"+(pf.near&&!myPos?" · finding you…":"");
+  var box=$("#plList");box.innerHTML="";
+  function row(p){
+    var r=el("div","pl");
+    r.appendChild(el("span","pl-k k-"+p.kind,KIND_LABEL[p.kind]));
+    var m=el("div","pl-m");
+    m.appendChild(el("div","pl-n",p.name));
+    m.appendChild(el("div","pl-s",[p.hood,p.tag].filter(Boolean).join(" · ")+(near?" · "+(p._km<10?p._km.toFixed(1):Math.round(p._km))+" km":"")));
+    r.appendChild(m);
+    var side=el("div","pl-side");
+    if(p.day){
+      var db=el("button","pl-day","Day "+dayNum(p.day));db.type="button";db.title=fmtDate(p.day);
+      db.addEventListener("click",function(){openDay(p.day)});side.appendChild(db);
+    }else side.appendChild(el("span","pl-free","Other place"));
+    side.appendChild(placeLink(p,"Map ↗"));
+    r.appendChild(side);
+    return r;
+  }
+  if(near){
+    list.sort(function(a,b){return a._km-b._km}).slice(0,40).forEach(function(p){box.appendChild(row(p))});
+    return;
+  }
+  PL.AREAS.forEach(function(a){
+    var ps=list.filter(function(p){return p.area===a});if(!ps.length)return;
+    ps.sort(function(x,y){return (x.day||"9")<(y.day||"9")?-1:(x.day||"9")>(y.day||"9")?1:x.hood<y.hood?-1:x.hood>y.hood?1:0});
+    box.appendChild(el("h3","wband",a));
+    ps.forEach(function(p){box.appendChild(row(p))});
+  });
+  if(!list.length)box.appendChild(el("p","note","Nothing saved here of that kind."));
+}
+
+function initPlaces(){
+  document.querySelectorAll("#daysView button").forEach(function(b){
+    b.addEventListener("click",function(){setDaysView(b.dataset.v)});
+  });
+  if(!PL){$("#daysView").hidden=true;return}
+  $("#plNear").addEventListener("click",function(){
+    pf.near=!pf.near;S.set("pf",pf);
+    if(pf.near&&!myPos){
+      if(!navigator.geolocation){pf.near=false;$("#plCount").textContent="This phone can't share its location.";return}
+      navigator.geolocation.getCurrentPosition(function(pos){
+        myPos={lat:pos.coords.latitude,lng:pos.coords.longitude};renderPlaces();
+      },function(){pf.near=false;S.set("pf",pf);renderPlaces();$("#plCount").textContent="Location is off — allow it for this site to sort by distance."},{maximumAge:300000,timeout:10000});
+    }
+    renderPlaces();
+  });
+  pf.near=false;
+  renderOtherPlaces();
+  var path=readPath();
+  setDaysView(path.dview||pf.view||"plan");
 }
 
 /* ---------- the tab in the address bar: #bakugai/scenarios ---------- */
@@ -3337,13 +3534,15 @@ var SUB_SLUG={watches:"watches",buys:"buys",customs:"customs",calc:"calculator",
 function fromSlug(map,slug){for(var k in map)if(map[k]===slug)return k;return null}
 function readPath(){
   var h=decodeURIComponent(location.hash||"").replace(/^#\/?/,"").toLowerCase().split("/");
-  return {tab:fromSlug(TAB_SLUG,h[0]),sub:fromSlug(SUB_SLUG,h[1]||""),cat:h[1]==="buys"?(h[2]||""):null};
+  return {tab:fromSlug(TAB_SLUG,h[0]),sub:fromSlug(SUB_SLUG,h[1]||""),cat:h[1]==="buys"?(h[2]||""):null,
+    dview:h[0]==="days"?(h[1]==="places"?"places":"plan"):null};
 }
 /* replaceState, not a new history entry: Back still leaves the app, as before */
 function writePath(){
   var t=S.get("tab","now"),h="#"+(TAB_SLUG[t]||"now");
   if(t==="baku"&&bk.tab)h+="/"+SUB_SLUG[bk.tab];
   if(t==="baku"&&bk.tab==="buys"&&sf.cat)h+="/"+sf.cat;
+  if(t==="days"&&pf.view==="places")h+="/places";
   if(location.hash!==h&&history.replaceState)history.replaceState(null,"",h);
 }
 
@@ -3381,6 +3580,7 @@ initShow();
 renderStatus();
 renderToday();
 renderDays();
+initPlaces();
 initMoney();
 initSplit();
 renderAllChecks();

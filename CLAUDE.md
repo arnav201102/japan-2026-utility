@@ -23,10 +23,11 @@ There is no lint, type-check or build. `tests/app.test.js` parses the inline `<s
 
 All top-level `function`/`var` names share one global scope. A duplicate name silently replaces the earlier one (this once broke the Buy tab's shopping lists), and `tests/app.test.js` fails on duplicates. Pick distinct names.
 
-**Two pure modules sit beside it**, written as UMD-ish IIFEs so the page loads them with `<script>` (as `window.Bakugai` / `window.TripSync`) and tests `require()` them:
+**Three pure modules sit beside it**, written as UMD-ish IIFEs so the page loads them with `<script>` (as `window.Bakugai` / `window.TripSync` / `window.TripPlaces`) and tests `require()` them:
 
 - `bakugai.js`: the 爆 Bakugai tab's data and maths. One `CONFIG` object (exchange-rate fallback, tax refund %, ¥5,000 refund minimum, ₹75,000 India duty-free allowance, 35% baggage duty, laptop exemption, scenario spends), plus `WATCHES`, `SHOP_ITEMS` (categories; an optional `guide: {title, steps, sources}` renders as a how-to box on that category's tab), `SHOP_PRODUCTS` (items in each category; `liquid: "small"|"big"` drives the liquids-bag badge, `no_refund: true` marks online-only buys), `JAPAN_ONLY`, `ABOVE_BUDGET`, `CUSTOMS_LINKS`, `SHOP_LINKS`. Rupee figures are never stored; they are computed from yen at the live rate (`watchRate()` in the page uses the Money tab's `rate`). The tag price includes tax, so the refund is `tag ÷ 1.1`, applied only when the pre-tax price is ≥ ¥5,000. In the page, `WG` refers to this module.
 - `sync.js`: merge rules for the shared cloud record (see below). In the page, `TS` refers to this module.
+- `places.js`: the 164 places from Manan's shared Google Maps list "Japan" (list id `i90fOtX28k7MoN776yqaVao7MOORKw`), each hand-sorted into `kind` (visit/eat/shop/other), `area`, `hood`, a short `tag`, and the itinerary `day` it fits (or null). It was pulled once from `https://www.google.com/maps/preview/entitylist/getlist?...` (a `)]}'`-prefixed JSON array; places are at `[0][8]`, name at `[2]`, address and coordinates at `[1][4]` and `[1][5]`); new places on the list need sorting by hand. Shown in Days → Places (`renderPlaces`, `#days/places`) and under each day (`placesBlock`, which skips names already in that day's `spots`). In the page, `PL` refers to this module.
 
 **Cloud sync.** Shared data lives in one JSONBin record (`CLOUD_URL`/`CLOUD_KEY` in `index.html`). Synced data: expenses, budget, the per-person shopping lists (`buyMap`), every checklist/booking list (`getList`/`setList`, stored as `items_<name>`), the Fuji/Kamakura swap, and the per-person Bakugai cart (`cartMap`). Every save is pull → merge → push (`cloudSync`):
 - every item has an `id` and `m` (last-modified ms). Items saved before ids existed get deterministic content-hash ids, so every phone picks the same one;
@@ -38,9 +39,9 @@ When adding new shared data: put it in `localState()`, `remoteState()`, `recordO
 
 **Not synced, on purpose:** passport/document copies (IndexedDB on each phone only, `initDocs`), theme, filters, tab state, and a manually typed exchange rate.
 
-**Routing.** The active tab is in the hash: `#now`, `#days`, `#money`, `#todo`, `#buy`, `#bakugai[/watches|buys|customs|calculator|scenarios][/<shop category id>]` (`TAB_SLUG`, `SUB_SLUG`, `readPath`, `writePath`). Updates use `history.replaceState`, so Back still leaves the app.
+**Routing.** The active tab is in the hash: `#now`, `#days[/places]`, `#money`, `#todo`, `#buy`, `#bakugai[/watches|buys|customs|calculator|scenarios][/<shop category id>]` (`TAB_SLUG`, `SUB_SLUG`, `readPath`, `writePath`). Updates use `history.replaceState`, so Back still leaves the app.
 
-**Offline (`sw.js`).** The page, `bakugai.js` and `sync.js` are fetched network-first (edits land without a cache bump). Icons and fonts are cache-first. Live APIs (rates, weather, JSONBin) bypass the cache. To add a new script, add it to `SHELL` and to the network-first regex; bump `VERSION` to force every phone to drop its cache.
+**Offline (`sw.js`).** The page, `bakugai.js`, `sync.js` and `places.js` are fetched network-first (edits land without a cache bump). Icons and fonts are cache-first. Live APIs (rates, weather, JSONBin) bypass the cache. To add a new script, add it to `SHELL` and to the network-first regex; bump `VERSION` to force every phone to drop its cache.
 
 **Telegram reminders.** `.github/workflows/telegram-reminders.yml` runs `scripts/telegram-remind.js` several times each IST morning and sends at most once a day. It reads `deadlines.json`, which must be kept in step with dated `BOOKINGS` entries in `index.html`.
 

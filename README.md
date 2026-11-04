@@ -13,7 +13,7 @@ private on each phone's local IndexedDB.
 | Tab | What's in it |
 |---|---|
 | **今 Now** | Countdown or day number, today's plan, today's weather, the Fuji go/no-go card, the next thing to book, and the before-you-leave-the-room list |
-| **程 Days** | All 13 days. Tap one for the plan, map links for each stop, the thing you can't afford to miss that day, and the host's number |
+| **程 Days** | All 13 days. Tap one for the plan, map links for each stop, places from the shared Google Maps list for that day, the thing you can't afford to miss, and the host's number. A **Places** view lists the whole Maps list by city — visit, eat, shop — with nearest-first |
 | **¥ Money** | Converter on a live rate, what you've spent and how fast, and the bill splitter |
 | **要 To do** | Bookings sorted by deadline, documents, packing |
 | **買 Buy** | Shared shopping lists for Arnav, Ayush and Manan (synced via JSONBin), what to buy before you fly, early in Japan, and to take home |
@@ -175,6 +175,7 @@ Everything else lives in `index.html`. The data is near the top of the
 | Phrases | `var PHRASES` |
 | Rate sources, in order | `var FX_SOURCES` |
 | Watches, other buys, customs rules, scenarios, links | `bakugai.js` (`CONFIG` at the top) |
+| Places from the Google Maps list | `places.js` |
 
 Colours and type are CSS variables in `:root`, defined once for light and again
 for dark.
