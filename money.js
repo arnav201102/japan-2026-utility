@@ -294,19 +294,24 @@ function parseSplitwise(text, people, map) {
    content; if it's not here but an earlier import has the same day and
    description, it was edited in Splitwise and replaces that one. Rows from
    earlier imports that aren't in this file are kept — that's the history.
-   Returns {list, added, changed, already, missing}. */
+   Rows deleted here (opts.deleted, the tombstones) are left out unless
+   opts.restore, which brings them back; added then counts them, restored says how many.
+   Returns {list, added, changed, already, skippedDeleted, restored, missing}. */
 function mergeImport(exps, imported, opts) {
   opts = opts || {};
   var deleted = opts.deleted || {};
-  var have = {}, list = exps.slice(), added = 0, changed = 0, already = 0, skippedDeleted = 0;
+  var have = {}, list = exps.slice(), added = 0, changed = 0, already = 0, skippedDeleted = 0, restored = 0;
   var seen = {}, inFile = {}, dupes = [];
   list.forEach(function (x, i) { if (x.id) have[x.id] = i; });
   imported.forEach(function (x) { inFile[x.id] = 1; });
   var key = function (x) { return x.swk || (isoDay(x.ts) + "|" + String(x.d || "").trim().toLowerCase()); };
   imported.forEach(function (x) {
     if (x.id in have) { already++; seen[x.id] = 1; return; }
-    /* deleted here on purpose — don't bring it back */
-    if (deleted[x.id] != null) { skippedDeleted++; seen[x.id] = 1; return; }
+    /* deleted here on purpose — don't bring it back, unless asked to (opts.restore) */
+    if (deleted[x.id] != null) {
+      if (!opts.restore) { skippedDeleted++; seen[x.id] = 1; return; }
+      restored++;
+    }
     var j = -1;
     for (var i = 0; i < list.length; i++) {
       var y = list[i];
@@ -333,7 +338,7 @@ function mergeImport(exps, imported, opts) {
     seen[x.id] = 1;
   });
   var kept = list.filter(function (y) { return y.src === "splitwise" && !seen[y.id]; });
-  return { list: list, added: added, changed: changed, already: already, skippedDeleted: skippedDeleted,
+  return { list: list, added: added, changed: changed, already: already, skippedDeleted: skippedDeleted, restored: restored,
            missing: kept.length, kept: kept.map(function (y) { return { d: y.d, day: isoDay(y.ts), a: y.a, cur: y.cur || "JPY" }; }),
            dupes: dupes };
 }

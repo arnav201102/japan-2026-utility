@@ -2317,7 +2317,7 @@ function backupJson(){
 }
 
 /* Splitwise CSV → preview → import */
-var swParsed=null,swMap={},swFileName="";
+var swParsed=null,swMap={},swFileName="",swRestore=false;
 function swPreview(){
   var out=$("#swResult");out.innerHTML="";
   var txt=$("#swText").value.trim();
@@ -2325,11 +2325,18 @@ function swPreview(){
   var r=MO.parseSplitwise(txt,PEOPLE,swMap);
   if(r.error){out.appendChild(el("p","note",r.error));swParsed=null;return}
   swParsed=r;
-  var merged=MO.mergeImport(exps,r.expenses,{deleted:(syncMeta.del&&syncMeta.del.exps)||{}});
+  var merged=MO.mergeImport(exps,r.expenses,{deleted:(syncMeta.del&&syncMeta.del.exps)||{},restore:swRestore});
   var cur=Object.keys(r.currencies).map(function(c){return r.currencies[c]+" in "+(c==="INR"?"₹":"¥")}).join(", ");
-  out.appendChild(el("p",null,r.expenses.length+" rows ("+(cur||"none")+") — "+merged.added+" new, "+merged.changed+" changed in Splitwise, "+merged.already+" already here."));
+  out.appendChild(el("p",null,r.expenses.length+" rows ("+(cur||"none")+") — "+merged.added+" new"+(merged.restored?" (incl. "+merged.restored+" you'd deleted)":"")+", "+merged.changed+" changed in Splitwise, "+merged.already+" already here."));
+  if(merged.skippedDeleted||swRestore){
+    /* rows deleted here stay out on purpose — but you may have cleared them to start over */
+    var rl=el("label","swm"),rc=document.createElement("input");rc.type="checkbox";rc.checked=swRestore;
+    rc.addEventListener("change",function(){swRestore=rc.checked;swPreview()});
+    rl.appendChild(rc);rl.appendChild(document.createTextNode(" Bring back the "+(merged.skippedDeleted||merged.restored)+" you deleted here"));
+    out.appendChild(el("p","note",(merged.skippedDeleted||merged.restored)+" of these rows were deleted in the app, so they're left out — tick below to import them again."));
+    out.appendChild(rl);
+  }
   var notes=[];
-  if(merged.skippedDeleted)notes.push(merged.skippedDeleted+" you deleted here — left out");
   if(r.otherCur)notes.push(r.otherCur+" in another currency — only ¥ and ₹ come in");
   if(r.zero)notes.push(r.zero+" with no amount");
   if(r.outside)notes.push(r.outside+" between people who aren't any of you");
@@ -2357,13 +2364,15 @@ function swPreview(){
     var b=el("button","btn","Import "+(merged.added?merged.added+" new":"")+(merged.added&&merged.changed?" and ":"")+(merged.changed?merged.changed+" changed":""));b.type="button";
     b.addEventListener("click",function(){
       /* lock today's rate on imported entries so their ₹/¥ value stays put */
-      var fresh=MO.mergeImport(exps,swParsed.expenses.map(function(x){var o={};for(var k in x)o[k]=x[k];o.fx=rate;return o}),{deleted:(syncMeta.del&&syncMeta.del.exps)||{}});
+      var fresh=MO.mergeImport(exps,swParsed.expenses.map(function(x){var o={};for(var k in x)o[k]=x[k];o.fx=rate;return o}),{deleted:(syncMeta.del&&syncMeta.del.exps)||{},restore:swRestore});
+      /* brought back on purpose: drop their tombstones so a sync can't remove them again */
+      if(swRestore&&syncMeta.del&&syncMeta.del.exps){fresh.list.forEach(function(x){delete syncMeta.del.exps[x.id]});saveSyncMeta()}
       exps=fresh.list.map(function(x){return normExp(x,typeof x.a==="number"?x.a:parseFloat(x.a))});
       importLog.push({id:TS?TS.uid():String(Date.now()),at:Date.now(),file:swFileName||"",rows:swParsed.expenses.length,
         added:fresh.added,changed:fresh.changed,already:fresh.already,missing:fresh.missing});
       S.set("importLog",importLog);
       S.set("exps",exps);renderExps();renderSwLog();touchCloud();
-      out.innerHTML="";$("#swText").value="";$("#swFile").value="";swFileName="";
+      out.innerHTML="";$("#swText").value="";$("#swFile").value="";swFileName="";swRestore=false;
       flash("#expFlash","Imported "+fresh.added+" new"+(fresh.changed?" and updated "+fresh.changed:"")+" from Splitwise. Synced to everyone.");
     });
     out.appendChild(b);

@@ -310,6 +310,19 @@ test("an expense deleted here doesn't come back on re-import", function () {
   assert.equal(m.skippedDeleted, 1);
 });
 
+test("deleted rows come back when asked to (cleared everything to start over)", function () {
+  var all = M.parseSplitwise(LIKE_REAL, P).expenses, del = {};
+  all.forEach(function (x) { del[x.id] = 123; });
+  var skip = M.mergeImport([], all, { deleted: del });
+  assert.equal(skip.added, 0);
+  assert.equal(skip.skippedDeleted, all.length);
+  var back = M.mergeImport([], all, { deleted: del, restore: true });
+  assert.equal(back.added, all.length);
+  assert.equal(back.restored, all.length);
+  assert.equal(back.skippedDeleted, 0);
+  assert.equal(M.mergeImport(back.list, all, { deleted: del, restore: true }).added, 0, "and only once");
+});
+
 test("a row renamed here still matches when Splitwise edits it later", function () {
   var first = M.mergeImport([], M.parseSplitwise(LIKE_REAL, P).expenses).list;
   var sag = first.filter(function (x) { return x.d === "Sagano"; })[0];
