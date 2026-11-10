@@ -67,15 +67,18 @@ function stamp(state, snap, now) {
   var changed = false, first = !snap;
   snap = snap || { c: {}, s: {} };
   Object.keys(state.colls).forEach(function (k) {
+    /* a list this phone has never snapshotted (new in an update) is treated
+       like a first run: nothing in it is claimed as freshly edited */
+    var fresh = first || !(k in snap.c);
     var prev = snap.c[k] || {}, cur = {};
     state.colls[k].forEach(function (it) {
       cur[it.id] = 1;
       if (prev[it.id] !== body(it)) {
-        it.m = first ? (it.m || 0) : now;
-        if (!first) changed = true;
+        it.m = fresh ? (it.m || 0) : now;
+        if (!fresh) changed = true;
       }
     });
-    if (first) return;
+    if (fresh) return;
     Object.keys(prev).forEach(function (id) {
       if (cur[id]) return;
       (state.del[k] = state.del[k] || {})[id] = now;
@@ -83,10 +86,10 @@ function stamp(state, snap, now) {
     });
   });
   Object.keys(state.scal).forEach(function (k) {
-    var s = state.scal[k];
+    var s = state.scal[k], fresh = first || !(k in snap.s);
     if (snap.s[k] !== JSON.stringify(s.v)) {
-      s.m = first ? (s.m || 0) : now;
-      if (!first) changed = true;
+      s.m = fresh ? (s.m || 0) : now;
+      if (!fresh) changed = true;
     }
   });
   return changed;

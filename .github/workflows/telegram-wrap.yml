@@ -1,0 +1,77 @@
+# Evening wrap-up → Telegram group, during the trip (24 Nov – 6 Dec).
+# Needs secrets: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID (the same ones as the reminders).
+# Reads the shared cloud record the app syncs to; see scripts/telegram-wrap.js.
+#
+# Like the reminders, several tries and at most one message a day, because
+# GitHub's cron often skips a slot. Times and dates are Japan time — you're there.
+
+name: Telegram evening wrap
+
+on:
+  schedule:
+    # ~22:00–23:00 in Japan (13:00–14:00 UTC)
+    - cron: "0 13 * * *"
+    - cron: "20 13 * * *"
+    - cron: "40 13 * * *"
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Send even outside the trip dates / already sent today (test)"
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+jobs:
+  wrap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Japan date
+        id: ist
+        run: echo "date=$(TZ=Asia/Tokyo date +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Already sent today?
+        id: gate
+        if: github.event_name == 'schedule'
+        uses: actions/cache/restore@v4
+        with:
+          path: .telegram-wrap-sent
+          key: telegram-wrap-${{ steps.ist.outputs.date }}
+
+      - name: Skip if already sent
+        if: github.event_name == 'schedule' && steps.gate.outputs.cache-hit == 'true'
+        run: |
+          echo "Already sent for ${{ steps.ist.outputs.date }} (Japan) — skipping."
+          echo "skip=true" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-node@v4
+        if: env.skip != 'true'
+        with:
+          node-version: "20"
+
+      - name: Send the wrap-up
+        if: env.skip != 'true'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          FORCE: ${{ github.event_name == 'workflow_dispatch' && inputs.force || 'false' }}
+          TZ: Asia/Tokyo
+        run: node scripts/telegram-wrap.js
+
+      - name: Mark sent for today
+        if: env.skip != 'true' && github.event_name == 'schedule' && success()
+        run: |
+          mkdir -p .telegram-wrap-sent
+          echo "sent ${{ steps.ist.outputs.date }} at $(date -u +%FT%TZ)" > .telegram-wrap-sent/ok
+
+      - name: Save sent marker
+        if: env.skip != 'true' && github.event_name == 'schedule' && success()
+        uses: actions/cache/save@v4
+        with:
+          path: .telegram-wrap-sent
+          key: telegram-wrap-${{ steps.ist.outputs.date }}

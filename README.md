@@ -51,6 +51,14 @@ list, delete the deployment, and redeploy from a clean folder.
 Keep passport scans in your phone's photos or a password manager, not next to a
 website.
 
+## Evening wrap-up (Telegram)
+
+Each evening of the trip, around 22:00–23:00 Japan time, the same bot posts
+the day's spending, who paid, the trip so far, everyone's cash wallet, who
+owes whom, and tomorrow's plan. It reads the shared cloud record, so it's only
+as complete as what you've logged. Same secrets as the reminders; test it with
+**Actions → Telegram evening wrap → Run workflow**.
+
 ## Booking reminders (Telegram)
 
 A GitHub Action tries several times each morning (**~08:00–11:00 IST**) and
@@ -269,6 +277,20 @@ any by hand), ¥ and ₹ rows are both read, and importing again later only adds
 what's new, updates anything you edited in Splitwise, and keeps anything since deleted there as history. Every import is logged. Splitwise can't convert between currencies; this does.
 
 Tap an expense to **edit** it (Splitwise rows: name, category and date; change amounts in Splitwise and re-import). The **trip report** shows where the money went — by category, before and during the trip, by city, by day, and each person's share — and copies as text for the group.
+
+**My money**: pick a name for that person's share of everything, what they've
+paid, who they owe, their cash wallet, their Bakugai duty-free use, and their
+spending day by day.
+
+**Shopping list → bill**: tick something on your Buy list and it asks if it was
+shared — "Split it" (or "paid cash") adds it to the bill; "Just mine" doesn't.
+
+**Cash wallet**: everyone starts with ¥15,000. Log each ATM withdrawal, tick "Paid in cash" on yen expenses,
+and now and then tap "I counted" with what's actually in your wallet — it
+shows what should be there and how much went on things nobody logged.
+
+**Export / backup**: download every expense as a spreadsheet (₹ and ¥
+columns, each person's share, the balance), or a backup file you can restore.
 
 Expenses and the budget automatically sync across all three phones through the cloud JSON record whenever you are online. Whenever someone logs or removes an expense, it updates for everyone.
 

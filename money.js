@@ -73,12 +73,26 @@ function shares(exps, people, cur, liveRate) {
   people.forEach(function (p) { out[p] = 0; paid[p] = 0; });
   exps.forEach(function (x) {
     if (isPayment(x)) return;
-    var r = rateOf(x, liveRate), c = x.cur || "JPY", n = netOf(x, people), payer = x.p;
-    if (x.net) { var top = -Infinity; people.forEach(function (p) { if (n[p] > top) { top = n[p]; payer = p; } }); }
-    if (payer in paid) paid[payer] += convert(x.a, c, cur, r);
+    var r = rateOf(x, liveRate), c = x.cur || "JPY", share = {}, pay = {};
+    if (!x.net) {
+      var who = (x.split && x.split.length ? x.split : people).filter(function (p) { return people.indexOf(p) > -1; });
+      if (!who.length) who = people;
+      people.forEach(function (p) { share[p] = who.indexOf(p) > -1 ? x.a / who.length : 0; pay[p] = p === x.p ? x.a : 0; });
+    } else {
+      /* Splitwise gives only paid-minus-owed. People below zero owe exactly that;
+         whatever's left of the cost is shared by those above zero (the payers),
+         and paid = share + net. A refund (negative cost) is the same, mirrored. */
+      var sign = x.a < 0 ? -1 : 1, A = x.a * sign, N = {}, debt = 0, up = [];
+      people.forEach(function (p) {
+        N[p] = (x.net[p] || 0) * sign;
+        if (N[p] < 0) { share[p] = -N[p]; debt += -N[p]; } else { share[p] = 0; if (N[p] > 0) up.push(p); }
+      });
+      up.forEach(function (p) { share[p] = (A - debt) / up.length; });
+      people.forEach(function (p) { pay[p] = (share[p] + N[p]) * sign; share[p] *= sign; });
+    }
     people.forEach(function (p) {
-      var owed = p === payer ? x.a - n[p] : -n[p];
-      out[p] += convert(owed, c, cur, r);
+      out[p] += convert(share[p], c, cur, r);
+      paid[p] += convert(pay[p], c, cur, r);
     });
   });
   people.forEach(function (p) { out[p] = round2(out[p]); paid[p] = round2(paid[p]); });
@@ -202,37 +216,58 @@ function parseSplitwise(text, people, map) {
   if (iDate < 0 || iDesc < 0 || iCost < 0 || iCur < 0)
     return { error: "This doesn't look like a Splitwise export — it needs Date, Description, Cost and Currency columns." };
   var first = Math.max(iDate, iDesc, iCat, iCost, iCur) + 1;
-  var members = head.slice(first).filter(function (h) { return h; });
+  /* keep each member's own column, even if a blank header sits between them */
+  var cols = [];
+  head.slice(first).forEach(function (h, k) { if (h) cols.push({ name: h, col: first + k }); });
+  var members = cols.map(function (m) { return m.name; });
   var mapping = {};
   members.forEach(function (m) { mapping[m] = (m in map) ? map[m] : matchPerson(m, people); });
-  var out = [], skipped = 0, bad = 0, currencies = {};
+  /* two Splitwise members landing on the same one of you would be added together */
+  var byPerson = {};
+  members.forEach(function (m) { var w = mapping[m]; if (w) (byPerson[w] = byPerson[w] || []).push(m); });
+  var clashes = Object.keys(byPerson).filter(function (p) { return byPerson[p].length > 1; })
+    .map(function (p) { return { person: p, members: byPerson[p] }; });
+  var out = [], skipped = 0, zero = 0, otherCur = 0, outside = 0, refunds = 0, currencies = {}, seenIds = {};
   rows.slice(1).forEach(function (r) {
     var desc = String(r[iDesc] || "").trim();
-    if (/^total balance$/i.test(desc)) { skipped++; return; }
+    if (/^total balance/i.test(desc)) { skipped++; return; }
     var cost = parseFloat(String(r[iCost]).replace(/,/g, ""));
     var cur = String(r[iCur] || "").trim().toUpperCase();
-    if (!(cost > 0) || CURS.indexOf(cur) < 0) { bad++; return; }
-    currencies[cur] = (currencies[cur] || 0) + 1;
-    var net = {}, raw = [];
-    members.forEach(function (m, k) {
-      var v = parseFloat(String(r[first + k] || "0").replace(/,/g, "")) || 0;
+    if (CURS.indexOf(cur) < 0) { otherCur++; return; }
+    if (!cost || isNaN(cost)) { zero++; return; }
+    var net = {}, raw = [], unmappedMoves = false;
+    cols.forEach(function (m) {
+      var v = parseFloat(String(r[m.col] || "0").replace(/,/g, "")) || 0;
       raw.push(v);
-      var who = mapping[m];
+      var who = mapping[m.name];
       if (who) net[who] = round2((net[who] || 0) + v);
+      else if (v) unmappedMoves = true;
     });
+    var involved = Object.keys(net).some(function (p) { return Math.abs(net[p]) >= 0.005; });
+    /* money that only moved between people who aren't any of you */
+    if (!involved && unmappedMoves) { outside++; return; }
+    if (cost < 0) refunds++;
+    currencies[cur] = (currencies[cur] || 0) + 1;
     var payer = people[0], top = -Infinity;
     Object.keys(net).forEach(function (p) { if (net[p] > top) { top = net[p]; payer = p; } });
     var date = String(r[iDate] || "").trim();
     var ts = Date.parse(date.length === 10 ? date + "T12:00:00" : date);
+    /* identical rows (two ¥600 drinks the same day) must stay two expenses */
+    var base = "sw:" + hash([date, desc, cost, cur, raw.join(";")].join("|"));
+    var n = seenIds[base] = (seenIds[base] || 0) + 1;
     out.push({
-      id: "sw:" + hash([date, desc, cost, cur, raw.join(";")].join("|")),
+      id: n > 1 ? base + "#" + n : base,
       d: desc.slice(0, 80), a: round2(cost), cur: cur, p: payer, net: net,
       ts: isNaN(ts) ? undefined : ts,
-      cat: /^settle all balances$/i.test(desc) ? "Payment" : (String(r[iCat] || "").trim() || undefined), src: "splitwise"
+      cat: /^settle all balances$/i.test(desc) ? "Payment" : (String(r[iCat] || "").trim() || undefined), src: "splitwise",
+      /* how this row is known in Splitwise, kept even if it's renamed or re-dated here */
+      swk: (isNaN(ts) ? "" : isoDay(ts)) + "|" + desc.toLowerCase() + (n > 1 ? "#" + n : "")
     });
   });
   var unmatched = members.filter(function (m) { return !mapping[m]; });
-  return { expenses: out, members: members, mapping: mapping, unmatched: unmatched, skipped: skipped, bad: bad, currencies: currencies };
+  return { expenses: out, members: members, mapping: mapping, unmatched: unmatched, clashes: clashes,
+           skipped: skipped, bad: zero + otherCur, zero: zero, otherCur: otherCur, outside: outside,
+           refunds: refunds, currencies: currencies };
 }
 
 /* Bring an import in. Splitwise's export has no ids, so a row is known by its
@@ -240,31 +275,95 @@ function parseSplitwise(text, people, map) {
    description, it was edited in Splitwise and replaces that one. Rows from
    earlier imports that aren't in this file are kept — that's the history.
    Returns {list, added, changed, already, missing}. */
-function mergeImport(exps, imported) {
-  var have = {}, list = exps.slice(), added = 0, changed = 0, already = 0, seen = {}, inFile = {};
+function mergeImport(exps, imported, opts) {
+  opts = opts || {};
+  var deleted = opts.deleted || {};
+  var have = {}, list = exps.slice(), added = 0, changed = 0, already = 0, skippedDeleted = 0;
+  var seen = {}, inFile = {}, dupes = [];
   list.forEach(function (x, i) { if (x.id) have[x.id] = i; });
   imported.forEach(function (x) { inFile[x.id] = 1; });
-  var key = function (x) { return isoDay(x.ts) + "|" + String(x.d || "").trim().toLowerCase(); };
+  var key = function (x) { return x.swk || (isoDay(x.ts) + "|" + String(x.d || "").trim().toLowerCase()); };
   imported.forEach(function (x) {
     if (x.id in have) { already++; seen[x.id] = 1; return; }
+    /* deleted here on purpose — don't bring it back */
+    if (deleted[x.id] != null) { skippedDeleted++; seen[x.id] = 1; return; }
     var j = -1;
     for (var i = 0; i < list.length; i++) {
       var y = list[i];
       if (y.src === "splitwise" && !seen[y.id] && !inFile[y.id] && key(y) === key(x)) { j = i; break; }
     }
-    if (j > -1) { list[j] = x; changed++; }
-    else { list.push(x); added++; }
+    if (j > -1) {
+      /* edited in Splitwise: take the new numbers, keep what was set here */
+      var old = list[j], nx = {};
+      for (var k in x) nx[k] = x[k];
+      if (old.fx > 0) nx.fx = old.fx;
+      if (old.cash) nx.cash = true;
+      if (old.catLocal) { nx.cat = old.cat; nx.catLocal = true; }
+      delete have[old.id];
+      list[j] = nx; have[nx.id] = j; changed++;
+    } else {
+      /* something logged here by hand on the same day for the same amount is probably the same thing */
+      var twin = list.filter(function (y) {
+        return y.src !== "splitwise" && !isPayment(y) && isoDay(y.ts) === isoDay(x.ts) &&
+          (y.cur || "JPY") === x.cur && Math.abs(y.a - x.a) < 0.01;
+      })[0];
+      if (twin) dupes.push({ imported: x.d, existing: twin.d, day: isoDay(x.ts) });
+      list.push(x); have[x.id] = list.length - 1; added++;
+    }
     seen[x.id] = 1;
   });
-  var missing = list.filter(function (y) { return y.src === "splitwise" && !seen[y.id]; }).length;
-  return { list: list, added: added, changed: changed, already: already, missing: missing };
+  var kept = list.filter(function (y) { return y.src === "splitwise" && !seen[y.id]; });
+  return { list: list, added: added, changed: changed, already: already, skippedDeleted: skippedDeleted,
+           missing: kept.length, kept: kept.map(function (y) { return { d: y.d, day: isoDay(y.ts), a: y.a, cur: y.cur || "JPY" }; }),
+           dupes: dupes };
+}
+
+/* ---------- cash wallet ----------
+   Everyone starts with CASH_START_JPY. cashLog holds {id, who, kind: "withdraw"|"count", jpy, note, ts}. Expenses
+   marked cash:true (in yen) come out of the payer's wallet. A "count" is what
+   they actually found in their wallet: the balance resets to it, and the gap
+   is what went on things nobody logged. */
+var CASH_START_JPY = 15000;   /* everyone lands with ¥15,000 */
+
+function walletOf(who, cashLog, exps, start) {
+  start = start == null ? CASH_START_JPY : start;
+  var ev = [];
+  (cashLog || []).forEach(function (c) { if (c.who === who) ev.push({ ts: c.ts || 0, k: c.kind, v: c.jpy }); });
+  (exps || []).forEach(function (x) {
+    if (x.cash && x.p === who && (x.cur || "JPY") === "JPY") ev.push({ ts: x.ts || 0, k: "spend", v: x.a });
+  });
+  ev.sort(function (a, b) { return a.ts - b.ts; });
+  var bal = start, withdrawn = 0, spent = 0, unlogged = 0, lastCount = null;
+  ev.forEach(function (e) {
+    if (e.k === "withdraw") { bal += e.v; withdrawn += e.v; }
+    else if (e.k === "spend") { bal -= e.v; spent += e.v; }
+    else if (e.k === "count") { unlogged += bal - e.v; lastCount = { ts: e.ts, jpy: e.v, gap: bal - e.v }; bal = e.v; }
+  });
+  return { start: start, balance: Math.round(bal), withdrawn: withdrawn, spent: spent, unlogged: Math.round(unlogged), lastCount: lastCount };
+}
+
+/* An amount someone typed: "1,200", "1,20,000", "1200.50", "12,50" (comma
+   decimal), "¥3,000". Negative, scientific or garbled input gives NaN. */
+function parseAmount(str) {
+  var s = String(str == null ? "" : str).replace(/[¥₹\s]/g, "").replace(/^\+/, "");
+  if (!s || s.charAt(0) === "-") return NaN;
+  var c = s.indexOf(",") > -1, d = s.indexOf(".") > -1;
+  if (c && d) s = s.lastIndexOf(",") > s.lastIndexOf(".") ? s.replace(/\./g, "").replace(",", ".") : s.replace(/,/g, "");
+  else if (c) { var parts = s.split(","); s = parts.length === 2 && parts[1].length >= 1 && parts[1].length <= 2 ? parts[0] + "." + parts[1] : s.replace(/,/g, ""); }
+  return /^\d+(\.\d+)?$/.test(s) ? parseFloat(s) : NaN;
+}
+
+/* the same settle-up recorded on two phones must be one payment, not two */
+function paymentId(from, to, amount, day) {
+  return "pay:" + from + ":" + to + ":" + Math.round(amount * 100) + ":" + day;
 }
 
 var api = {
   CURS: CURS, convert: convert, netOf: netOf, balances: balances, totalSpend: totalSpend,
   settleUp: settleUp, parseCSV: parseCSV, matchPerson: matchPerson,
   parseSplitwise: parseSplitwise, mergeImport: mergeImport, isPayment: isPayment,
-  CATS: CATS, bucketOf: bucketOf, shares: shares, report: report, isoDay: isoDay
+  CATS: CATS, bucketOf: bucketOf, shares: shares, report: report, isoDay: isoDay,
+  walletOf: walletOf, CASH_START_JPY: CASH_START_JPY, parseAmount: parseAmount, paymentId: paymentId
 };
 if (typeof module === "object" && module.exports) module.exports = api;
 else root.TripMoney = api;

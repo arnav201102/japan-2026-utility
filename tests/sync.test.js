@@ -113,3 +113,15 @@ test("uid is unique enough", function () {
   var seen = {};
   for (var i = 0; i < 2000; i++) { var u = T.uid(); assert.ok(!seen[u]); seen[u] = 1; }
 });
+
+test("data new in an update doesn't overwrite what another phone already saved", function () {
+  /* this phone's snapshot predates a shared setting and the cash list */
+  var mine = { colls: { list: [], cash: [] }, scal: { prefs: { v: {}, m: 0 } }, del: {} };
+  var oldSnap = { c: { list: {} }, s: {} };
+  assert.equal(T.stamp(mine, oldSnap, 9000), false);
+  assert.equal(mine.scal.prefs.m, 0);
+  var cloud = { colls: { list: [], cash: [{ id: "c1", jpy: 30000, m: 5000 }] }, scal: { prefs: { v: { Arnav: "x" }, m: 5000 } }, del: {} };
+  var merged = T.merge(mine, cloud, 10000);
+  assert.deepEqual(merged.scal.prefs.v, { Arnav: "x" }, "the other phone's setting survives");
+  assert.equal(merged.colls.cash.length, 1);
+});
