@@ -1,5 +1,5 @@
 /* Japan 2026 — the places from the shared Google Maps list "Japan", sorted.
-   Pulled from the list on 2026-11-04: 164 places (a duplicate and the Shinjuku
+   Pulled from the list on 2026-11-04, updated 2026-11-10: 168 places (a duplicate and the Shinjuku
    Airbnb left out). kind is visit | eat | shop | other ("other" means the list
    didn't say what it is). day is the itinerary day it fits, or null.
    index.html shows them in Days → Places and under each day; tests require() it. */
@@ -172,7 +172,11 @@ var PLACES = [
  {id:"p163",name:"% ARABICA Kyoto Arashiyama",kind:"eat",area:"Kyoto",hood:"Arashiyama",day:"2026-12-01",tag:"coffee",addr:"3-47 Sagatenryuji Susukinobabacho, Ukyo Ward, Kyoto, 616-8385",lat:35.013541,lng:135.676425},
  {id:"p164",name:"CAFE ANNON Namba",kind:"eat",area:"Osaka",hood:"Namba",day:"2026-12-03",tag:"pancakes",addr:"〒542-0075 Osaka, Chuo Ward, Nanbasennichimae, 4−20 せんだビル 1・2F",lat:34.664248,lng:135.504085},
  {id:"p165",name:"Round1 Stadium Sennichimae",kind:"visit",area:"Osaka",hood:"Namba",day:"2026-12-03",tag:"arcade, bowling",addr:"1 Chome-3-1 Namba, Chuo Ward, Osaka, 542-0076",lat:34.667511,lng:135.502862},
- {id:"p166",name:"Watch shop, Motoasakusa",kind:"shop",area:"Tokyo",hood:"Asakusa",day:"2026-11-28",tag:"watch shop",addr:"4-chōme-9-14 Motoasakusa, Taito City, Tokyo 111-0041",lat:35.710244,lng:139.787715}
+ {id:"p166",name:"Watch shop, Motoasakusa",kind:"shop",area:"Tokyo",hood:"Asakusa",day:"2026-11-28",tag:"watch shop",addr:"4-chōme-9-14 Motoasakusa, Taito City, Tokyo 111-0041",lat:35.710244,lng:139.787715},
+ {id:"p167",name:"DOLCE TACUBO GINZA",kind:"eat",area:"Tokyo",hood:"Ginza",day:"2026-11-29",tag:"gelato & soft serve, closed Wed",addr:"〒104-0061 Tokyo, Chuo City, Ginza, 7 Chome−11−14 GINZAカムイビル 1F",lat:35.668322,lng:139.763487},
+ {id:"p168",name:"Alpen Shinjuku Flagship Store",kind:"shop",area:"Tokyo",hood:"Shinjuku",day:"2026-11-27",tag:"sports & outdoor gear",addr:"〒160-0022 Tokyo, Shinjuku City, Shinjuku, 3 Chome−23−7 B2F～3F",lat:35.693298,lng:139.700795},
+ {id:"p169",name:"Dogenzaka Church -The Church-",kind:"eat",area:"Tokyo",hood:"Shibuya",day:"2026-11-25",tag:"church-themed bar, 20:00–05:00",addr:"〒150-0043 Tokyo, Shibuya, Dogenzaka, 2 Chome−16−5 Central Kyoritsu Building, 1階",lat:35.658597,lng:139.696901},
+ {id:"p170",name:"SHOGUN PIZZA Shibuya",kind:"eat",area:"Tokyo",hood:"Shibuya",day:"2026-11-25",tag:"pizza",addr:"〒150-0042 Tokyo, Shibuya, Udagawacho, 13−4 スペイン坂OKビル １F",lat:35.661184,lng:139.698809}
 ];
 
 /* A Google Maps link that finds the place: name plus neighbourhood, or the
