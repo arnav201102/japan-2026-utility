@@ -60,8 +60,14 @@ function buildWrap(rec, days, today, rate) {
   if (todays.length) {
     L.push("Spent today: " + yen(spentY) + " (≈ " + rupees(spentR) + ") · " + todays.length + " expense" + (todays.length === 1 ? "" : "s"));
     var paid = {};
-    todays.forEach(function (x) { paid[x.p] = (paid[x.p] || 0) + M.convert(x.a, x.cur || "JPY", "JPY", x.fx > 0 ? x.fx : rate); });
-    L.push(PEOPLE.filter(function (p) { return paid[p]; }).map(function (p) { return p + " paid " + yen(paid[p]); }).join(" · "));
+    todays.forEach(function (x) {
+      /* several payers each get their part; a refund counts against whoever got it back */
+      var pd = x.net ? (function () { var o = {}; o[x.p] = x.a; return o; })() : M.paidOf(x, PEOPLE), sg = x.refund ? -1 : 1;
+      Object.keys(pd).forEach(function (p) {
+        if (pd[p]) paid[p] = (paid[p] || 0) + sg * M.convert(pd[p], x.cur || "JPY", "JPY", x.fx > 0 ? x.fx : rate);
+      });
+    });
+    L.push(PEOPLE.filter(function (p) { return Math.round(paid[p] || 0); }).map(function (p) { return p + (paid[p] < 0 ? " got back " + yen(-paid[p]) : " paid " + yen(paid[p])); }).join(" · "));
   } else {
     L.push("Nothing logged today. Anything to add to the app?");
   }

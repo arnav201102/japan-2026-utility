@@ -208,9 +208,29 @@ a.tel.g,button.tel.g{background:var(--moss-bg)}
 .exp-edit{background:var(--card);border-radius:3px;padding:12px 14px;margin:4px 0 10px;display:flex;flex-wrap:wrap;gap:8px}
 .exp-edit .ql{flex:1 1 130px}
 .exp-edit .ql input,.exp-edit .ql select{font:400 15px var(--gothic);border:1px solid var(--sand);border-radius:3px;padding:7px 8px;background:var(--field);color:var(--ink);width:100%}
-.exp-edit .esplit,.exp-edit .toolbar,.exp-edit .note{flex:1 1 100%;margin:0}
+.exp-edit .esplit,.exp-edit .toolbar,.exp-edit .note,.exp-edit .eerr{flex:1 1 100%;margin:0}
 .ecash{display:inline-flex;margin:-6px 0 4px;font-size:13.5px}
-.ecash-note{font-size:12.5px;margin:0 0 12px}
+.ecash-note{font-size:12.5px;margin:0 0 6px}
+.flash.eerr{color:var(--momiji);margin:0 0 10px;min-height:0}
+.sbox{margin:0 0 10px}
+.sb-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0}
+.sb-row .lbl,.esplit .lbl{font-size:13px;color:var(--ink-soft);min-width:58px}
+.sb-row .seg{margin:0}
+.sb-people{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0}
+.sb-p{display:flex;flex-direction:column;gap:2px;font-size:12.5px;color:var(--ink-soft);flex:1 1 90px}
+.sb-p input{font:400 15px var(--gothic);border:1px solid var(--sand);border-radius:3px;padding:7px 8px;background:var(--field);color:var(--ink);min-width:0;width:100%}
+.sb-left{font-size:12.5px;color:var(--moss);margin:2px 0 6px}
+.sb-left.bad{color:var(--momiji)}
+.sb-hint{font-size:12.5px;margin:2px 0 6px}
+.sb-more{font-size:13px;margin:2px 0 4px}
+.sb-edit{flex:1 1 100%}
+.exp .amt.refund{color:var(--moss)}
+.undo{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;pointer-events:none;
+  background:var(--ink);color:var(--washi);border-radius:4px;padding:10px 14px;display:flex;gap:16px;align-items:center;font-size:14px;z-index:40;
+  max-width:calc(100% - 32px);transition:opacity .2s,transform .2s}
+.undo.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.undo span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.undo button{background:none;border:0;color:var(--momiji);font:700 14px var(--gothic);cursor:pointer;padding:0}
 .exp-edit .ecash{flex:1 1 100%;margin:0}
 .settle .stl-row{flex-wrap:wrap}
 #cashCard{margin-top:4px}
@@ -628,9 +648,10 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
     <select id="eCat" aria-label="Category"></select>
     <button class="btn" id="eAdd">Add</button>
   </div>
-  <div class="esplit" id="eSplit" role="group" aria-label="Split between"></div>
+  <div id="eSplit"></div>
   <label class="wtog ecash"><input type="checkbox" id="eCash"> Paid in cash (¥)</label>
-  <p class="note ecash-note">Still splits like any expense — and the whole amount comes out of the payer's wallet, since they handed over the cash.</p>
+  <p class="note ecash-note">Still splits like any expense — and what each payer handed over comes out of their wallet.</p>
+  <div class="flash eerr" id="eErr" role="alert"></div>
   <div class="seg" id="expFilter" role="group" aria-label="Filter by who paid"></div>
   <div id="expList"></div>
   <div class="settle" id="settle"></div>
@@ -1730,6 +1751,23 @@ function renderFilter(){
   });
 }
 var expEditing=null;
+/* a few seconds to take a delete back — it removes it on every phone */
+var undoTimer=null;
+function offerUndo(x){
+  var bar=$("#undoBar");
+  if(!bar){bar=el("div","undo");bar.id="undoBar";bar.setAttribute("role","status");document.body.appendChild(bar)}
+  bar.innerHTML="";
+  bar.appendChild(el("span",null,"Deleted “"+(x.d||"expense")+"”"));
+  var b=el("button",null,"Undo");b.type="button";
+  b.addEventListener("click",function(){
+    clearTimeout(undoTimer);bar.classList.remove("on");
+    if(!exps.some(function(e){return e.id===x.id}))exps.push(x);
+    S.set("exps",exps);renderExps();touchCloud();
+    flash("#expFlash","Back on the list, for everyone.");
+  });
+  bar.appendChild(b);bar.classList.add("on");
+  clearTimeout(undoTimer);undoTimer=setTimeout(function(){bar.classList.remove("on")},8000);
+}
 /* paid it, or has a share in it */
 function involves(x,p){
   if(x.p===p)return true;
@@ -1758,13 +1796,19 @@ function renderExps(){
     t.addEventListener("click",function(){expEditing=expEditing===x.id?null:x.id;renderExps()});
     var tags=[];
     if(MO&&MO.isPayment(x))tags.push("payment");
-    else{if(MO)tags.push(MO.bucketOf(x));if(x.split)tags.push("split: "+x.split.join(", "))}
+    else{
+      if(x.refund)tags.push("refund");
+      if(MO)tags.push(MO.bucketOf(x));
+      if(x.owe)tags.push("split "+PEOPLE.filter(function(p){return x.owe[p]}).map(function(p){return p+" "+money(x.owe[p],x.cur||"JPY")}).join(" · "));
+      else if(x.split)tags.push("split: "+x.split.join(", "));
+      if(x.paid)tags.push("paid "+PEOPLE.filter(function(p){return x.paid[p]}).map(function(p){return p+" "+money(x.paid[p],x.cur||"JPY")}).join(" + "));
+    }
     if(x.cash)tags.push("cash");
     if(x.src==="splitwise")tags.push("Splitwise");
     if(tags.length)t.appendChild(el("small","etag",tags.join(" · ")));
     r.appendChild(t);
-    r.appendChild(el("span","who",x.p));
-    var amt=el("span","amt",money(x.a,x.cur||"JPY"));
+    r.appendChild(el("span","who",x.paid?x.p+" +"+(Object.keys(x.paid).length-1):x.p));
+    var amt=el("span","amt"+(x.refund?" refund":""),(x.refund?"−":"")+money(Math.abs(x.a),x.cur||"JPY"));
     var other=(x.cur||"JPY")==="JPY"?"INR":"JPY";
     if(MO)amt.appendChild(el("small",null,"≈ "+money(MO.convert(x.a,x.cur||"JPY",other,x.fx>0?x.fx:rate),other)));
     r.appendChild(amt);
@@ -1773,7 +1817,8 @@ function renderExps(){
       if(!confirm("Delete “"+(x.d||"this expense")+"” for everyone?"))return;
       var at=-1;exps.forEach(function(e,i){if(e===x||(x.id&&e.id===x.id))at=i});   /* by id, not where it sat when drawn */
       if(at<0){renderExps();return}
-      exps.splice(at,1);if(expEditing===x.id)expEditing=null;S.set("exps",exps);renderExps();touchCloud();
+      var gone=exps.splice(at,1)[0];if(expEditing===x.id)expEditing=null;S.set("exps",exps);renderExps();touchCloud();
+      offerUndo(gone);
     });
     r.appendChild(del);box.appendChild(r);
     if(expEditing&&expEditing===x.id)box.appendChild(expEditor(x));
@@ -1794,7 +1839,7 @@ function renderPace(){
   exps.forEach(function(x){
     var dd=expDay(x); if(!dd)return;
     daysWithSpend[dd]=true;
-    if(dd===today&&!(MO&&MO.isPayment(x)))todaySpend+=expYen(x);
+    if(dd===today&&!(MO&&MO.isPayment(x)))todaySpend+=(x.refund?-1:1)*expYen(x);
   });
   var onTrip=idx>=0;
   var elapsed=onTrip?idx+1:Object.keys(daysWithSpend).length;
@@ -1864,20 +1909,117 @@ function sane(a,cur){
 function balancesInr(){return MO.balances(exps,PEOPLE,"INR",rate)}
 function showBal(inr){return balCur==="INR"?rupees(inr):"≈ "+yen(inr/rate)}
 var balCur=S.get("balCur","INR");
-var eSplit=PEOPLE.slice();
+
 function money(n,cur){return cur==="INR"?rupees(n):yen(n)}
 
-function renderESplit(){
-  var box=$("#eSplit");if(!box)return;box.innerHTML="";
-  box.appendChild(el("span","lbl","Split between"));
-  PEOPLE.forEach(function(p){
-    var l=el("label","wtog"),cb=document.createElement("input");cb.type="checkbox";cb.checked=eSplit.indexOf(p)>-1;
-    cb.addEventListener("change",function(){
-      if(cb.checked){if(eSplit.indexOf(p)<0)eSplit.push(p)}else eSplit=eSplit.filter(function(q){return q!==p});
-      if(!eSplit.length){eSplit=[p];cb.checked=true}
+/* The split box: expense or refund; split equally, by amounts or by shares;
+   paid by one person (the "Who paid" picker) or several. Used by the add row
+   and the editor. getAmount() gives the current total; read(payer) checks it. */
+function splitBox(init,getAmount,getCur){
+  init=init||{};
+  /* work on copies — nothing touches the expense itself until a save succeeds */
+  function copy(m){var o={};if(m)for(var k in m)o[k]=m[k];return o}
+  var st={refund:!!init.refund,mode:init.weights?"share":init.owe?"amount":"equal",
+    who:init.split?init.split.slice():PEOPLE.slice(),owe:copy(init.owe),weights:copy(init.weights),
+    many:!!init.paid,paid:copy(init.paid)};
+  var box=el("div","sbox");
+  var advanced=st.refund||st.mode!=="equal"||st.many;
+  function seg(label,opts,val,on){
+    var row=el("div","sb-row");row.appendChild(el("span","lbl",label));
+    var g=el("div","seg");
+    opts.forEach(function(o){var b=el("button",null,o[1]);b.type="button";b.setAttribute("aria-pressed",o[0]===val?"true":"false");
+      b.addEventListener("click",function(){on(o[0]);draw()});g.appendChild(b)});
+    row.appendChild(g);return row;
+  }
+  function people(map,ph,onIn){
+    var w=el("div","sb-people");
+    PEOPLE.forEach(function(p){
+      var l=el("label","sb-p");l.appendChild(el("span",null,p));
+      var i=document.createElement("input");i.type="text";i.inputMode="decimal";i.className="num";i.placeholder=ph;
+      i.value=map[p]!=null&&map[p]!==""?map[p]:"";
+      i.addEventListener("input",function(){map[p]=i.value;onIn&&onIn()});
+      l.appendChild(i);w.appendChild(l);
     });
-    l.appendChild(cb);l.appendChild(document.createTextNode(" "+p));box.appendChild(l);
-  });
+    return w;
+  }
+  var leftOwe,leftPaid;
+  function sumLeft(map){
+    var a=getAmount(),t={};PEOPLE.forEach(function(p){var v=MO.parseAmount(map[p]);if(v>0)t[p]=v});
+    return a>0?MO.addsUp(a,t):null;
+  }
+  function showLeft(node,map){
+    if(!node)return;var r=sumLeft(map),cur=getCur();
+    node.className="sb-left"+(r&&!r.ok?" bad":"");
+    node.textContent=!r?"Type the total first.":r.ok?"Adds up.":r.left>0?money(r.left,cur)+" still to assign":money(-r.left,cur)+" too much";
+  }
+  function draw(){
+    box.innerHTML="";
+    if(!advanced){
+      box.appendChild(equalRow());
+      var more=el("button","linkbtn sb-more","More options — refund, uneven split, several payers");more.type="button";
+      more.addEventListener("click",function(){advanced=true;draw()});box.appendChild(more);
+      return;
+    }
+    box.appendChild(seg("Type",[["exp","Expense"],["refund","Refund"]],st.refund?"refund":"exp",function(v){st.refund=v==="refund"}));
+    if(st.refund)box.appendChild(el("p","note sb-hint","Money coming back — a cancelled ticket, a returned item. “Who paid” is whoever got it back; the split is whose money it was."));
+    box.appendChild(seg("Split",[["equal","Equally"],["amount","Amounts"],["share","Shares"]],st.mode,function(v){st.mode=v}));
+    if(st.mode==="equal")box.appendChild(equalRow());
+    else if(st.mode==="amount"){box.appendChild(people(st.owe,"0",function(){showLeft(leftOwe,st.owe)}));leftOwe=el("div","sb-left");box.appendChild(leftOwe);showLeft(leftOwe,st.owe)}
+    else{
+      PEOPLE.forEach(function(p){if(st.weights[p]==null)st.weights[p]=1});
+      box.appendChild(people(st.weights,"0"));
+      box.appendChild(el("p","note sb-hint","Shares like 2 : 1 : 1 — 0 leaves someone out."));
+    }
+    box.appendChild(seg("Paid by",[["one","One person"],["many","Several"]],st.many?"many":"one",function(v){st.many=v==="many"}));
+    if(st.many){box.appendChild(people(st.paid,"0",function(){showLeft(leftPaid,st.paid)}));leftPaid=el("div","sb-left");box.appendChild(leftPaid);showLeft(leftPaid,st.paid)}
+  }
+  function equalRow(){
+    var r=el("div","esplit");r.appendChild(el("span","lbl","Split between"));
+    PEOPLE.forEach(function(p){
+      var l=el("label","wtog"),cb=document.createElement("input");cb.type="checkbox";cb.checked=st.who.indexOf(p)>-1;
+      cb.addEventListener("change",function(){
+        if(cb.checked){if(st.who.indexOf(p)<0)st.who.push(p)}else st.who=st.who.filter(function(q){return q!==p});
+        if(!st.who.length){st.who=[p];cb.checked=true}
+      });
+      l.appendChild(cb);l.appendChild(document.createTextNode(" "+p));r.appendChild(l);
+    });
+    return r;
+  }
+  draw();
+  return {el:box,
+    refresh:function(){showLeft(leftOwe,st.owe);showLeft(leftPaid,st.paid)},
+    /* the fields to store, or an error to show */
+    read:function(payer){
+      var a=getAmount(),f={refund:st.refund||undefined,split:undefined,owe:undefined,weights:undefined,paid:undefined,p:payer};
+      if(st.mode==="equal"){if(st.who.length<PEOPLE.length)f.split=st.who.slice()}
+      else if(st.mode==="amount"){
+        var o={};PEOPLE.forEach(function(p){var v=MO.parseAmount(st.owe[p]);if(v>0)o[p]=v});
+        var r=MO.addsUp(a,o);if(!r.ok)return {error:"The split adds up to "+money(r.sum,getCur())+", not "+money(a,getCur())+"."};
+        f.owe=o;
+      }else{
+        var w={};PEOPLE.forEach(function(p){var v=parseFloat(st.weights[p]);if(v>0)w[p]=v});
+        var ow=MO.oweFromWeights(a,w,PEOPLE);if(!ow)return {error:"Give at least one person a share."};
+        f.owe=ow;f.weights=w;
+      }
+      if(st.many){
+        var pd={};PEOPLE.forEach(function(p){var v=MO.parseAmount(st.paid[p]);if(v>0)pd[p]=v});
+        var rp=MO.addsUp(a,pd);if(!rp.ok)return {error:"What was paid adds up to "+money(rp.sum,getCur())+", not "+money(a,getCur())+"."};
+        var ks=Object.keys(pd);
+        if(ks.length>1){f.paid=pd;f.p=ks.sort(function(x,y){return pd[y]-pd[x]})[0]}
+        else if(ks.length===1)f.p=ks[0];
+      }
+      return {fields:f};
+    }};
+}
+var eBox=null;
+function renderESplit(){
+  var mount=$("#eSplit");if(!mount||!MO)return;mount.innerHTML="";
+  eBox=splitBox({},function(){return MO.parseAmount($("#eAmt").value)},function(){return $("#eCur").value});
+  mount.appendChild(eBox.el);
+}
+function applyFields(x,f){
+  ["refund","split","owe","weights","paid"].forEach(function(k){if(f[k]===undefined)delete x[k];else x[k]=f[k]});
+  x.p=f.p;
 }
 
 function renderSettle(){
@@ -2029,18 +2171,17 @@ function expEditor(x){
   var p=field("Paid by",sel(PEOPLE.map(function(q){return [q,q]}),x.p));
   var cat=field("Category",sel((MO?MO.CATS:[]).map(function(k){return [k,k]}),MO&&!MO.isPayment(x)?MO.bucketOf(x):"Other"));
   var dt=field("Date",inp(expDay(x)||"","date"));
-  var who=x.split?x.split.slice():PEOPLE.slice();
-  var sp=el("div","esplit");sp.appendChild(el("span","lbl","Split between"));
-  PEOPLE.forEach(function(q){
-    var l=el("label","wtog"),cb=document.createElement("input");cb.type="checkbox";cb.checked=who.indexOf(q)>-1;cb.disabled=locked;
-    cb.addEventListener("change",function(){if(cb.checked){if(who.indexOf(q)<0)who.push(q)}else who=who.filter(function(z){return z!==q});if(!who.length){who=[q];cb.checked=true}});
-    l.appendChild(cb);l.appendChild(document.createTextNode(" "+q));sp.appendChild(l);
-  });
-  f.appendChild(sp);
+  var sb=null;
+  if(!locked&&!(MO&&MO.isPayment(x))){
+    sb=splitBox(x,function(){return MO.parseAmount(a.value)},function(){return c.value});
+    sb.el.classList.add("sb-edit");f.appendChild(sb.el);
+    a.addEventListener("input",function(){sb.refresh()});
+  }
   var cl=el("label","wtog ecash"),cc=document.createElement("input");cc.type="checkbox";cc.checked=!!x.cash;
   cl.appendChild(cc);cl.appendChild(document.createTextNode(" Paid in cash (¥)"));f.appendChild(cl);
   if(locked){[a,c,p].forEach(function(n){n.disabled=true});f.appendChild(el("p","note","Imported from Splitwise — change the amount or split there and import again; it updates this one, keeping the category and cash tick set here."))}
   if(MO&&MO.isPayment(x))cat.disabled=true;
+  var err=el("div","flash eerr");err.setAttribute("role","alert");f.appendChild(err);
   var bar=el("div","toolbar"),save=el("button","btn","Save");save.type="button";
   save.addEventListener("click",function(){
     /* a sync may have swapped in a fresh copy while the editor was open — save onto that */
@@ -2048,10 +2189,14 @@ function expEditor(x){
     if(!live){expEditing=null;renderExps();flash("#expFlash","That expense was deleted on another phone.");return}
     x=live;
     var amt=locked?x.a:(MO?MO.parseAmount(a.value):num(a.value));
-    if(!locked&&!(amt>0)){flash("#expFlash","That amount doesn't look right — type it like 1200 or 1,200.");a.focus();return}
+    if(!locked&&!(amt>0)){err.textContent="That amount doesn't look right — type it like 1200 or 1,200.";a.focus();return}
     if(!locked&&amt!==x.a&&!sane(amt,c.value))return;
     x.d=d.value.trim().slice(0,80);
-    if(!locked){x.a=amt;x.cur=c.value;x.p=p.value;if(who.length<PEOPLE.length)x.split=who.slice();else delete x.split}
+    if(!locked){
+      var rd=sb?sb.read(p.value):{fields:{p:p.value,split:x.split,refund:x.refund}};
+      if(rd.error){err.textContent=rd.error;return}
+      x.a=amt;x.cur=c.value;applyFields(x,rd.fields);
+    }
     if(cc.checked&&(x.cur||"JPY")==="JPY")x.cash=true;else delete x.cash;
     if(!(MO&&MO.isPayment(x))&&cat.value!==(MO?MO.bucketOf(x):x.cat)){x.cat=cat.value;x.catLocal=true}
     if(dt.value){var t=Date.parse(dt.value+"T12:00:00");if(!isNaN(t))x.ts=t}
@@ -2152,18 +2297,19 @@ function csvCell(v){
 }
 function expensesCsv(){
   if(!MO)return "Open the app on a connection once, then try again.";
-  var head=["Date","Description","Category","Paid by","Split between","Amount","Currency","Rate (₹ per ¥)","In ₹","In ¥"].concat(PEOPLE.map(function(p){return p+" net ₹"})).concat(["Source"]);
+  var head=["Date","Type","Description","Category","Paid by","Split between","Amount","Currency","Rate (₹ per ¥)","In ₹","In ¥"].concat(PEOPLE.map(function(p){return p+" net ₹"})).concat(["Source"]);
   var rows=[head];
   exps.slice().sort(function(a,b){return (a.ts||0)-(b.ts||0)}).forEach(function(x){
     var cur=x.cur||"JPY",r=x.fx>0?x.fx:rate,n=MO?MO.netOf(x,PEOPLE):{};
-    rows.push([expDay(x)||"",x.d||"",MO?MO.bucketOf(x):(x.cat||""),x.p,
-      x.net?"(Splitwise split)":(x.split||PEOPLE).join(" + "),x.a,cur,Math.round(r*10000)/10000,
-      Math.round(MO.convert(x.a,cur,"INR",r)*100)/100,Math.round(MO.convert(x.a,cur,"JPY",r))].concat(
+    var sg=x.refund?-1:1,desc=function(m){return PEOPLE.filter(function(p){return m[p]}).map(function(p){return p+" "+m[p]}).join(" + ")};
+    rows.push([expDay(x)||"",MO.isPayment(x)?"Payment":x.refund?"Refund":"Expense",x.d||"",MO.bucketOf(x),
+      x.paid?desc(x.paid):x.p,x.net?"(Splitwise split)":x.owe?desc(x.owe):(x.split||PEOPLE).join(" + "),sg*x.a,cur,Math.round(r*10000)/10000,
+      Math.round(sg*MO.convert(x.a,cur,"INR",r)*100)/100,Math.round(sg*MO.convert(x.a,cur,"JPY",r))].concat(
       PEOPLE.map(function(p){return Math.round(MO.convert(n[p]||0,cur,"INR",r)*100)/100}),[x.src==="splitwise"?"Splitwise":"app"]));
   });
   var bal=MO.balances(exps,PEOPLE,"INR",rate);
   rows.push([]);
-  rows.push(["","Balance now","","","","","","","",""].concat(PEOPLE.map(function(p){return bal[p]})).concat([""]));
+  rows.push(["","","Balance now","","","","","","","",""].concat(PEOPLE.map(function(p){return bal[p]})).concat([""]));
   return rows.map(function(r){return r.map(csvCell).join(",")}).join("\r\n");
 }
 function backupJson(){
@@ -2226,20 +2372,24 @@ function swPreview(){
 
 function initSplit(){
   $("#eAdd").addEventListener("click",function(){
+    $("#eErr").textContent="";
     var a=MO?MO.parseAmount($("#eAmt").value):num($("#eAmt").value);
-    if(!(a>0)){flash("#expFlash",$("#eAmt").value.trim()?"That amount doesn't look right — type it like 1200 or 1,200.":"Type the amount first.");$("#eAmt").focus();return}
+    if(!(a>0)){flash("#eErr",$("#eAmt").value.trim()?"That amount doesn't look right — type it like 1200 or 1,200.":"Type the amount first.");$("#eAmt").focus();return}
     if(!sane(a,$("#eCur").value))return;
-    var x={id:TS?TS.uid():undefined,d:$("#eDesc").value.trim(),a:a,cur:$("#eCur").value,fx:rate,p:$("#ePayer").value,cat:$("#eCat").value,ts:Date.now()};
+    var rd=eBox.read($("#ePayer").value);
+    if(rd.error){flash("#eErr",rd.error);return}
+    var x={id:TS?TS.uid():undefined,d:$("#eDesc").value.trim(),a:a,cur:$("#eCur").value,fx:rate,cat:$("#eCat").value,ts:Date.now()};
+    applyFields(x,rd.fields);
     if($("#eCash").checked&&x.cur==="JPY")x.cash=true;
     $("#eCash").checked=false;
-    if(eSplit.length<PEOPLE.length)x.split=eSplit.slice();
     pushExp(x);
-    eSplit=PEOPLE.slice();renderESplit();   /* back to everyone, so the next one isn't split by accident */
+    renderESplit();   /* back to a plain equal split, so the next one isn't uneven by accident */
     $("#eCur").value=defaultCur();          /* and back to the likely currency */
     S.set("exps",exps);$("#eDesc").value="";$("#eAmt").value="";renderExps();
     touchCloud();
   });
   $("#eAmt").addEventListener("keydown",function(e){if(e.key==="Enter")$("#eAdd").click()});
+  $("#eAmt").addEventListener("input",function(){if(eBox)eBox.refresh()});
   renderESplit();
   $("#eCur").value=defaultCur();
   $("#eCur").addEventListener("change",function(){$("#eAmt").placeholder=this.value==="INR"?"₹ amount":"¥ amount"});
@@ -2358,6 +2508,22 @@ function normExp(x,amt){
   if(typeof x.swk==="string")o.swk=x.swk.slice(0,140);
   if(x.catLocal===true)o.catLocal=true;
   if(x.cash===true&&o.cur==="JPY")o.cash=true;
+  if(x.refund===true)o.refund=true;
+  /* several payers / an uneven split, kept only if the amounts really add up */
+  function amounts(m){
+    if(!m||typeof m!=="object")return null;
+    var r={},any=false;
+    PEOPLE.forEach(function(p){var v=+m[p];if(v>0){r[p]=Math.round(v*100)/100;any=true}});
+    return any&&(!MO||MO.addsUp(Math.abs(amt),r).ok)?r:null;
+  }
+  if(!o.net){
+    var pd=amounts(x.paid);if(pd&&Object.keys(pd).length>1)o.paid=pd;
+    var ow=amounts(x.owe);if(ow){o.owe=ow;delete o.split}
+    if(ow&&x.weights&&typeof x.weights==="object"){
+      var w={};PEOPLE.forEach(function(p){var v=+x.weights[p];if(v>0)w[p]=v});
+      if(Object.keys(w).length)o.weights=w;
+    }
+  }
   return o;
 }
 function normalizeExps(raw){

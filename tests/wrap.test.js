@@ -53,3 +53,15 @@ test("outside the trip there's no day number and no tomorrow", function () {
   var msg = W.buildWrap(REC, DAYS, "2026-11-10", 0.6);
   assert.doesNotMatch(msg, /Day \d|Tomorrow/);
 });
+
+test("several payers and refunds in the wrap-up", function () {
+  var rec = { exps: [
+    { id: "x", d: "Dinner", a: 9000, cur: "JPY", fx: 0.6, p: "Arnav", paid: { Arnav: 6000, Manan: 3000 }, ts: at("2026-11-25", "20") },
+    { id: "y", d: "Bike refund", a: 1000, cur: "JPY", fx: 0.6, p: "Ayush", refund: true, ts: at("2026-11-25", "21") }
+  ], cash: [] };
+  var msg = W.buildWrap(rec, DAYS, "2026-11-25", 0.6);
+  assert.match(msg, /Spent today: ¥8,000/);
+  assert.match(msg, /Arnav paid ¥6,000/);
+  assert.match(msg, /Ayush got back ¥1,000/);
+  assert.match(msg, /Manan paid ¥3,000/);
+});

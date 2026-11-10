@@ -276,6 +276,8 @@ spreadsheet, then pick the CSV in Money. Names are matched by first name (fix
 any by hand), ¥ and ₹ rows are both read, and importing again later only adds
 what's new, updates anything you edited in Splitwise, and keeps anything since deleted there as history. Every import is logged. Splitwise can't convert between currencies; this does.
 
+**More options** under the add row: mark it a **refund** (money coming back, like a cancelled ticket), split it **by amounts** or **by shares** (2 : 1) instead of equally, or say **several people paid** (Arnav ¥6,000 + Ayush ¥3,000). It checks the amounts add up as you type. Deleting gives you a few seconds to **undo**.
+
 Tap an expense to **edit** it (Splitwise rows: name, category and date; change amounts in Splitwise and re-import). The **trip report** shows where the money went — by category, before and during the trip, by city, by day, and each person's share — and copies as text for the group.
 
 **My money**: pick a name for that person's share of everything, what they've

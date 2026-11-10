@@ -358,3 +358,53 @@ test("typed amounts", function () {
 test("the same settle-up on two phones has one id", function () {
   assert.equal(M.paymentId("Manan", "Ayush", 12901.79, "2026-11-10"), "pay:Manan:Ayush:1290179:2026-11-10");
 });
+
+/* ---------- refunds, uneven splits, several payers ---------- */
+test("an uneven split by amounts", function () {
+  var x = { a: 3000, cur: "JPY", p: "Arnav", owe: { Arnav: 1000, Ayush: 2000 } };
+  assert.deepEqual(M.netOf(x, P), { Arnav: 2000, Ayush: -2000, Manan: 0 });
+  assert.deepEqual(M.shares([x], P, "JPY", 0.6).share, { Arnav: 1000, Ayush: 2000, Manan: 0 });
+});
+
+test("a split by shares adds up exactly", function () {
+  assert.deepEqual(M.oweFromWeights(1000, { Arnav: 2, Ayush: 1, Manan: 0 }, P), { Arnav: 666.67, Ayush: 333.33 });
+  assert.deepEqual(M.oweFromWeights(100, { Arnav: 1, Ayush: 1, Manan: 1 }, P), { Arnav: 33.34, Ayush: 33.33, Manan: 33.33 });
+  assert.equal(M.oweFromWeights(100, {}, P), null);
+});
+
+test("several payers on one expense", function () {
+  var x = { a: 9000, cur: "JPY", p: "Arnav", paid: { Arnav: 6000, Ayush: 3000 } };
+  assert.deepEqual(M.netOf(x, P), { Arnav: 3000, Ayush: 0, Manan: -3000 });
+  var s = M.shares([x], P, "JPY", 0.6);
+  assert.deepEqual(s.paid, { Arnav: 6000, Ayush: 3000, Manan: 0 });
+  assert.deepEqual(s.share, { Arnav: 3000, Ayush: 3000, Manan: 3000 });
+});
+
+test("several payers and an uneven split together", function () {
+  var x = { a: 1000, cur: "JPY", p: "Arnav", paid: { Arnav: 700, Manan: 300 }, owe: { Arnav: 200, Ayush: 500, Manan: 300 } };
+  assert.deepEqual(M.netOf(x, P), { Arnav: 500, Ayush: -500, Manan: 0 });
+});
+
+test("a refund runs the expense backwards", function () {
+  var ticket = { a: 9000, cur: "INR", fx: 0.6, p: "Arnav" };
+  var refund = { a: 3000, cur: "INR", fx: 0.6, p: "Arnav", refund: true };   /* Arnav got ₹3,000 back */
+  assert.deepEqual(M.balances([ticket, refund], P, "INR", 0.6), { Arnav: 4000, Ayush: -2000, Manan: -2000 });
+  assert.equal(M.totalSpend([ticket, refund], "INR", 0.6), 6000);
+  assert.deepEqual(M.shares([ticket, refund], P, "INR", 0.6).share, { Arnav: 2000, Ayush: 2000, Manan: 2000 });
+  var days = [{ d: "2026-11-24", city: "x" }, { d: "2026-12-06", city: "y" }];
+  assert.equal(M.report([ticket, refund], P, "INR", 0.6, days).total, 6000);
+});
+
+test("cash: each payer's part leaves their wallet; a cash refund comes back", function () {
+  var exps = [
+    { a: 9000, cur: "JPY", p: "Arnav", paid: { Arnav: 6000, Ayush: 3000 }, cash: true, ts: 1 },
+    { a: 1000, cur: "JPY", p: "Arnav", refund: true, cash: true, ts: 2 }
+  ];
+  assert.equal(M.walletOf("Arnav", [], exps).balance, 15000 - 6000 + 1000);
+  assert.equal(M.walletOf("Ayush", [], exps).balance, 15000 - 3000);
+});
+
+test("amounts that should add up to the total", function () {
+  assert.deepEqual(M.addsUp(1000, { Arnav: 333.33, Ayush: 333.33, Manan: 333.34 }), { ok: true, sum: 1000, left: 0 });
+  assert.deepEqual(M.addsUp(1000, { Arnav: 600 }), { ok: false, sum: 600, left: 400 });
+});

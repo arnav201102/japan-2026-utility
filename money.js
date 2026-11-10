@@ -2,7 +2,9 @@
 
    An expense is {id, d (what), a (amount), cur ("JPY"|"INR"), p (who paid),
    split (who shares it; missing = everyone), fx (₹ per ¥ when it was added),
-   ts, src, cat, net}. net, when present, is each person's paid-minus-owed in
+   ts, src, cat, net}. Optional: paid {person: amount} when several people paid,
+   owe {person: amount} for an uneven split (weights {person: n} remembers a
+   "by shares" split), refund: true for money coming back — it runs the other way. net, when present, is each person's paid-minus-owed in
    the expense's own currency — that's what a Splitwise export gives, and it
    copes with any split and any number of payers. Everything else is worked out
    from p and split. Converting always uses the expense's own fx, so a balance
@@ -26,6 +28,28 @@ function convert(amount, from, to, fx) {
 function rateOf(x, liveRate) { return x.fx > 0 ? x.fx : liveRate; }
 
 /* each person's paid-minus-owed for one expense, in the expense's currency */
+/* who paid how much of an expense, in its own currency */
+function paidOf(x, people) {
+  var out = {};
+  people.forEach(function (p) { out[p] = 0; });
+  if (x.paid) Object.keys(x.paid).forEach(function (p) { if (p in out) out[p] += x.paid[p]; });
+  else if (x.p in out) out[x.p] += x.a;
+  return out;
+}
+
+/* each person's share of it: set amounts, or equal among whoever's in */
+function oweOf(x, people) {
+  var out = {};
+  people.forEach(function (p) { out[p] = 0; });
+  if (x.owe) { Object.keys(x.owe).forEach(function (p) { if (p in out) out[p] += x.owe[p]; }); return out; }
+  var who = (x.split && x.split.length ? x.split : people).filter(function (p) { return p in out; });
+  if (!who.length) who = people;
+  who.forEach(function (p) { out[p] += x.a / who.length; });
+  return out;
+}
+
+/* each person's paid-minus-owed for one expense, in the expense's currency.
+   A refund runs the other way: whoever got the money back now owes it out. */
 function netOf(x, people) {
   var out = {};
   people.forEach(function (p) { out[p] = 0; });
@@ -33,11 +57,8 @@ function netOf(x, people) {
     Object.keys(x.net).forEach(function (p) { if (p in out) out[p] += x.net[p]; });
     return out;
   }
-  var who = (x.split && x.split.length ? x.split : people).filter(function (p) { return p in out; });
-  if (!who.length) who = people;
-  var each = x.a / who.length;
-  if (x.p in out) out[x.p] += x.a;
-  who.forEach(function (p) { out[p] -= each; });
+  var pd = paidOf(x, people), ow = oweOf(x, people), sg = x.refund ? -1 : 1;
+  people.forEach(function (p) { out[p] = sg * (pd[p] - ow[p]); });
   return out;
 }
 
@@ -75,9 +96,8 @@ function shares(exps, people, cur, liveRate) {
     if (isPayment(x)) return;
     var r = rateOf(x, liveRate), c = x.cur || "JPY", share = {}, pay = {};
     if (!x.net) {
-      var who = (x.split && x.split.length ? x.split : people).filter(function (p) { return people.indexOf(p) > -1; });
-      if (!who.length) who = people;
-      people.forEach(function (p) { share[p] = who.indexOf(p) > -1 ? x.a / who.length : 0; pay[p] = p === x.p ? x.a : 0; });
+      var ow = oweOf(x, people), pd = paidOf(x, people), sg = x.refund ? -1 : 1;
+      people.forEach(function (p) { share[p] = sg * ow[p]; pay[p] = sg * pd[p]; });
     } else {
       /* Splitwise gives only paid-minus-owed. People below zero owe exactly that;
          whatever's left of the cost is shared by those above zero (the payers),
@@ -112,7 +132,7 @@ function report(exps, people, cur, liveRate, days) {
   var byCat = {}, phase = { before: 0, during: 0, after: 0 }, byDay = {}, byCity = {}, total = 0, count = 0;
   exps.forEach(function (x) {
     if (isPayment(x)) return;
-    var v = convert(x.a, x.cur || "JPY", cur, rateOf(x, liveRate)), day = isoDay(x.ts), b = bucketOf(x);
+    var v = (x.refund ? -1 : 1) * convert(x.a, x.cur || "JPY", cur, rateOf(x, liveRate)), day = isoDay(x.ts), b = bucketOf(x);
     total += v; count++;
     byCat[b] = (byCat[b] || 0) + v;
     var ph = !day || day < first ? "before" : day > last ? "after" : "during";
@@ -143,7 +163,7 @@ function balances(exps, people, cur, liveRate) {
 /* total spend in cur, payments between you left out */
 function totalSpend(exps, cur, liveRate) {
   return exps.reduce(function (t, x) {
-    return isPayment(x) ? t : t + convert(x.a, x.cur || "JPY", cur, rateOf(x, liveRate));
+    return isPayment(x) ? t : t + (x.refund ? -1 : 1) * convert(x.a, x.cur || "JPY", cur, rateOf(x, liveRate));
   }, 0);
 }
 
@@ -330,7 +350,10 @@ function walletOf(who, cashLog, exps, start) {
   var ev = [];
   (cashLog || []).forEach(function (c) { if (c.who === who) ev.push({ ts: c.ts || 0, k: c.kind, v: c.jpy }); });
   (exps || []).forEach(function (x) {
-    if (x.cash && x.p === who && (x.cur || "JPY") === "JPY") ev.push({ ts: x.ts || 0, k: "spend", v: x.a });
+    if (!x.cash || (x.cur || "JPY") !== "JPY") return;
+    /* their part of what was paid in cash; a cash refund comes back into the wallet */
+    var mine = x.net ? (x.p === who ? x.a : 0) : paidOf(x, [who])[who];
+    if (mine) ev.push({ ts: x.ts || 0, k: "spend", v: (x.refund ? -1 : 1) * mine });
   });
   ev.sort(function (a, b) { return a.ts - b.ts; });
   var bal = start, withdrawn = 0, spent = 0, unlogged = 0, lastCount = null;
@@ -353,6 +376,25 @@ function parseAmount(str) {
   return /^\d+(\.\d+)?$/.test(s) ? parseFloat(s) : NaN;
 }
 
+/* A "by shares" split (Arnav 2, Ayush 1) as amounts that add up exactly:
+   pennies left over by rounding go to the biggest share. */
+function oweFromWeights(a, weights, people) {
+  var W = 0, out = {}, top = null;
+  people.forEach(function (p) { var w = +weights[p] || 0; if (w > 0) { W += w; if (!top || w > (+weights[top] || 0)) top = p; } });
+  if (!W) return null;
+  var sum = 0;
+  people.forEach(function (p) { var w = +weights[p] || 0; if (w > 0) { out[p] = round2(a * w / W); sum += out[p]; } });
+  out[top] = round2(out[top] + a - sum);
+  return out;
+}
+
+/* do these amounts add up to the total? (within a few paise / yen of rounding) */
+function addsUp(a, map) {
+  var sum = 0;
+  Object.keys(map || {}).forEach(function (p) { sum += +map[p] || 0; });
+  return { ok: Math.abs(sum - a) < 0.05, sum: round2(sum), left: round2(a - sum) };
+}
+
 /* the same settle-up recorded on two phones must be one payment, not two */
 function paymentId(from, to, amount, day) {
   return "pay:" + from + ":" + to + ":" + Math.round(amount * 100) + ":" + day;
@@ -363,7 +405,8 @@ var api = {
   settleUp: settleUp, parseCSV: parseCSV, matchPerson: matchPerson,
   parseSplitwise: parseSplitwise, mergeImport: mergeImport, isPayment: isPayment,
   CATS: CATS, bucketOf: bucketOf, shares: shares, report: report, isoDay: isoDay,
-  walletOf: walletOf, CASH_START_JPY: CASH_START_JPY, parseAmount: parseAmount, paymentId: paymentId
+  walletOf: walletOf, CASH_START_JPY: CASH_START_JPY, parseAmount: parseAmount, paymentId: paymentId,
+  paidOf: paidOf, oweOf: oweOf, oweFromWeights: oweFromWeights, addsUp: addsUp
 };
 if (typeof module === "object" && module.exports) module.exports = api;
 else root.TripMoney = api;
