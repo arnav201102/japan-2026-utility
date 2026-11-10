@@ -14,7 +14,7 @@ private on each phone's local IndexedDB.
 |---|---|
 | **今 Now** | Countdown or day number, today's plan, today's weather, the Fuji go/no-go card, the next thing to book, and the before-you-leave-the-room list |
 | **程 Days** | All 13 days. Tap one for the plan, map links for each stop, places from the shared Google Maps list for that day, the thing you can't afford to miss, and the host's number. A **Places** view lists the whole Maps list by city — visit, eat, shop — with nearest-first |
-| **¥ Money** | Converter on a live rate, what you've spent and how fast, and the bill splitter |
+| **¥ Money** | Converter on a live rate, what you've spent and how fast, and the bill splitter — in ¥ or ₹, split between any of you, with Splitwise import and settle-up |
 | **要 To do** | Bookings sorted by deadline, documents, packing |
 | **買 Buy** | Shared shopping lists for Arnav, Ayush and Manan (synced via JSONBin), what to buy before you fly, early in Japan, and to take home |
 | **爆 Bakugai** | The shopping-spree tab: watch guide, other buys, India customs, duty calculator, spending scenarios |
@@ -257,6 +257,18 @@ minutes before. Open it and it drops into the phone's own calendar, which will
 actually wake you — the web page can't.
 
 ## Money between the three of you
+
+Every expense is in **yen or rupees**, and locks the exchange rate on the day
+you add it, so balances don't drift as the rate moves. Untick anyone who isn't
+in on an expense. Balances and **settle-up** show in ₹ or ¥ with the fewest
+payments possible; **Mark paid** records one so everything squares.
+
+**Import from Splitwise**: splitwise.com → the group → settings → Export as
+spreadsheet, then pick the CSV in Money. Names are matched by first name (fix
+any by hand), ¥ and ₹ rows are both read, and importing again later only adds
+what's new, updates anything you edited in Splitwise, and keeps anything since deleted there as history. Every import is logged. Splitwise can't convert between currencies; this does.
+
+Tap an expense to **edit** it (Splitwise rows: name, category and date; change amounts in Splitwise and re-import). The **trip report** shows where the money went — by category, before and during the trip, by city, by day, and each person's share — and copies as text for the group.
 
 Expenses and the budget automatically sync across all three phones through the cloud JSON record whenever you are online. Whenever someone logs or removes an expense, it updates for everyone.
 

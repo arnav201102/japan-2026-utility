@@ -3,8 +3,8 @@
    and the weather are never cached here; they have their own saved values in
    local storage and say how old they are. */
 
-var VERSION = "jp2026-v19";
-var SHELL = ["./", "./index.html", "./bakugai.js", "./sync.js", "./places.js", "./manifest.json", "./icon-192.png", "./icon-512.png"];
+var VERSION = "jp2026-v20";
+var SHELL = ["./", "./index.html", "./bakugai.js", "./sync.js", "./places.js", "./money.js", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", function (e) {
   e.waitUntil(
@@ -64,7 +64,7 @@ self.addEventListener("fetch", function (e) {
 
   /* The data and sync scripts, same as the page: network first so an edit
      lands without bumping VERSION, the cached copy when offline. */
-  var data = url.match(/\/(bakugai|sync|places)\.js(\?|$)/);
+  var data = url.match(/\/(bakugai|sync|places|money)\.js(\?|$)/);
   if (data) {
     var key = "./" + data[1] + ".js";
     e.respondWith(
