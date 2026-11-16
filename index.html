@@ -1516,7 +1516,7 @@ var DAYS=[
  {d:"2026-12-03",dow:"Thu",city:"Osaka",t:"Kuromon, Umeda, Castle, Dotonbori",
   p:["Leave Kyoto early — checkout is 11:00 but the day is in Osaka. JR Special Rapid to Osaka, about 30 minutes, around ¥580 on ICOCA, then the Midosuji line down to Namba.",
      "Bags at the flat or in Namba lockers — check-in is 16:00. Brunch at Kuromon Market, next door.",
-     "Then one clockwise loop that ends at the flat. Buy the Osaka Amazing Pass, 1 day, and take the Midosuji line back up to Umeda Sky first — it's only free on the pass before 15:00. Coffee at Bread, Espresso & Roastery in Nishitenma.",
+     "Then one clockwise loop that ends at the flat. Start the Osaka Amazing Pass, 1 day, one each, and take the Midosuji line back up to Umeda Sky first — it's only free on the pass before 15:00. Coffee at Bread, Espresso & Roastery in Nishitenma.",
      "Osaka Castle, then Shinsekai for kushikatsu under Tsutenkaku. Magic Cafe & Bar is round the corner.",
      "Dotonbori in the evening. The Tombori River Cruise is free on the pass. Up Mido-suji to Shinsaibashi — the drugstores on Shinsaibashi-suji for cosmetics, open late. MooKEN, Fanny Mae and Cafe Annon are all near the flat. Round1 Sennichimae if there's energy left.",
      "USJ tomorrow: the Studio Passes have to be on paper — the gate won't take a phone screen. If they aren't printed yet, any 7-Eleven prints PDFs (netprint). Check all three tickets are linked in the USJ app."],
@@ -1571,6 +1571,7 @@ var BOOKINGS=[
  {id:"taxfree",t:"Tax-free refund with bags checked through to Delhi",w:"ask ANA: are bags checked through KIX → Delhi, or do you collect and re-check them at Haneda (the ticket says re-check and change terminal)? Then how the Haneda tax-free step works, and whether tax-free cosmetics can go in a checked bag",when:"2026-11-20T10:00"},
  {id:"shortlist",t:"Watches and shoes: shortlist models, sizes in cm, Indian prices to compare",w:"so you buy in minutes in Japan, not hours",when:"2026-11-15T10:00"},
  {id:"earrival",t:"India e-Arrival card for the flight home",w:"the ticket says it's needed within 72 hours before landing in Delhi (6 Dec 17:25). Check on the government site whether Indian passport holders need it; if so, all three fill it in",when:"2026-12-03T20:00"},
+ {id:"osakapass",t:"Osaka Amazing Pass, 1 day, for all three — 3 Dec",w:"buy ahead online (digital pass) or at a station in Osaka on the morning. Covers subways, Umeda Sky before 15:00 and the Tombori River Cruise",when:"2026-11-28T10:00",u:true},
  {id:"vjw",t:"Visit Japan Web for all three",w:"around 20 Nov",when:"2026-11-20T10:00"}
 ];
 /* ticks used to be keyed by position — carry the old ones across once */
@@ -4893,7 +4894,7 @@ document.addEventListener("visibilitychange",function(){
    patched in here: matched by their old text, new rows under fixed ids so every
    phone adds the same one. Runs once per phone; a row someone deleted stays deleted. */
 function migrateTickets(){
-  if(S.get("mig_tickets5",false))return;
+  if(S.get("mig_tickets6",false))return;
   var changed=false;
   var byOld={
     "Ruriko-in lottery for 2 Dec":"rurikoin","Smart EX: Shinkansen Tokyo → Kyoto, 30 Nov, early":"smartex",
@@ -4915,12 +4916,13 @@ function migrateTickets(){
   addTo("book",book,"bk_usjapp",def.usjapp);
   addTo("book",book,"bk_locker25",def.locker25);
   addTo("book",book,"bk_earrival",def.earrival);
+  addTo("book",book,"bk_osakapass",def.osakapass);
   var docs=getList("docs");
   DOCS.forEach(function(d){
     if(/^USJ Studio Passes printed/.test(d.t))addTo("docs",docs,"dk_usjprint",d);
     if(/^Japan visas printed/.test(d.t))addTo("docs",docs,"dk_visaprint",d);
   });
-  S.set("mig_tickets5",true);
+  S.set("mig_tickets6",true);
   if(!changed)return;
   setList("book",book);setList("docs",docs);
   renderAllChecks();touchCloud();
