@@ -39,7 +39,7 @@ All top-level `function`/`var` names share one global scope. A duplicate name si
 
 When adding new shared data: put it in `localState()`, `remoteState()`, `recordOf()` and `applyState()`, and call `touchCloud()` after every mutation. List items already use a field named `u` (urgent), so don't reuse `u`, `m` or `id` for anything else. Never test against the real JSONBin, because it is the trip's live data. The browser tests used so far intercept `api.jsonbin.io` with a fake record. The fake must send CORS headers and answer the OPTIONS preflight.
 
-**Not synced, on purpose:** passport/document copies (IndexedDB on each phone only, `initDocs`), theme, filters, tab state, and a manually typed exchange rate.
+**Not synced, on purpose:** passport/document copies (IndexedDB on each phone only, `initDocs`), theme, filters, tab state, a manually typed exchange rate, and the add form's last-picked payer (`ePayer`, so each phone starts on its owner).
 
 **Routing.** The active tab is in the hash: `#now`, `#days[/places]`, `#money`, `#convert`, `#todo`, `#buy`, `#bakugai[/watches|buys|customs|calculator|scenarios][/<shop category id>]` (`TAB_SLUG`, `SUB_SLUG`, `readPath`, `writePath`). Updates use `history.replaceState`, so Back still leaves the app.
 
@@ -52,6 +52,7 @@ When adding new shared data: put it in `localState()`, `remoteState()`, `recordO
 - Match the existing ES5 style (`var`, `function`, no arrow functions or modules in browser code); keep it dependency-free.
 - Colours are CSS variables on `:root`, defined three times: light, `@media (prefers-color-scheme: dark)` under `:root:not([data-theme="light"])`, and `:root[data-theme="dark"]`. New tokens go in all three. The scenario chart uses validated categorical tokens `--s0`…`--s4`.
 - Layout is phone-first, `max-width: 600px`, no horizontal page scroll; the tab bar is a fixed 8-column grid.
+- Corners use the `--r` token (10px) on `:root`; cards are 12–14px, pills 999px. Section headings can carry a kanji badge: `<h2 class="sec hk-h"><span class="hk" style="--k:…">字</span>Title</h2>`. Class names are global, so check before reusing a short one (`.ql` is the Bakugai calculator's).
 - `.tip > b:first-child` is the tip's heading; use `<strong>` for inline emphasis inside tips.
 - Elements toggled with the `hidden` attribute rely on the global `[hidden]{display:none!important}` rule (flex containers like `.addrow` would otherwise ignore it).
 - **Never put personal files in this folder.** Vercel serves every file at a public, guessable URL. `.gitignore`/`.vercelignore` exclude images and PDFs except the two icons.

@@ -7,6 +7,8 @@
 <meta name="description" content="Trip utility: itinerary, hosts, currency, checklists and emergency numbers for Japan, 24 Nov – 6 Dec 2026.">
 <meta name="theme-color" content="#27405E">
 <link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -29,6 +31,7 @@
   --moss:#5D6A4E;
   --moss-bg:#5D6A4E;
   --on-bg:#EDEEE9;
+  --r:10px;
   --s0:#6F726C;--s1:#2a78d6;--s2:#1baf7a;--s3:#6250d6;--s4:#eb6834;
   --who0:#127F89;--who1:#B03C78;--who2:#9A6410;
   --gothic:"Zen Kaku Gothic New","Hiragino Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -106,7 +109,7 @@ h2.sec:first-child{margin-top:0}
 p.note{font-size:14px;color:var(--ink-soft);margin-bottom:14px}
 
 /* hero status */
-.status{background:var(--ai-bg);color:var(--on-bg);border-radius:3px;padding:22px 20px 20px;margin-bottom:20px}
+.status{background:var(--ai-bg);color:var(--on-bg);border-radius:var(--r);padding:22px 20px 20px;margin-bottom:20px}
 .status .big{font-family:var(--mincho);font-weight:700;font-size:66px;line-height:.9;letter-spacing:-.02em;display:block}
 .status .cap{font-size:14px;opacity:.82;margin-top:8px}
 .status .where{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.22);font-size:15px}
@@ -118,7 +121,7 @@ p.note{font-size:14px;color:var(--ink-soft);margin-bottom:14px}
 .alert .d{font-size:13px;color:var(--ink-soft);margin-top:4px}
 
 /* weather */
-.wx{background:var(--card);border-radius:3px;padding:16px 18px;margin-bottom:20px;font-size:15px}
+.wx{background:var(--card);border-radius:var(--r);padding:16px 18px;margin-bottom:20px;font-size:15px}
 .wx .hd{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px}
 .wx .hd b{font-size:15px}
 .wx .hd .dy{font-size:13px;color:var(--ink-soft);white-space:nowrap}
@@ -129,7 +132,7 @@ p.note{font-size:14px;color:var(--ink-soft);margin-bottom:14px}
 .wx .nums{font-size:14px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
 .wx .why{font-size:14px;color:var(--ink-soft);margin-top:6px;line-height:1.5}
 .wx .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--sand)}
-.wx .acts a,.wx .acts button{font:500 14px var(--gothic);border-radius:3px;padding:8px 13px;text-decoration:none;cursor:pointer;border:1px solid var(--sand);background:none;color:var(--ink)}
+.wx .acts a,.wx .acts button{font:500 14px var(--gothic);border-radius:var(--r);padding:8px 13px;text-decoration:none;cursor:pointer;border:1px solid var(--sand);background:none;color:var(--ink)}
 .wx .acts .primary{background:var(--ai-bg);color:#fff;border-color:var(--ai-bg)}
 .wx.swapped{border-left:4px solid var(--momiji)}
 
@@ -145,22 +148,22 @@ p.note{font-size:14px;color:var(--ink-soft);margin-bottom:14px}
 .day .body{display:none;padding:2px 0 18px;font-size:15px}
 .day.open .body{display:block}
 .day .body p{margin-bottom:10px}
-.stay{background:var(--card);padding:12px 14px;border-radius:3px;font-size:14px;line-height:1.5}
+.stay{background:var(--card);padding:12px 14px;border-radius:var(--r);font-size:14px;line-height:1.5}
 .stay .nm{font-weight:700;font-size:15px}
 .stay .ad{color:var(--ink-soft);margin:3px 0 8px}
-a.tel,button.tel{display:inline-block;background:var(--ai-bg);color:#fff;text-decoration:none;border:0;padding:7px 13px;border-radius:3px;font:500 14px var(--gothic);margin-right:8px;margin-top:4px;cursor:pointer}
+a.tel,button.tel{display:inline-block;background:var(--ai-bg);color:#fff;text-decoration:none;border:0;padding:7px 13px;border-radius:var(--r);font:500 14px var(--gothic);margin-right:8px;margin-top:4px;cursor:pointer}
 a.tel.g,button.tel.g{background:var(--moss-bg)}
 .ref{font-size:12px;color:var(--ink-soft);margin-top:8px}
 
 /* map chips and last train */
 .spots{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 12px}
-.spots a{display:inline-block;border:1px solid var(--sand);border-radius:3px;padding:6px 10px;font-size:13px;color:var(--ai);text-decoration:none;background:var(--card)}
+.spots a{display:inline-block;border:1px solid var(--sand);border-radius:var(--r);padding:6px 10px;font-size:13px;color:var(--ai);text-decoration:none;background:var(--card)}
 .spots a::before{content:"⌖ ";opacity:.6}
 .last{font-size:13.5px;color:var(--ink-soft);border-left:3px solid var(--sand);padding:2px 0 2px 10px;margin:0 0 12px;line-height:1.5}
 .last b{color:var(--ink);font-weight:700}
 
 /* money */
-.conv{background:var(--card);border-radius:3px;padding:18px;margin-bottom:16px}
+.conv{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:16px}
 .fx{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .fx label{font-family:var(--mincho);font-size:26px;color:var(--ai);font-weight:700;min-width:34px}
 .fx input{flex:1;min-width:0;font:700 26px/1.2 var(--gothic);font-variant-numeric:tabular-nums;border:0;border-bottom:2px solid var(--sand);background:none;color:var(--ink);padding:4px 0;width:100%}
@@ -174,18 +177,18 @@ a.tel.g,button.tel.g{background:var(--moss-bg)}
 .rate-warn{font-size:13px;color:var(--ink-soft);margin-top:6px;padding-top:6px;border-top:1px solid var(--sand)}
 .credit{font-size:12px;color:var(--ink-soft);margin:-10px 0 20px}
 .credit a{color:var(--ink-soft)}
-.rate input{width:72px;font:500 14px var(--gothic);font-variant-numeric:tabular-nums;border:1px solid var(--sand);border-radius:3px;padding:4px 6px;background:var(--field);color:var(--ink)}
+.rate input{width:72px;font:500 14px var(--gothic);font-variant-numeric:tabular-nums;border:1px solid var(--sand);border-radius:var(--r);padding:4px 6px;background:var(--field);color:var(--ink)}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
-.chip{background:none;border:1px solid var(--sand);border-radius:3px;padding:7px 11px;font:500 14px/1 var(--gothic);font-variant-numeric:tabular-nums;color:var(--ink);cursor:pointer}
+.chip{background:none;border:1px solid var(--sand);border-radius:var(--r);padding:7px 11px;font:500 14px/1 var(--gothic);font-variant-numeric:tabular-nums;color:var(--ink);cursor:pointer}
 .chip b{color:var(--ai)}
 
 /* splitter */
 .addrow{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-.addrow input,.addrow select{font:400 15px var(--gothic);border:1px solid var(--sand);border-radius:3px;padding:9px 10px;background:var(--field);color:var(--ink);min-width:0}
+.addrow input,.addrow select{font:400 15px var(--gothic);border:1px solid var(--sand);border-radius:var(--r);padding:9px 10px;background:var(--field);color:var(--ink);min-width:0}
 .addrow input.desc{flex:1 1 100%}
 .addrow input.amt{flex:1 1 90px;font-variant-numeric:tabular-nums}
 .addrow select{flex:1 1 110px}
-.btn{background:var(--ai-bg);color:#fff;border:0;border-radius:3px;padding:9px 16px;font:500 15px var(--gothic);cursor:pointer}
+.btn{background:var(--ai-bg);color:#fff;border:0;border-radius:var(--r);padding:9px 16px;font:500 15px var(--gothic);cursor:pointer}
 .btn.ghost{background:none;color:var(--ink-soft);border:1px solid var(--sand)}
 .exp{display:flex;align-items:baseline;gap:10px;padding:9px 0;border-bottom:1px solid var(--sand);font-size:15px}
 .exp .who{font-size:13px;color:var(--ink-soft)}
@@ -193,7 +196,7 @@ a.tel.g,button.tel.g{background:var(--moss-bg)}
 .exp .dd{font-size:12px;color:var(--ink-soft);white-space:nowrap}
 .exp button{background:none;border:0;color:var(--sand);font-size:18px;cursor:pointer;line-height:1;padding:0 2px}
 .exp button:hover{color:var(--momiji)}
-.settle{background:var(--card);border-radius:3px;padding:14px 16px;margin-top:14px;font-size:15px}
+.settle{background:var(--card);border-radius:var(--r);padding:14px 16px;margin-top:14px;font-size:15px}
 .settle div{padding:3px 0;font-variant-numeric:tabular-nums}
 .settle .ttl{font-weight:700;border-bottom:1px solid var(--sand);padding-bottom:7px;margin-bottom:6px}
 .settle .balcur{margin-bottom:10px}
@@ -208,9 +211,9 @@ a.tel.g,button.tel.g{background:var(--moss-bg)}
 .exp .ed:hover{color:var(--ai)}
 .exp-phase{font-family:var(--mincho);font-weight:600;font-size:15px;color:var(--ai);margin:20px 0 0;padding-top:10px;border-top:2px solid var(--sand)}
 .exp-day{font-size:12px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 2px}
-.exp-edit{background:var(--card);border-radius:3px;padding:12px 14px;margin:4px 0 10px;display:flex;flex-wrap:wrap;gap:8px}
+.exp-edit{background:var(--card);border-radius:var(--r);padding:12px 14px;margin:4px 0 10px;display:flex;flex-wrap:wrap;gap:8px}
 .exp-edit .ql{flex:1 1 130px}
-.exp-edit .ql input,.exp-edit .ql select{font:400 15px var(--gothic);border:1px solid var(--sand);border-radius:3px;padding:7px 8px;background:var(--field);color:var(--ink);width:100%}
+.exp-edit .ql input,.exp-edit .ql select{font:400 15px var(--gothic);border:1px solid var(--sand);border-radius:var(--r);padding:7px 8px;background:var(--field);color:var(--ink);width:100%}
 .exp-edit .esplit,.exp-edit .toolbar,.exp-edit .note,.exp-edit .eerr{flex:1 1 100%;margin:0}
 .ecash{display:inline-flex;margin:-6px 0 4px;font-size:13.5px}
 .ecash-note{font-size:12.5px;margin:0 0 6px}
@@ -221,7 +224,7 @@ a.tel.g,button.tel.g{background:var(--moss-bg)}
 .sb-row .seg{margin:0}
 .sb-people{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0}
 .sb-p{display:flex;flex-direction:column;gap:2px;font-size:12.5px;color:var(--ink-soft);flex:1 1 90px}
-.sb-p input{font:400 15px var(--gothic);border:1px solid var(--sand);border-radius:3px;padding:7px 8px;background:var(--field);color:var(--ink);min-width:0;width:100%}
+.sb-p input{font:400 15px var(--gothic);border:1px solid var(--sand);border-radius:var(--r);padding:7px 8px;background:var(--field);color:var(--ink);min-width:0;width:100%}
 .sb-left{font-size:12.5px;color:var(--moss);margin:2px 0 6px}
 .sb-left.bad{color:var(--momiji)}
 .sb-hint{font-size:12.5px;margin:2px 0 6px}
@@ -251,20 +254,20 @@ a.tel.g,button.tel.g{background:var(--moss-bg)}
 #swPanel input[type=file]{font:400 14px var(--gothic);color:var(--ink);margin:4px 0}
 .swmap{display:flex;flex-direction:column;gap:6px;margin:8px 0}
 .swm{font-size:14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.swm select{font:400 14px var(--gothic);border:1px solid var(--sand);border-radius:3px;padding:5px 7px;background:var(--field);color:var(--ink)}
+.swm select{font:400 14px var(--gothic);border:1px solid var(--sand);border-radius:var(--r);padding:5px 7px;background:var(--field);color:var(--ink)}
 .warnp{font-size:13px;color:var(--momiji);margin:6px 0}
 
 /* segmented control */
-.seg{display:inline-flex;border:1px solid var(--sand);border-radius:3px;overflow:hidden;margin-bottom:12px}
+.seg{display:inline-flex;border:1px solid var(--sand);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
 .seg button{background:none;border:0;border-right:1px solid var(--sand);padding:7px 13px;font:500 14px var(--gothic);color:var(--ink-soft);cursor:pointer}
 .seg button:last-child{border-right:0}
 .seg button[aria-pressed="true"]{background:var(--ai-bg);color:#fff}
 .toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.toolbar button{font:500 14px var(--gothic);border:1px solid var(--sand);background:none;color:var(--ink);border-radius:3px;padding:8px 13px;cursor:pointer}
+.toolbar button{font:500 14px var(--gothic);border:1px solid var(--sand);background:none;color:var(--ink);border-radius:var(--r);padding:8px 13px;cursor:pointer}
 .toolbar button.btn{background:var(--ai-bg);color:#fff;border-color:var(--ai-bg)}
 .io{display:none;margin-top:12px}
 .io.on{display:block}
-.io textarea{width:100%;height:120px;font:400 12px ui-monospace,SFMono-Regular,Menlo,monospace;border:1px solid var(--sand);border-radius:3px;padding:10px;background:var(--field);color:var(--ink);resize:vertical}
+.io textarea{width:100%;height:120px;font:400 12px ui-monospace,SFMono-Regular,Menlo,monospace;border:1px solid var(--sand);border-radius:var(--r);padding:10px;background:var(--field);color:var(--ink);resize:vertical}
 .io p{font-size:13px;color:var(--ink-soft);margin:8px 0}
 .flash{font-size:13px;color:var(--moss);margin-top:8px;min-height:18px}
 
@@ -296,22 +299,22 @@ a.tel.g,button.tel.g{background:var(--moss-bg)}
 .bk.done .txt{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:var(--sand)}
 .bk.done .when{text-decoration:none}
 .bk .side{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:5px}
-.bk .due{font-size:12px;font-weight:700;white-space:nowrap;border-radius:3px;padding:3px 7px;background:var(--card);color:var(--ink-soft)}
+.bk .due{font-size:12px;font-weight:700;white-space:nowrap;border-radius:var(--r);padding:3px 7px;background:var(--card);color:var(--ink-soft)}
 .bk .due.soon{background:var(--momiji-bg);color:#fff}
 .bk .due.near{color:var(--momiji)}
 .bk .due.over{color:var(--momiji);border:1px solid var(--momiji)}
-.bk .cal{background:none;border:1px solid var(--sand);border-radius:3px;color:var(--ink-soft);font:500 11.5px var(--gothic);padding:3px 7px;cursor:pointer;white-space:nowrap}
+.bk .cal{background:none;border:1px solid var(--sand);border-radius:var(--r);color:var(--ink-soft);font:500 11.5px var(--gothic);padding:3px 7px;cursor:pointer;white-space:nowrap}
 .bk .cal:hover{color:var(--ai);border-color:var(--ai)}
 .bk.done .side{opacity:.45}
 
 /* running tab */
-.tab-total{background:var(--ai-bg);color:var(--on-bg);border-radius:3px;padding:16px 18px;margin-bottom:18px}
+.tab-total{background:var(--ai-bg);color:var(--on-bg);border-radius:var(--r);padding:16px 18px;margin-bottom:18px}
 .tab-total .big{font-family:var(--mincho);font-weight:700;font-size:36px;line-height:1;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
 .tab-total .sub{font-size:14px;opacity:.82;margin-top:6px;font-variant-numeric:tabular-nums}
 .tab-total .rest{margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.22);font-size:14px;font-variant-numeric:tabular-nums}
 .tab-total .rest span{display:block}
 .tab-total .bud{margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.22);font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.tab-total .bud input{width:80px;font:500 14px var(--gothic);font-variant-numeric:tabular-nums;border:1px solid rgba(255,255,255,.32);border-radius:3px;padding:4px 7px;background:rgba(255,255,255,.09);color:#fff}
+.tab-total .bud input{width:80px;font:500 14px var(--gothic);font-variant-numeric:tabular-nums;border:1px solid rgba(255,255,255,.32);border-radius:var(--r);padding:4px 7px;background:rgba(255,255,255,.09);color:#fff}
 .tab-total .bud input:focus{outline:none;border-color:#fff}
 .tab-total .bud .tag{opacity:.82}
 .buy{display:flex;gap:11px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--sand);font-size:15px}
@@ -325,8 +328,8 @@ a.tel.g,button.tel.g{background:var(--moss-bg)}
 .buy .x{background:none;border:0;color:var(--sand);font-size:18px;cursor:pointer;line-height:1;padding:0 2px}
 .buy .x:hover{color:var(--momiji)}
 .buy .etag{display:block;font-size:11.5px;color:var(--ink-soft);text-decoration:none}
-.buy-ask{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:13.5px;background:var(--card);border-radius:3px;padding:8px 12px;margin:2px 0 6px}
-.buy-ask input{width:90px;font:400 14px var(--gothic);border:1px solid var(--sand);border-radius:3px;padding:4px 6px;background:var(--field);color:var(--ink)}
+.buy-ask{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:13.5px;background:var(--card);border-radius:var(--r);padding:8px 12px;margin:2px 0 6px}
+.buy-ask input{width:90px;font:400 14px var(--gothic);border:1px solid var(--sand);border-radius:var(--r);padding:4px 6px;background:var(--field);color:var(--ink)}
 .tip{background:var(--card);border-left:4px solid var(--moss);padding:13px 15px;margin:14px 0 20px;font-size:14px;line-height:1.55}
 .tip>b:first-child{display:block;font-size:13px;color:var(--moss);margin-bottom:3px}
 
@@ -336,25 +339,25 @@ a.tel.g,button.tel.g{background:var(--moss-bg)}
 .row .r{flex:1}
 .row .r a{color:var(--ai)}
 .sos{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
-.sos a{display:block;background:var(--momiji-bg);color:#fff;text-decoration:none;border-radius:3px;padding:14px;text-align:center}
+.sos a{display:block;background:var(--momiji-bg);color:#fff;text-decoration:none;border-radius:var(--r);padding:14px;text-align:center}
 .sos a .n{font-family:var(--mincho);font-weight:700;font-size:30px;display:block;line-height:1}
 .sos a .l{font-size:13px;opacity:.9;margin-top:3px}
 .ph{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--sand);padding:11px 0;font:inherit;color:inherit;cursor:pointer}
 .ph .tx{flex:1}
 .ph .jp{font-size:17px;font-weight:500}
 .ph .en{font-size:14px;color:var(--ink-soft);line-height:1.45}
-.ph .zoom{flex:none;font-size:15px;color:var(--ai);border:1px solid var(--sand);border-radius:3px;padding:5px 9px}
+.ph .zoom{flex:none;font-size:15px;color:var(--ai);border:1px solid var(--sand);border-radius:var(--r);padding:5px 9px}
 .links a{display:block;padding:10px 0;border-bottom:1px solid var(--sand);color:var(--ai);text-decoration:none;font-size:15px}
 .links a span{display:block;font-size:13px;color:var(--ink-soft)}
 
 /* documents kept on the phone */
 .docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin:4px 0 10px}
-.doc{position:relative;border:1px solid var(--sand);border-radius:3px;overflow:hidden;background:var(--card)}
+.doc{position:relative;border:1px solid var(--sand);border-radius:var(--r);overflow:hidden;background:var(--card)}
 .doc .open{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer}
 .doc img{display:block;width:100%;height:104px;object-fit:cover}
 .doc .pdf{height:104px;display:flex;align-items:center;justify-content:center;font-family:var(--mincho);font-weight:700;font-size:20px;color:var(--ai)}
 .doc .cap{font-size:11.5px;padding:5px 7px;color:var(--ink-soft);line-height:1.3;word-break:break-word}
-.doc .rm{position:absolute;top:4px;right:4px;width:24px;height:24px;line-height:1;background:rgba(0,0,0,.62);color:#fff;border:0;border-radius:3px;font-size:15px;cursor:pointer;padding:0}
+.doc .rm{position:absolute;top:4px;right:4px;width:24px;height:24px;line-height:1;background:rgba(0,0,0,.62);color:#fff;border:0;border-radius:var(--r);font-size:15px;cursor:pointer;padding:0}
 .docview{position:fixed;inset:0;z-index:70;background:#0B0D10;display:none;align-items:center;justify-content:center;overflow:auto;padding:20px}
 .docview.on{display:flex}
 .docview .hold{max-width:100%;text-align:center}
@@ -369,7 +372,7 @@ a.tel.g,button.tel.g{background:var(--moss-bg)}
 .show .romaji{font-size:17px;color:var(--ink-soft);margin-top:14px}
 .show .en{font-size:16px;margin-top:10px;line-height:1.5}
 .show .foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--sand);font-size:14px;color:var(--ink-soft)}
-.show .close{position:fixed;top:calc(14px + env(safe-area-inset-top));right:16px;background:var(--card);border:1px solid var(--sand);color:var(--ink);border-radius:3px;font:500 15px var(--gothic);padding:8px 15px;cursor:pointer;z-index:61}
+.show .close{position:fixed;top:calc(14px + env(safe-area-inset-top));right:16px;background:var(--card);border:1px solid var(--sand);color:var(--ink);border-radius:var(--r);font:500 15px var(--gothic);padding:8px 15px;cursor:pointer;z-index:61}
 
 /* watch guide */
 .wck{padding:14px 16px}
@@ -382,8 +385,8 @@ a.tel.g,button.tel.g{background:var(--moss-bg)}
 .wck-out b{font-family:var(--mincho);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums}
 .wck-out .warn{color:var(--momiji)}
 .wf{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}
-.wf select{flex:1 1 120px;min-width:0;font:400 15px var(--gothic);border:1px solid var(--sand);border-radius:3px;padding:8px 9px;background:var(--field);color:var(--ink)}
-.wtog{display:flex;align-items:center;gap:7px;font-size:14px;border:1px solid var(--sand);border-radius:3px;padding:7px 11px;cursor:pointer;background:var(--field)}
+.wf select{flex:1 1 120px;min-width:0;font:400 15px var(--gothic);border:1px solid var(--sand);border-radius:var(--r);padding:8px 9px;background:var(--field);color:var(--ink)}
+.wtog{display:flex;align-items:center;gap:7px;font-size:14px;border:1px solid var(--sand);border-radius:var(--r);padding:7px 11px;cursor:pointer;background:var(--field)}
 .wtog input{accent-color:var(--momiji-bg);width:16px;height:16px}
 .wbud{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-soft);margin-bottom:12px}
 .wbud input{flex:1;accent-color:var(--momiji-bg);min-width:0}
@@ -405,7 +408,7 @@ h3.wband small{font-family:var(--gothic);font-weight:400;font-size:12px;color:va
 .w .ws{font-weight:700;color:var(--moss)}
 .w .ws.neg{color:var(--momiji)}
 .w .wv.na{color:var(--ink-soft)}
-.wb{display:inline-block;font-size:11px;font-weight:700;line-height:1;border-radius:3px;padding:3px 6px;margin:4px 4px 0 0;white-space:nowrap}
+.wb{display:inline-block;font-size:11px;font-weight:700;line-height:1;border-radius:var(--r);padding:3px 6px;margin:4px 4px 0 0;white-space:nowrap}
 .wb.jp{color:var(--momiji);border:1px solid var(--momiji)}
 .wb.pick{background:var(--moss-bg);color:#fff}
 .wb.ok{color:var(--moss);border:1px solid var(--moss)}
@@ -421,12 +424,12 @@ h3.wband small{font-family:var(--gothic);font-weight:400;font-size:12px;color:va
 /* bakugai */
 
 .baku-hd h2 span{font-weight:700}
-.cartbar{background:var(--card);border-radius:3px;padding:10px 14px;margin:-4px 0 14px;font-size:13.5px;line-height:1.5}
+.cartbar{background:var(--card);border-radius:var(--r);padding:10px 14px;margin:-4px 0 14px;font-size:13.5px;line-height:1.5}
 .cartbar .cb-t{color:var(--ink-soft)}
 .cartbar .cb-t b{color:var(--ink)}
 .cartbar .meter{margin:7px 0 6px}
-.meter{height:6px;border-radius:3px;background:var(--sand);overflow:hidden}
-.meter span{display:block;height:100%;background:var(--moss-bg);border-radius:3px}
+.meter{height:6px;border-radius:var(--r);background:var(--sand);overflow:hidden}
+.meter span{display:block;height:100%;background:var(--moss-bg);border-radius:var(--r)}
 .meter.full span{background:var(--momiji-bg)}
 .tab-total .meter{background:rgba(255,255,255,.2);margin:6px 0 8px}
 .tab-total .meter span{background:#fff}
@@ -436,7 +439,7 @@ h3.wband small{font-family:var(--gothic);font-weight:400;font-size:12px;color:va
 .subtabs button{flex:none;background:none;border:0;border-bottom:3px solid transparent;padding:9px 6px 8px;font:500 14.5px var(--gothic);color:var(--ink-soft);cursor:pointer;white-space:nowrap}
 .subtabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--momiji)}
 .subtabs button:focus-visible{outline:2px solid var(--momiji);outline-offset:-2px}
-.wadd{display:inline-block;margin-top:6px;background:none;border:1px solid var(--sand);border-radius:3px;color:var(--ai);font:500 12px var(--gothic);padding:3px 8px;cursor:pointer}
+.wadd{display:inline-block;margin-top:6px;background:none;border:1px solid var(--sand);border-radius:var(--r);color:var(--ai);font:500 12px var(--gothic);padding:3px 8px;cursor:pointer}
 .wadd:hover{border-color:var(--ai)}
 .wb.warn{color:var(--momiji);border:1px solid var(--momiji);white-space:normal;line-height:1.3}
 .bkline{font-size:14px;background:var(--card);border-left:4px solid var(--momiji);padding:10px 13px;margin-bottom:12px;line-height:1.5}
@@ -457,11 +460,11 @@ h3.wband small{font-family:var(--gothic);font-weight:400;font-size:12px;color:va
 .cattabs button{flex:none;background:var(--card);border:1px solid var(--sand);border-radius:16px;padding:6px 12px;font:500 13.5px var(--gothic);color:var(--ink-soft);cursor:pointer;white-space:nowrap}
 .cattabs button[aria-selected="true"]{background:var(--ai-bg);border-color:var(--ai-bg);color:#fff}
 .cattabs button:focus-visible{outline:2px solid var(--momiji);outline-offset:1px}
-#buysCat .sc{border-bottom:0;background:var(--card);border-radius:3px;padding:12px 14px;margin-bottom:6px}
+#buysCat .sc{border-bottom:0;background:var(--card);border-radius:var(--r);padding:12px 14px;margin-bottom:6px}
 .w .pact{display:flex;align-items:center;gap:10px;margin-top:6px;font-size:12.5px}
 .w .pact a{color:var(--ai)}
 .w .pact .wadd{margin-top:0}
-.bkbox{background:var(--ai-bg);color:var(--on-bg);border-radius:3px;padding:18px 18px 16px;margin-bottom:10px}
+.bkbox{background:var(--ai-bg);color:var(--on-bg);border-radius:var(--r);padding:18px 18px 16px;margin-bottom:10px}
 .bkbox .big{font-family:var(--mincho);font-weight:700;font-size:54px;line-height:.95;font-variant-numeric:tabular-nums}
 .bkbox .cap{font-size:15px;margin-top:8px}
 .bkbox .why{font-size:13.5px;opacity:.88;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.22);line-height:1.55}
@@ -480,14 +483,14 @@ h3.wband small{font-family:var(--gothic);font-weight:400;font-size:12px;color:va
 .ql small{font-size:12px}
 .ql.sv{flex-direction:row;align-items:center;gap:8px}
 .ql.sv input{width:64px}
-.ql input{font:400 15px var(--gothic);font-variant-numeric:tabular-nums;border:1px solid var(--sand);border-radius:3px;padding:8px 9px;background:var(--field);color:var(--ink);min-width:0}
+.ql input{font:400 15px var(--gothic);font-variant-numeric:tabular-nums;border:1px solid var(--sand);border-radius:var(--r);padding:8px 9px;background:var(--field);color:var(--ink);min-width:0}
 #calcCart .addrow .wtog{padding:7px 9px}
 .cl-sub{display:block;font-size:12px;color:var(--ink-soft)}
 .cl-hint{font-size:12.5px;color:var(--ink-soft);margin:6px 0 12px}
 #calcWarn .alert{margin:0 0 10px;padding:10px 14px}
 #calcWarn .alert .v{font-size:14px;margin:0}
 .scsp{flex-wrap:wrap}
-.scchart{background:var(--card);border-radius:3px;padding:14px 14px 12px;margin:4px 0 12px}
+.scchart{background:var(--card);border-radius:var(--r);padding:14px 14px 12px;margin:4px 0 12px}
 .sc-row{margin-bottom:10px}
 .sc-lb{font-size:12.5px;color:var(--ink-soft);margin-bottom:3px}
 .sc-track{display:flex;align-items:center;gap:8px}
@@ -519,7 +522,7 @@ h3.wband small{font-family:var(--gothic);font-weight:400;font-size:12px;color:va
 #plNear{margin-bottom:8px}
 #plNear[aria-pressed="true"]{background:var(--ai-bg);color:#fff;border-color:var(--ai-bg)}
 .pl{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--sand);font-size:14px}
-.pl-k{flex:none;width:44px;font-size:11px;font-weight:700;text-align:center;border-radius:3px;padding:3px 0;margin-top:2px;border:1px solid var(--sand);color:var(--ink-soft)}
+.pl-k{flex:none;width:44px;font-size:11px;font-weight:700;text-align:center;border-radius:var(--r);padding:3px 0;margin-top:2px;border:1px solid var(--sand);color:var(--ink-soft)}
 .pl-k.k-eat{color:var(--momiji);border-color:var(--momiji)}
 .pl-k.k-shop{color:var(--ai);border-color:var(--ai)}
 .pl-k.k-visit{color:var(--moss);border-color:var(--moss)}
@@ -528,7 +531,7 @@ h3.wband small{font-family:var(--gothic);font-weight:400;font-size:12px;color:va
 .pl-s{font-size:12.5px;color:var(--ink-soft);line-height:1.4;margin-top:1px}
 .pl-side{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:5px;font-size:12.5px}
 .pl-side a{color:var(--ai)}
-.pl-day{background:var(--card);border:1px solid var(--sand);border-radius:3px;font:700 12px var(--gothic);color:var(--ink);padding:3px 8px;cursor:pointer}
+.pl-day{background:var(--card);border:1px solid var(--sand);border-radius:var(--r);font:700 12px var(--gothic);color:var(--ink);padding:3px 8px;cursor:pointer}
 .pl-free{font-size:11.5px;color:var(--ink-soft)}
 .dayplaces{margin:2px 0 12px;padding-top:8px;border-top:1px dashed var(--sand)}
 .dp-h{font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:4px}
@@ -546,7 +549,7 @@ nav.tabs button .g{display:block;font-family:var(--mincho);font-size:17px;line-h
 nav.tabs button[aria-selected="true"]{color:#fff;border-top-color:var(--momiji)}
 nav.tabs button:focus-visible{outline:2px solid #fff;outline-offset:-4px}
 
-.credits{margin-top:30px;padding:14px 16px;background:var(--card);border-left:4px solid var(--momiji);border-radius:3px;font-size:13.5px;line-height:1.55}
+.credits{margin-top:30px;padding:14px 16px;background:var(--card);border-left:4px solid var(--momiji);border-radius:var(--r);font-size:13.5px;line-height:1.55}
 .credits div+div{margin-top:5px}
 .credits b{color:var(--momiji)}
 footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.5}
@@ -680,6 +683,156 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
 .mfab{position:fixed;right:max(16px,calc(50% - 284px));bottom:calc(98px + env(safe-area-inset-bottom));z-index:30;background:var(--momiji-bg);color:#fff;border:0;border-radius:999px;padding:13px 20px;font:700 15px var(--gothic);box-shadow:0 10px 24px -8px rgba(0,0,0,.55);cursor:pointer;transition:opacity .2s,transform .2s}
 .mfab.off{opacity:0;transform:translateY(16px) scale(.92);pointer-events:none}
 body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
+/* ---- shared bits: kanji badges on headings, tucked-away notes, progress ---- */
+h2.sec.hk-h{display:flex;align-items:center;gap:10px}
+.hk{width:30px;height:30px;border-radius:50%;background:var(--k);color:#fff;display:grid;place-items:center;font:700 15px/1 var(--mincho);flex:none}
+details.more{margin:-4px 0 14px}
+details.more summary{font-size:14px;color:var(--ink-soft);cursor:pointer;list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::after{content:" How it works ›";color:var(--ai);font-size:13px;white-space:nowrap}
+details.more[open] summary::after{content:" Less ‹"}
+details.more p.note{margin:6px 0 0}
+.prog{display:flex;align-items:center;gap:10px}
+.prog .pt{flex:none}
+.prog .pm{flex:1;height:6px;border-radius:var(--r);background:var(--sand);overflow:hidden;max-width:220px}
+.prog .pm span{display:block;height:100%;background:var(--ai);border-radius:var(--r);transition:width .3s}
+.prog .pm.all span{background:var(--moss)}
+.mhero .bud .tag{flex-basis:100%;opacity:1}
+.mhero .bud .tag::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#9FD39A;margin-right:7px;vertical-align:middle}
+.mhero .bud .tag.over::before{background:#F2A493}
+
+/* ---- To do and Buy: card rows, round ticks, one-piece add rows ---- */
+#p-list .chk,#p-list .bk,#p-buy .chk,#p-buy .buy{background:var(--card);border:1px solid var(--sand);border-radius:12px;padding:11px 10px 11px 12px;margin:6px 0;align-items:center}
+#p-list .bk{align-items:flex-start}
+#p-list .chk.got,#p-list .bk.done,#p-buy .chk.got,#p-buy .buy.got{background:none;border-style:dashed}
+#p-list .chk input,#p-list .bk input,#p-buy .chk input,#p-buy .buy input[type=checkbox]{width:24px;height:24px;border-radius:50%;margin-top:0;border-width:2px}
+#p-list .bk input{margin-top:1px}
+#p-list .chk input:checked,#p-list .bk input:checked,#p-buy .chk input:checked,#p-buy .buy input[type=checkbox]:checked{background:var(--moss);border-color:var(--moss)}
+#p-list .chk input:checked::after,#p-list .bk input:checked::after,#p-buy .chk input:checked::after,#p-buy .buy input[type=checkbox]:checked::after{left:7px;top:3px}
+#p-list .x,#p-buy .x{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;align-self:center;margin:0;font-size:20px}
+#p-list .x:hover,#p-buy .x:hover{background:var(--washi)}
+#p-list .bk .x{align-self:flex-start}
+#p-list .bk .due{border-radius:999px;padding:3px 9px}
+#p-list .bk .cal{border-radius:999px;padding:3px 9px}
+#p-buy .buy .txt{font-weight:600}
+#p-buy .buy .amt{text-align:right}
+#p-list .addrow,#p-buy .addrow{flex-wrap:nowrap;gap:0;background:var(--field);border:1.5px solid var(--sand);border-radius:999px;padding:4px;margin:4px 0 8px}
+#p-list .addrow:focus-within,#p-buy .addrow:focus-within{border-color:var(--ai)}
+#p-list .addrow input,#p-buy .addrow input{border:0;background:none;padding:8px 12px;font-size:16px;min-width:0}
+#p-list .addrow input:focus,#p-buy .addrow input:focus{outline:none}
+#p-list .addrow input.desc,#p-buy .addrow input.desc{flex:1 1 auto}
+#p-buy .addrow input.amt{flex:0 0 96px;padding:8px 10px;border-left:1px solid var(--sand);border-radius:0}
+#p-list .addrow .btn,#p-buy .addrow .btn{border-radius:999px;padding:8px 18px;flex:none;font-weight:700}
+#p-buy .buy-ask{border-radius:12px;border-left:4px solid var(--momiji-bg);margin:-2px 0 10px;padding:10px 14px}
+#p-buy .buy-ask .linkbtn{border:1.5px solid var(--ai);border-radius:999px;padding:4px 11px;text-decoration:none;font-weight:700;font-size:13px}
+#p-buy .buy-ask .linkbtn:last-child{border-color:var(--sand);color:var(--ink-soft)}
+#p-list p[style]{margin-top:24px}
+#p-list .btn.ghost{border-radius:999px}
+#p-list .toolbar button,#p-buy .toolbar button{border-radius:999px}
+/* ---- Now ---- */
+.status{border-radius:16px;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--ai-bg) 0%,#16263A 100%)}
+.status::after{content:"旅";position:absolute;right:14px;bottom:-26px;font:700 150px/1 var(--mincho);color:#fff;opacity:.06;pointer-events:none}
+.tdots{display:flex;gap:5px;margin-top:14px;flex-wrap:wrap}
+.tdots .td{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.45)}
+.tdots .td.past{background:rgba(255,255,255,.75);border-color:transparent}
+.tdots .td.now{background:#E5533C;border-color:#fff;box-shadow:0 0 0 3px rgba(229,83,60,.35)}
+.qtiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:-8px 0 20px}
+.qt{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;background:var(--card);border:1px solid var(--sand);border-top:4px solid var(--k);border-radius:14px;padding:10px 10px 9px;font:inherit;color:var(--ink);cursor:pointer;min-width:0}
+.qt .qtl{font-size:11.5px;color:var(--ink-soft);line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.qt .qtv{font:700 clamp(15px,4.6vw,19px)/1.25 var(--gothic);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.qt.pos .qtv{color:var(--moss)}.qt.neg .qtv{color:var(--momiji)}
+.qt .qts{font-size:11px;color:var(--ai)}
+.qt .qts::after{content:" ›"}
+.alert{border-radius:14px;border:1px solid var(--sand);border-left:5px solid var(--momiji)}
+.wx{border-radius:14px;border:1px solid var(--sand)}
+.wx .acts a,.wx .acts button{border-radius:999px}
+#todayCard{background:var(--card);border:1px solid var(--sand);border-radius:14px;padding:16px}
+#todayCard .stay{background:var(--washi)}
+
+/* ---- Days ---- */
+.day{border:1px solid var(--sand);border-left:5px solid var(--k);background:var(--card);border-radius:14px;padding:0 14px;margin:0 0 10px}
+.day+.day::before{content:"";position:absolute;left:29px;top:-11px;height:10px;width:2px;background:var(--sand)}
+.day+.day .head{border-top:0}
+.day.cur{border-left-color:var(--k);box-shadow:0 0 0 2px var(--momiji)}
+.day.past{opacity:.72}
+.day.past.open{opacity:1}
+.day .head{align-items:center;padding:12px 0}
+.day .n{display:grid;place-items:center;width:32px;height:32px;min-width:32px;border-radius:50%;background:var(--k);color:#fff;font-size:16px}
+.day.cur .n{color:#fff;box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--momiji)}
+.day .dt{flex:1;min-width:0;line-height:1.3}
+.day .dt .dsub{display:block;font-weight:400;font-size:12.5px;color:var(--ink-soft);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.day.open .dt .dsub{white-space:normal}
+.day .cty{align-self:center;background:var(--k);color:#fff;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700}
+.day .body{padding:0 0 16px}
+.day .stay{background:var(--washi)}
+.spots a{border-radius:999px;padding:6px 12px}
+.pl{background:var(--card);border:1px solid var(--sand);border-radius:12px;padding:11px 12px;margin:6px 0}
+.pl-k{border-radius:999px}
+.pl-day{border-radius:999px}
+
+/* ---- Info ---- */
+#p-info .row{flex-direction:column;gap:3px;background:var(--card);border:1px solid var(--sand);border-radius:12px;padding:11px 14px;margin:8px 0;align-items:stretch}
+#p-info .row .l{width:auto;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+#p-info .row .r{font-size:15px;line-height:1.5}
+#p-info .row .r a[href^="tel:"]{display:inline-flex;align-items:center;gap:6px;background:var(--ai-bg);color:#fff;text-decoration:none;font-weight:700;border-radius:999px;padding:6px 14px;margin:2px 0 4px}
+#p-info .row .r a[href^="tel:"]::before{content:"☎"}
+#p-info .row .seg{margin:4px 0 0}
+.sos a{border-radius:14px;padding:16px 12px;box-shadow:0 8px 20px -12px rgba(163,55,42,.8)}
+.ph{background:var(--card);border:1px solid var(--sand);border-radius:12px;padding:11px 12px;margin:6px 0}
+.ph .zoom{border-radius:999px}
+.links{display:grid;gap:8px}
+.links a{background:var(--card);border:1px solid var(--sand);border-left:4px solid var(--ai);border-radius:12px;padding:11px 14px;font-weight:700}
+.links a span{font-weight:400}
+.credits{border-radius:14px}
+
+/* ---- Bakugai ---- */
+.subtabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;overflow:visible;margin:0 0 16px;padding:0;border:1px solid var(--sand);border-radius:999px;background:var(--card)}
+.subtabs button{border:0;border-radius:999px;padding:7px 2px;background:none;font-size:12.5px;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis}
+.subtabs button[aria-selected="true"]{background:var(--momiji-bg);color:#fff;font-weight:700}
+.whd{display:none}
+/* compact watch / item cards: details on the left, prices stacked on the right */
+.w{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto 1fr;gap:2px 12px;background:var(--card);border:1px solid var(--sand);border-radius:12px;padding:10px 12px;margin:6px 0;align-items:start}
+.w .wn{grid-column:1;grid-row:1/span 3;display:flex;flex-wrap:wrap;align-items:center;gap:3px 4px;min-width:0}
+.w .wn>.wm,.w .wn>.wmeta,.w .wn>.wnote{flex-basis:100%}
+.w .wn>.wm{line-height:1.3}
+.w .wn>div:not([class]){display:contents}
+.w .wn>.wnote{order:5;margin-top:0;font-size:12px}
+.w .wn>.wadd,.w .wn>.pact{order:4}
+.w .wn .wb{margin:0;font-size:10.5px;padding:2px 7px}
+.w .pact{display:inline-flex;align-items:center;gap:8px;margin:0;font-size:12.5px}
+.w .wadd{margin:0;padding:2px 10px;font-size:11.5px}
+.w .wv{grid-column:2;text-align:right;white-space:nowrap;line-height:1.25;font-size:13px}
+.w .wv:nth-child(2){grid-row:1;font-size:16px}
+.w .wv:nth-child(3){grid-row:2;color:var(--ink-soft)}
+.w .wv:nth-child(4){grid-row:3;justify-self:end}
+.w .wv:nth-child(3)::before{content:"India ";font-size:11px}
+.w .wv:nth-child(4)::before{content:"save ";font-size:11px;font-weight:400}
+.w .wv.ws{background:color-mix(in srgb,var(--moss) 16%,var(--card));border-radius:999px;padding:1px 8px;margin-top:2px}
+.w .wv.ws.neg{background:color-mix(in srgb,var(--momiji) 14%,var(--card))}
+/* the watch header, tighter */
+.baku-hd details.more{margin:-6px 0 10px}
+.cartbar{padding:8px 12px;margin:0 0 12px}
+#sp-watches .wck{padding:10px 14px;margin-bottom:10px}
+#sp-watches .wck-in input{font-size:18px}
+#sp-watches .wck-out{margin-top:8px;padding-top:8px}
+#sp-watches .wf{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0 0 8px}
+#sp-watches .wf select{font-size:14px;padding:7px 6px}
+#sp-watches .wf .wtog{grid-column:1/-1;justify-self:start;padding:5px 10px;font-size:13.5px}
+#sp-watches .wbud{margin-bottom:8px}
+.wsortrow{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.wsortrow .seg{margin:0}
+.wsortrow .wcount{margin:0}
+#p-baku .tip{margin:10px 0 14px}
+.wb{border-radius:999px;padding:3px 8px}
+.wadd{border-radius:999px;padding:4px 12px;font-weight:700}
+.cartbar{border-radius:14px;border:1px solid var(--sand)}
+details.tip summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px}
+details.tip summary::-webkit-details-marker{display:none}
+details.tip summary b{font-size:13.5px;color:var(--moss)}
+details.tip.warnbox summary b{color:var(--momiji)}
+details.tip summary::after{content:"+";flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--washi);color:var(--ink-soft);font-weight:700}
+details.tip[open] summary::after{content:"−"}
+details.tip[open] summary{margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -701,16 +854,18 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
   <div class="status">
     <span class="big num" id="bigNum">—</span>
     <div class="cap" id="bigCap">loading</div>
+    <div class="tdots" id="tripDots" aria-hidden="true"></div>
     <div class="where" id="whereNow"></div>
   </div>
+  <div class="qtiles" id="nowTiles"></div>
   <div id="nextUp"></div>
   <div id="wxToday"></div>
   <div id="fujiCard"></div>
 
-  <h2 class="sec" id="todayHead">Today</h2>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--momiji-bg)" aria-hidden="true">今</span><span id="todayHead">Today</span></h2>
   <div id="todayCard"></div>
 
-  <h2 class="sec">Before you leave the room</h2>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--moss-bg)" aria-hidden="true">鍵</span>Before you leave the room</h2>
   <div class="addrow">
     <input class="desc" id="addDailyInput" placeholder="Add daily check..." aria-label="Add daily check">
     <button class="btn" id="addDailyBtn">Add</button>
@@ -725,13 +880,13 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
     <button type="button" data-v="places" aria-pressed="false">Places</button>
   </div>
   <div id="daysPlan">
-    <h2 class="sec">Itinerary</h2>
+    <h2 class="sec hk-h"><span class="hk" style="--k:var(--ai-bg)" aria-hidden="true">旅</span>Itinerary</h2>
     <p class="note">Tap a day for the plan, where you're staying and the host's number.</p>
     <div id="dayList"></div>
     <div id="otherPlaces"></div>
   </div>
   <div id="daysPlaces" hidden>
-    <h2 class="sec">Places</h2>
+    <h2 class="sec hk-h"><span class="hk" style="--k:var(--s2)" aria-hidden="true">地</span>Places</h2>
     <p class="note">Everything on the shared Google Maps list “Japan”, sorted into things to see, eat and shop. Day N takes you to the day it fits; “Other place” means it's on the list but not on any day yet — they're also listed under the itinerary.</p>
     <div class="seg pl-seg" id="plArea" role="group" aria-label="City"></div>
     <div class="pl-bar">
@@ -779,7 +934,7 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
   <!-- balances and settling up -->
   <div class="msec" id="mBal">
     <h2 class="sec">Balances</h2>
-    <p class="note">Everyone pays their own way, so this just tracks who covered what and evens it out at the end. Synced across all three phones. Edits merge, so nobody overwrites anyone, and anything added offline goes up when you're back online.</p>
+    <details class="more"><summary>Who covered what, evened out at the end.</summary><p class="note">Everyone pays their own way, so this just tracks who covered what and evens it out at the end. Synced across all three phones. Edits merge, so nobody overwrites anyone, and anything added offline goes up when you're back online.</p></details>
     <div id="settle"></div>
   </div>
 
@@ -830,7 +985,7 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
 
   <div class="msec" id="mCash">
     <h2 class="sec">Cash wallet</h2>
-    <p class="note">The yen in each person's pocket — everyone starts with ¥15,000. Log ATM withdrawals, tick “Paid in cash” on expenses, and now and then count what you've got — the gap is what went on things nobody logged.</p>
+    <details class="more"><summary>The yen in each pocket — everyone starts with ¥15,000.</summary><p class="note">Log ATM withdrawals, tick “Paid in cash” on expenses, and now and then count what you've got — the gap is what went on things nobody logged.</p></details>
     <div class="seg pills" id="cashWho" role="group" aria-label="Whose wallet"></div>
     <div class="tab-total mpcard cashcard" id="cashCard"></div>
     <div class="mcard cashadd">
@@ -873,8 +1028,8 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
 
 <!-- ============ CHECKLIST ============ -->
 <section class="panel" id="p-list" role="tabpanel" aria-labelledby="t-list">
-  <h2 class="sec">Bookings</h2>
-  <p class="note">Alarm times are IST. Dated ones also ping the trip Telegram group each morning (passed / next 48h / this week). Synced with cloud so bookings and checklist items show for all three of you.</p>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--momiji-bg)" aria-hidden="true">予</span>Bookings</h2>
+  <details class="more"><summary>Sorted by deadline, synced to all three phones.</summary><p class="note">Alarm times are IST. Dated ones also ping the trip Telegram group each morning (passed / next 48h / this week). Synced with cloud so bookings and checklist items show for all three of you.</p></details>
   <div class="prog" id="prog-book"></div>
   <div class="addrow">
     <input class="desc" id="addBookInput" placeholder="Add booking (e.g. Shibuya Sky, restaurant)..." aria-label="Add booking">
@@ -882,7 +1037,7 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
   </div>
   <div id="list-book"></div>
 
-  <h2 class="sec">Documents</h2>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--s1)" aria-hidden="true">書</span>Documents</h2>
   <div class="prog" id="prog-docs"></div>
   <div class="addrow">
     <input class="desc" id="addDocsInput" placeholder="Add document to prepare..." aria-label="Add document">
@@ -890,7 +1045,7 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
   </div>
   <div id="list-docs"></div>
 
-  <h2 class="sec">Packing</h2>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--s3)" aria-hidden="true">荷</span>Packing</h2>
   <p class="note">Tokyo and Kyoto sit around 6–14°C in late November, and it drops fast after dark.</p>
   <div class="prog" id="prog-pack"></div>
   <div class="addrow">
@@ -908,10 +1063,10 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
 
 <!-- ============ BUY ============ -->
 <section class="panel" id="p-buy" role="tabpanel" aria-labelledby="t-buy">
-  <h2 class="sec">Shopping lists</h2>
-  <p class="note">Shared between Arnav, Ayush and Manan. Pick whose list you're editing, add things, tick when bought. Edits merge across phones, so nobody overwrites anyone. Offline? It's kept on this phone and syncs when you're back.</p>
-  <div class="seg" id="buyWho" role="group" aria-label="Whose list"></div>
-  <div class="tab-total" id="buyTotal"></div>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--momiji-bg)" aria-hidden="true">買</span>Shopping lists</h2>
+  <details class="more"><summary>One list each, shared between all three phones.</summary><p class="note">Pick whose list you're editing, add things, tick when bought. Edits merge across phones, so nobody overwrites anyone. Offline? It's kept on this phone and syncs when you're back.</p></details>
+  <div class="seg pills" id="buyWho" role="group" aria-label="Whose list"></div>
+  <div class="tab-total mpcard" id="buyTotal"></div>
   <div class="addrow">
     <input class="desc" id="bDesc" placeholder="What are you buying?" aria-label="Item">
     <input class="amt num" id="bAmt" type="text" inputmode="decimal" placeholder="¥ guess" aria-label="Rough price in yen">
@@ -923,7 +1078,7 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
   </div>
   <div class="flash" id="buyFlash"></div>
 
-  <h2 class="sec">Before you fly</h2>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--s1)" aria-hidden="true">前</span>Before you fly</h2>
   <p class="note">Bought here, in rupees, while you still have time to return it. Prices are rough for September 2026.</p>
   <div class="prog" id="prog-before"></div>
   <div class="addrow">
@@ -932,7 +1087,7 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
   </div>
   <div id="list-before"></div>
 
-  <h2 class="sec">Get these early</h2>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--s2)" aria-hidden="true">早</span>Get these early</h2>
   <p class="note">Cheap, and the trip is worse without them. Most of it is a konbini or Don Quijote run on the first night in Shinjuku.</p>
   <div class="prog" id="prog-need"></div>
   <div class="addrow">
@@ -941,7 +1096,7 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
   </div>
   <div id="list-need"></div>
 
-  <h2 class="sec">Taking things home</h2>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--s4)" aria-hidden="true">土</span>Taking things home</h2>
   <p class="note">Prices are rough and from September 2026. Don Quijote beats the airport on almost everything except alcohol.</p>
   <div class="prog" id="prog-gift"></div>
   <div class="addrow">
@@ -960,7 +1115,7 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
 <section class="panel" id="p-baku" role="tabpanel" aria-labelledby="t-baku">
   <div class="baku-hd">
     <h2 class="sec"><span lang="ja">爆買い</span> Bakugai</h2>
-    <p class="note">The shopping-spree tab: what's worth buying, what Indian customs will charge, and the point where Japan stops being cheaper.</p>
+    <details class="more"><summary>What's worth buying, and what customs will take.</summary><p class="note">The shopping-spree tab: what's worth buying, what Indian customs will charge, and the point where Japan stops being cheaper.</p></details>
     <div class="cartbar" id="cartBar"></div>
   </div>
   <div class="subtabs" role="tablist" aria-label="Bakugai sections">
@@ -997,18 +1152,20 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
       <input type="range" id="wfMax" min="5000" max="50000" step="1000">
       <span class="num" id="wfMaxV"></span>
     </div>
-    <div class="seg" id="wSort" role="group" aria-label="Sort by">
-      <button type="button" data-s="jp">Japan ₹</button>
-      <button type="button" data-s="in">India ₹</button>
-      <button type="button" data-s="save">Saving</button>
+    <div class="wsortrow">
+      <div class="seg" id="wSort" role="group" aria-label="Sort by">
+        <button type="button" data-s="jp">Japan ₹</button>
+        <button type="button" data-s="in">India ₹</button>
+        <button type="button" data-s="save">Saving</button>
+      </div>
+      <div class="wcount" id="wCount"></div>
     </div>
-    <div class="wcount" id="wCount"></div>
     <div id="wList"></div>
 
     <h2 class="sec">Only sold in Japan</h2>
     <p class="note">Ranges are what you pay after the refund, at the rate above.</p>
     <div id="wJapan"></div>
-    <div class="tip"><b>Buying Japan-market</b>Seiko's Japan references usually start with SA or SB; Casio's end in JF. The warranty is usually valid only in Japan. Radio-controlled watches sync to Japan's time signal and won't auto-sync in India — they still keep accurate time, you just set them by hand or by the phone app.</div>
+    <details class="tip"><summary><b>Buying Japan-market</b></summary>Seiko's Japan references usually start with SA or SB; Casio's end in JF. The warranty is usually valid only in Japan. Radio-controlled watches sync to Japan's time signal and won't auto-sync in India — they still keep accurate time, you just set them by hand or by the phone app.</details>
 
     <h2 class="sec">Above the budget</h2>
     <p class="note"><b>Stretch</b> could still fit inside your own ₹75,000 duty-free allowance if it's the only big thing you bring home. <b>Browse</b> is for looking. Yen figures are official list prices; discount shops are often lower.</p>
@@ -1039,9 +1196,9 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
     <p class="ratenote" id="rateNote1"></p>
 
     <h2 class="sec">Leaving Japan, at Haneda</h2>
-    <div class="tip"><b>Pay the tax, claim it back</b>From 1 Nov 2026 shops charge the full price with the 10% consumption tax. You get it back after a customs check at the airport you leave Japan from — for you that's <b>Haneda</b>, before NH837, not KIX. The National Tax Agency's Q&amp;A (Q32, note 4) says domestic-to-international connections do it at the departure airport. Do it before bag drop, within 90 days of buying.</div>
-    <div class="tip"><b>Everything on you</b>The check needs every tax-free item in hand, with the receipts. Your bags are checked through to Delhi at KIX, so watches, electronics and their receipts ride in your cabin bag. Leave extra time at Haneda.</div>
-    <div class="tip warnbox" id="liquids"><b>Cosmetics, liquids and knives — the refund plan</b>
+    <details class="tip"><summary><b>Pay the tax, claim it back</b></summary>From 1 Nov 2026 shops charge the full price with the 10% consumption tax. You get it back after a customs check at the airport you leave Japan from — for you that's <b>Haneda</b>, before NH837, not KIX. The National Tax Agency's Q&amp;A (Q32, note 4) says domestic-to-international connections do it at the departure airport. Do it before bag drop, within 90 days of buying.</details>
+    <details class="tip"><summary><b>Everything on you</b></summary>The check needs every tax-free item in hand, with the receipts. Your bags are checked through to Delhi at KIX, so watches, electronics and their receipts ride in your cabin bag. Leave extra time at Haneda.</details>
+    <details class="tip warnbox" id="liquids"><summary><b>Cosmetics, liquids and knives — the refund plan</b></summary>
       Two rules decide this (National Tax Agency Q&amp;A). <strong>Q37:</strong> customs checks each receipt as a whole — if one item from it isn't with you at the Haneda kiosk, nothing on that receipt is refunded. <strong>Q39:</strong> open or use any cosmetic and it no longer counts.
       <ol class="plan">
         <li><strong>Keep everything sealed.</strong> Use what you brought from India until you're home.</li>
@@ -1051,9 +1208,9 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
         <li><strong>Or skip the refund on them.</strong> 10% of ¥5,000 of hair masks is about ₹270. Buy those without your passport, pack them in the KIX checked bag, and keep the refund for the things that ride with you.</li>
         <li><strong>Knives</strong> must be checked, so they can't be shown at Haneda: buy them as a separate receipt, or without tax-free.</li>
       </ol>
-      Ask ANA before you fly whether you can add a bag at Haneda when the rest is checked through from KIX — it's on your To-do.</div>
-    <div class="tip"><b>Visit Japan Web</b>At Haneda you can do the customs check on your phone over the departure-lobby Wi-Fi instead of a kiosk, if you've registered on Visit Japan Web beforehand. Do it at home.</div>
-    <div class="tip"><b>Small buys and paying</b>Under ¥5,000 before tax at one shop on one day gets no refund. Always pay in yen — if the terminal offers rupees, say no.</div>
+      Ask ANA before you fly whether you can add a bag at Haneda when the rest is checked through from KIX — it's on your To-do.</details>
+    <details class="tip"><summary><b>Visit Japan Web</b></summary>At Haneda you can do the customs check on your phone over the departure-lobby Wi-Fi instead of a kiosk, if you've registered on Visit Japan Web beforehand. Do it at home.</details>
+    <details class="tip"><summary><b>Small buys and paying</b></summary>Under ¥5,000 before tax at one shop on one day gets no refund. Always pay in yen — if the terminal offers rupees, say no.</details>
 
     <h2 class="sec">Arriving in Delhi</h2>
     <div class="row"><div class="l">Allowance</div><div class="r"><b>₹75,000 per person</b>, Baggage Rules 2026 (in force 2 Feb 2026). It can't be pooled — Arnav can't use Manan's.</div></div>
@@ -1125,7 +1282,7 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
 
 <!-- ============ INFO ============ -->
 <section class="panel" id="p-info" role="tabpanel" aria-labelledby="t-info">
-  <h2 class="sec">Emergency</h2>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--momiji-bg)" aria-hidden="true">急</span>Emergency</h2>
   <div class="sos">
     <a href="tel:110"><span class="n">110</span><span class="l">Police</span></a>
     <a href="tel:119"><span class="n">119</span><span class="l">Fire · Ambulance</span></a>
@@ -1135,7 +1292,7 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
   <div class="row"><div class="l">Consulate, Osaka</div><div class="r"><a href="tel:+81662617299">+81 6-6261-7299</a><br>Kyutaromachi, Chuo-ku — 1 min from Sakaisuji-Hommachi</div></div>
   <div class="row"><div class="l">Lost something</div><div class="r">Ask any station office for 忘れ物 (wasuremono). Japan's lost-and-found actually works — things get handed in.</div></div>
 
-  <h2 class="sec">Your documents</h2>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--s3)" aria-hidden="true">証</span>Your documents</h2>
   <p class="note">Photograph your passport, visa and insurance and keep them here. They stay in this browser on this phone — they are never uploaded, never sent to the others, and they open with no signal.</p>
   <div id="docList"></div>
   <div class="toolbar">
@@ -1150,13 +1307,13 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
     <p><b>Don't put them in the project folder.</b> Anything sitting next to index.html gets published at a public, guessable web address when this deploys. That is the one place a passport scan must never be.</p>
   </div>
 
-  <h2 class="sec">Flights</h2>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--s1)" aria-hidden="true">飛</span>Flights</h2>
   <div class="row"><div class="l">24 Nov</div><div class="r">NH838 · Delhi 18:55 → Haneda 05:55 (+1)</div></div>
   <div class="row"><div class="l">6 Dec</div><div class="r">NH990 · Kansai 06:45 → Haneda 07:55</div></div>
   <div class="row"><div class="l">6 Dec</div><div class="r">NH837 · Haneda 10:35 → Delhi 17:25</div></div>
   <div class="row"><div class="l">Airport by</div><div class="r">05:45 at KIX. Ticketed through to Delhi, so check-in closes 60 min before. You sleep at the airport: Nankai from Namba at 22:00 on 5 Dec.</div></div>
 
-  <h2 class="sec">Passes and how to pay</h2>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--s2)" aria-hidden="true">券</span>Passes and how to pay</h2>
   <div class="row"><div class="l">Everywhere</div><div class="r">Suica or ICOCA on your phone. Trains, buses, konbini, most vending machines.</div></div>
   <div class="row"><div class="l">28–30 Nov</div><div class="r">Tokyo Subway 72-hour ticket, started on the morning of the 28th so it covers Asakusa, Ginza, Roppongi and the run to Tokyo Station. Metro and Toei only. On the other Tokyo days just use Suica.</div></div>
   <div class="row"><div class="l">27 Nov</div><div class="r">Odakyu Enoshima-Kamakura Freepass from Shinjuku, about ¥1,640. Covers the trip there and back and every Enoden ride.</div></div>
@@ -1164,15 +1321,15 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
   <div class="row"><div class="l">3 Dec</div><div class="r">Osaka Amazing Pass, 1 day. Umeda Sky is only free before 15:00, so go there first.</div></div>
   <div class="row"><div class="l">Cash</div><div class="r">Keep ¥10,000 on you. Small restaurants, shrine entries and temple gates are often cash only. 7-Eleven ATMs take Indian cards.</div></div>
 
-  <h2 class="sec">Worth saying out loud</h2>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--s4)" aria-hidden="true">話</span>Worth saying out loud</h2>
   <p class="note">Tap any line to blow it up big enough to hold in front of someone.</p>
   <div id="phraseList"></div>
 
-  <h2 class="sec">Show a driver</h2>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--ai-bg)" aria-hidden="true">車</span>Show a driver</h2>
   <p class="note">Japanese address, large. Taxi drivers rarely read romaji, and the satnav wants the phone number anyway.</p>
   <div id="driverList"></div>
 
-  <h2 class="sec">Book and check here</h2>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--momiji-bg)" aria-hidden="true">約</span>Book and check here</h2>
   <div class="links">
     <a href="https://smart-ex.jp/en/" target="_blank" rel="noopener">Smart EX<span>Shinkansen seats, changeable free until departure</span></a>
     <a href="https://rurikoin.komyoji.com/" target="_blank" rel="noopener">Ruriko-in<span>Reservation lottery for 13 Nov – 6 Dec visits</span></a>
@@ -1185,7 +1342,7 @@ body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
     <a href="https://www.jma.go.jp/bosai/forecast/" target="_blank" rel="noopener">Japan Meteorological Agency<span>The forecast that decides your Fuji day</span></a>
   </div>
 
-  <h2 class="sec">This app</h2>
+  <h2 class="sec hk-h"><span class="hk" style="--k:var(--s0)" aria-hidden="true">設</span>This app</h2>
   <div class="row"><div class="l">Appearance</div><div class="r"><div class="seg" id="themeSeg" role="group" aria-label="Appearance"><button data-t="auto">Auto</button><button data-t="light">Light</button><button data-t="dark">Dark</button></div></div></div>
   <div class="row"><div class="l">Offline</div><div class="r" id="swState">Checking…</div></div>
   <p class="offline">Everything here works with the phone in aeroplane mode once it has loaded on your wifi once. The exchange rate and the weather are the only parts that need a connection, and both keep showing the last thing they got.</p>
@@ -1599,7 +1756,9 @@ if(fujiSwapped)doSwap();
 function fujiDay(){return DAYS[fujiSwapped?KAMA_I:FUJI_I]}
 
 function renderStatus(){
-  var big=$("#bigNum"),cap=$("#bigCap"),wh=$("#whereNow");
+  var big=$("#bigNum"),cap=$("#bigCap"),wh=$("#whereNow"),dots=$("#tripDots");
+  /* the 13 days as dots: done, today, to come */
+  if(dots){dots.innerHTML="";DAYS.forEach(function(d,i){var s=el("span","td"+(idx>=0&&i<idx?" past":"")+(i===idx?" now":""));s.title=fmtDate(d.d)+" · "+d.city;dots.appendChild(s)})}
   if(idx>=0){
     big.textContent=idx+1;
     cap.textContent="Day "+(idx+1)+" of "+DAYS.length+" — "+DAYS[idx].city;
@@ -1757,13 +1916,18 @@ function renderToday(){
   if(d.stay)box.appendChild(stayBlock(d.stay));
 }
 
+/* one colour per place, so the itinerary reads at a glance */
+var CITY_LOOK={"Tokyo":"var(--s1)","Mt. Fuji":"var(--s3)","Kamakura":"var(--s2)","Kyoto":"var(--momiji-bg)","Osaka":"var(--s4)","Universal":"var(--moss-bg)"};
+function cityVar(c){return CITY_LOOK[c]||"var(--s0)"}
 function renderDays(){
   var box=$("#dayList");box.innerHTML="";
   DAYS.forEach(function(d,i){
-    var w=el("div","day"+(d.d===today?" cur":""));
+    var w=el("div","day"+(d.d===today?" cur":"")+(d.d<today?" past":""));
+    w.style.setProperty("--k",cityVar(d.city));
     var btn=el("button","head");btn.type="button";btn.setAttribute("aria-expanded","false");
     btn.appendChild(el("span","n",String(i+1)));
     var lbl=el("span","dt",fmtDate(d.d)+" "+d.dow);
+    if(d.t)lbl.appendChild(el("small","dsub",d.t));
     btn.appendChild(lbl);
     btn.appendChild(el("span","cty",d.city));
     var body=el("div","body");
@@ -1996,6 +2160,28 @@ function renderExps(){
   renderPace();
 }
 
+/* the Now tab's money tiles — tap one to jump to that part of Money */
+function goMoney(id){
+  var t=document.querySelector('nav.tabs button[data-p="money"]');if(t)t.click();
+  setTimeout(function(){var e=document.getElementById(id);if(e)e.scrollIntoView({block:"start",behavior:"smooth"})},60);
+}
+function renderNowTiles(){
+  var box=$("#nowTiles");if(!box)return;box.innerHTML="";
+  if(!MO)return;
+  var me=myWho,onTrip=idx>=0,spend=0;
+  if(onTrip)exps.forEach(function(x){if(expDay(x)===today&&!MO.isPayment(x))spend+=(x.refund?-1:1)*expYen(x)});
+  else spend=MO.totalSpend(exps,"JPY",rate);
+  var bal=balancesInr()[me]||0,sq=Math.abs(bal)<1;
+  function tile(k,label,val,sub,go,cls){
+    var b=el("button","qt"+(cls?" "+cls:""));b.type="button";b.style.setProperty("--k",k);
+    b.appendChild(el("span","qtl",label));b.appendChild(el("span","qtv",val));if(sub)b.appendChild(el("span","qts",sub));
+    b.addEventListener("click",function(){goMoney(go)});box.appendChild(b);
+  }
+  tile("var(--momiji-bg)",onTrip?"Spent today":"Logged so far",yen(spend),"together","mList");
+  tile(whoVar(me),me+"'s wallet",yen(MO.walletOf(me,cashLog,exps).balance),"cash","mCash");
+  tile(sq?"var(--s0)":bal>0?"var(--moss-bg)":"var(--momiji-bg)",sq?me+" is":bal>0?me+" is owed":me+" owes",sq?"Square":rupees(Math.abs(bal)),"settle up","mBal",sq?"":bal>0?"pos":"neg");
+}
+
 /* how fast the money is going */
 function renderPace(){
   var box=$("#pace");if(!box)return;
@@ -2040,7 +2226,7 @@ function renderPace(){
     var cap=budget*PEOPLE.length,mt=el("div","meter"+(todaySpend>cap?" full":"")),ms=el("span");
     ms.style.width=Math.max(0,Math.min(100,todaySpend/cap*100))+"%";mt.appendChild(ms);box.insertBefore(mt,rest);
     var over=todaySpend-budget*PEOPLE.length;
-    bud.appendChild(el("span","tag",over>0?("· "+yen(over)+" over today"):("· "+yen(-over)+" left today")));
+    bud.appendChild(el("span","tag"+(over>0?" over":""),over>0?(yen(over)+" over today"):(yen(-over)+" left today")));
   }
   box.appendChild(bud);
 }
@@ -2114,10 +2300,12 @@ function initPickers(){
       if(o.icon)b.appendChild(o.icon);
       b.appendChild(document.createTextNode(o.t));
       if(o.label)b.setAttribute("aria-label",o.label);
-      b.addEventListener("click",function(){sel.value=o.v;sel.dispatchEvent(new Event("change"));syncPickers()});
+      b.addEventListener("click",function(){sel.value=o.v;sel.dispatchEvent(new Event("change"));if(selSel==="#ePayer")S.set("ePayer",o.v);syncPickers()});
       box.appendChild(b);
     });
   }
+  /* whoever usually pays on this phone — the last payer picked here, else the My money person */
+  var pay=S.get("ePayer",myWho);if(PEOPLE.indexOf(pay)>-1)$("#ePayer").value=pay;
   build("#eCurChips","#eCur",[{v:"JPY",t:"¥",label:"Yen"},{v:"INR",t:"₹",label:"Rupees"}]);
   build("#ePayerChips","#ePayer",PEOPLE.map(function(p){return {v:p,t:p,k:whoVar(p),icon:avatar(p)}}));
   build("#eCatChips","#eCat",(MO?MO.CATS:[]).map(function(k){return {v:k,t:k,k:(CAT_LOOK[k]||CAT_LOOK.Other)[1],icon:catIcon(k)}}));
@@ -2331,6 +2519,7 @@ var myWho=S.get("myWho",S.get("buyWho",PEOPLE[0]));
 if(PEOPLE.indexOf(myWho)<0)myWho=PEOPLE[0];
 function renderMine(){
   var seg=$("#mineWho");if(!seg||!MO)return;
+  renderNowTiles();
   whoSeg(seg,myWho,function(p){myWho=p;S.set("myWho",p);renderMine()});
   var cur=balCur,me=myWho,first=DAYS[0].d,last=DAYS[DAYS.length-1].d;
   var during=exps.filter(function(x){var d=expDay(x);return d&&d>=first&&d<=last});
@@ -3099,19 +3288,14 @@ function stopBuyPoll(){stopCloudPoll()}
 
 function renderBuyWho(){
   var box=$("#buyWho");if(!box)return;
-  box.innerHTML="";
-  PEOPLE.forEach(function(p){
-    var b=el("button",null,p);b.type="button";
-    b.setAttribute("aria-pressed",p===buyWho?"true":"false");
-    b.addEventListener("click",function(){buyWho=p;S.set("buyWho",p);renderBuys()});
-    box.appendChild(b);
-  });
+  whoSeg(box,buyWho,function(p){buyWho=p;S.set("buyWho",p);renderBuys()});
 }
 function renderBuyTotal(){
   var box=$("#buyTotal"); if(!box)return;
   var list=buys(),got=0,plan=0;
   list.forEach(function(b){plan+=b.a||0;if(b.k)got+=b.a||0});
-  box.innerHTML="";
+  box.innerHTML="";box.style.setProperty("--k",whoVar(buyWho));
+  box.appendChild(avatar(buyWho,true));
   box.appendChild(el("div","big",yen(got)));
   box.appendChild(el("div","sub",buyWho+" · spent so far  ·  ≈ ₹"+Math.round(got*rate).toLocaleString("en-IN")));
   var left=plan-got;
@@ -3241,7 +3425,6 @@ function watchRow(w){
   if(w.top_pick)tags.push(["pick","Top pick"]);
   if(w.japan_only)tags.push(["jp","Japan only"]);
   if(w.india_price_verified)tags.push(["ok","✓ India price"]);
-  if(w.link_verified)tags.push(["ok","✓ Link"]);
   if(!w.refund)tags.push(["nr","No refund"]);
   if(tags.length){var t=el("div");tags.forEach(function(x){t.appendChild(el("span","wb "+x[0],x[1]))});n.appendChild(t)}
   if(w.notes)n.appendChild(el("div","wnote",w.notes));
@@ -3559,7 +3742,6 @@ function productRow(p,item){
   var tags=[];
   if(p.no_refund)tags.push(["nr","Online only — no tax refund"]);
   else if(p.jp_effective_inr!=null&&!p.refund)tags.push(["nr","Under ¥5,000 — combine at one shop"]);
-  if(p.link&&p.link_verified)tags.push(["ok","✓ Link"]);
   if(p.liquid)tags.push(p.liquid==="small"?["ok","Fits the liquids bag"]:["warn","Over 100 ml — see the refund plan"]);
   if(tags.length){
     var t=el("div");
@@ -3567,7 +3749,7 @@ function productRow(p,item){
       var bdg=el("span","wb "+x[0],x[1]);
       if(x[0]==="warn"&&p.liquid){
         bdg.setAttribute("role","link");bdg.tabIndex=0;bdg.style.cursor="pointer";
-        bdg.addEventListener("click",function(){setSubtab("customs");$("#liquids").scrollIntoView({block:"start"})});
+        bdg.addEventListener("click",function(){setSubtab("customs");$("#liquids").open=true;$("#liquids").scrollIntoView({block:"start"})});
       }
       t.appendChild(bdg);
     });
@@ -4110,10 +4292,15 @@ function renderBookings(){
   });
 
   var n=items.filter(function(x){return x.k}).length;
-  var pb=$("#prog-book");
-  if(pb)pb.textContent=n+" of "+items.length+" done";
+  showProg($("#prog-book"),n,items.length);
 }
 
+/* "3 of 10 done" with a bar under it */
+function showProg(node,n,total){
+  if(!node)return;node.innerHTML="";
+  node.appendChild(el("span","pt",n+" of "+total+" done"));
+  var m=el("span","pm"+(total&&n===total?" all":"")),f=el("span");f.style.width=(total?n/total*100:0)+"%";m.appendChild(f);node.appendChild(m);
+}
 function renderChecklist(name,mount,progMount){
   var box=$(mount);if(!box)return;
   var items=getList(name);
@@ -4156,8 +4343,7 @@ function renderChecklist(name,mount,progMount){
   function updateProg(){
     if(!progMount)return;
     var n=items.filter(function(x){return x.k}).length;
-    var elP=$(progMount);
-    if(elP)elP.textContent=n+" of "+items.length+" done";
+    showProg($(progMount),n,items.length);
   }
   updateProg();
 }

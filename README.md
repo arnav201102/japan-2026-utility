@@ -12,7 +12,7 @@ private on each phone's local IndexedDB.
 
 | Tab | What's in it |
 |---|---|
-| **今 Now** | Countdown or day number, today's plan, today's weather, the Fuji go/no-go card, the next thing to book, and the before-you-leave-the-room list |
+| **今 Now** | Countdown or day number with the 13 days as dots, tiles for today's spend, your wallet and your balance (tap to jump to Money), today's plan, today's weather, the Fuji go/no-go card, the next thing to book, and the before-you-leave-the-room list |
 | **程 Days** | All 13 days. Tap one for the plan, map links for each stop, places from the shared Google Maps list for that day, the thing you can't afford to miss, and the host's number. A **Places** view lists the whole Maps list by city — visit, eat, shop — with nearest-first |
 | **¥ Money** | What you've spent and how fast, and the bill splitter — in ¥ or ₹, split equally, by amounts, by percent or by shares, with Splitwise import and settle-up. A floating **＋ Expense** button jumps to the add form from anywhere on the tab |
 | **換 Convert** | ¥ ↔ ₹ converter on a live rate, with quick amounts |
