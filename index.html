@@ -655,6 +655,11 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
 #expList .exp .etag{font-weight:400;margin-top:1px}
 #expList .exp .who{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:12.5px}
 #expList .exp .who .av{width:18px;height:18px;font-size:8px}
+#expList .eflow{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:5px;font-size:12px;color:var(--ink-soft)}
+#expList .eflow .ef{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+#expList .eflow .av{width:14px;height:14px;font-size:6.5px}
+#expList .eflow .pos{color:var(--moss)}
+#expList .eflow .neg{color:var(--momiji)}
 #expList .exp .amt,#cashList .exp .amt{margin-left:auto;font-size:16px;text-align:right;align-self:center}
 #expList .exp .xdel,#cashList .exp .xdel{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:20px;align-self:center}
 #expList .exp .xdel:hover,#cashList .exp .xdel:hover{background:var(--washi)}
@@ -2099,6 +2104,18 @@ function involves(x,p){
   if(MO){var n=MO.netOf(x,PEOPLE);if(Math.abs(n[p])>=0.005)return true}
   return !x.net&&(!x.split||x.split.indexOf(p)>-1);
 }
+/* who comes out ahead or behind on one expense: "Ayush owes ₹1,036" */
+function flowOf(x){
+  if(!MO||MO.isPayment(x))return null;
+  var n=MO.netOf(x,PEOPLE),cur=x.cur||"JPY",box=el("div","eflow");
+  PEOPLE.forEach(function(p){
+    var v=n[p];if(Math.abs(v)<0.5)return;
+    var c=el("span","ef "+(v>0?"pos":"neg"));c.appendChild(avatar(p));
+    c.appendChild(document.createTextNode(p+(v>0?" gets ":" owes ")+money(Math.abs(v),cur)));
+    box.appendChild(c);
+  });
+  return box.childNodes.length?box:null;
+}
 function renderExps(){
   renderFilter();
   var box=$("#expList");box.innerHTML="";
@@ -2137,7 +2154,9 @@ function renderExps(){
     main.appendChild(t);
     var who=el("span","who");who.appendChild(avatar(x.p));
     who.appendChild(document.createTextNode(x.paid?x.p+" +"+(Object.keys(x.paid).length-1):x.p));
-    main.appendChild(who);r.appendChild(main);
+    main.appendChild(who);
+    var fl=flowOf(x);if(fl)main.appendChild(fl);
+    r.appendChild(main);
     var amt=el("span","amt"+(x.refund?" refund":""),(x.refund?"−":"")+money(Math.abs(x.a),x.cur||"JPY"));
     var other=(x.cur||"JPY")==="JPY"?"INR":"JPY";
     if(MO)amt.appendChild(el("small",null,"≈ "+money(MO.convert(x.a,x.cur||"JPY",other,x.fx>0?x.fx:rate),other)));

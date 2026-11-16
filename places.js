@@ -1,5 +1,5 @@
 /* Japan 2026 — the places from the shared Google Maps list "Japan", sorted.
-   Pulled from the list on 2026-11-04, updated 2026-11-10: 168 places (a duplicate and the Shinjuku
+   Pulled from the list on 2026-11-04, updated 2026-11-16: 172 places (a duplicate and the Shinjuku
    Airbnb left out). kind is visit | eat | shop | other ("other" means the list
    didn't say what it is). day is the itinerary day it fits, or null.
    index.html shows them in Days → Places and under each day; tests require() it. */
@@ -176,7 +176,11 @@ var PLACES = [
  {id:"p167",name:"DOLCE TACUBO GINZA",kind:"eat",area:"Tokyo",hood:"Ginza",day:"2026-11-29",tag:"gelato & soft serve, closed Wed",addr:"〒104-0061 Tokyo, Chuo City, Ginza, 7 Chome−11−14 GINZAカムイビル 1F",lat:35.668322,lng:139.763487},
  {id:"p168",name:"Alpen Shinjuku Flagship Store",kind:"shop",area:"Tokyo",hood:"Shinjuku",day:"2026-11-27",tag:"sports & outdoor gear",addr:"〒160-0022 Tokyo, Shinjuku City, Shinjuku, 3 Chome−23−7 B2F～3F",lat:35.693298,lng:139.700795},
  {id:"p169",name:"Dogenzaka Church -The Church-",kind:"eat",area:"Tokyo",hood:"Shibuya",day:"2026-11-25",tag:"church-themed bar, 20:00–05:00",addr:"〒150-0043 Tokyo, Shibuya, Dogenzaka, 2 Chome−16−5 Central Kyoritsu Building, 1階",lat:35.658597,lng:139.696901},
- {id:"p170",name:"SHOGUN PIZZA Shibuya",kind:"eat",area:"Tokyo",hood:"Shibuya",day:"2026-11-25",tag:"pizza",addr:"〒150-0042 Tokyo, Shibuya, Udagawacho, 13−4 スペイン坂OKビル １F",lat:35.661184,lng:139.698809}
+ {id:"p170",name:"SHOGUN PIZZA Shibuya",kind:"eat",area:"Tokyo",hood:"Shibuya",day:"2026-11-25",tag:"pizza",addr:"〒150-0042 Tokyo, Shibuya, Udagawacho, 13−4 スペイン坂OKビル １F",lat:35.661184,lng:139.698809},
+ {id:"p171",name:"渋谷中華そば saji.",kind:"eat",area:"Tokyo",hood:"Shibuya",day:"2026-11-25",tag:"chuka soba ramen",addr:"〒150-0036 Tokyo, Shibuya, Nanpeidaicho, 15−11 Nosaka Bld., 1F",lat:35.655393,lng:139.695049},
+ {id:"p172",name:"TRAVELER'S FACTORY KYOTO",kind:"shop",area:"Kyoto",hood:"Karasuma",day:"2026-12-02",tag:"Traveler's notebooks, stationery",addr:"〒604-8185 Kyoto, Nakagyo Ward, Banocho, 586-2 1F",lat:35.009583,lng:135.759832},
+ {id:"p173",name:"Shibuya Center-Gai",kind:"visit",area:"Tokyo",hood:"Shibuya",day:"2026-11-25",tag:"Shibuya's main street",addr:"Shibuya Center-Gai, Udagawacho, Shibuya, Tokyo 150-0042",lat:35.660414,lng:139.698578},
+ {id:"p174",name:"Terrace Dining TANGO",kind:"eat",area:"Tokyo",hood:"Shibakoen",day:"2026-11-29",tag:"terrace dining by Tokyo Tower",addr:"3 Chome-5-4 Shibakoen, Minato City, Tokyo 105-0011",lat:35.65916,lng:139.745846}
 ];
 
 /* A Google Maps link that finds the place: name plus neighbourhood, or the
