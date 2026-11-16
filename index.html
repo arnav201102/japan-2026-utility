@@ -30,6 +30,7 @@
   --moss-bg:#5D6A4E;
   --on-bg:#EDEEE9;
   --s0:#6F726C;--s1:#2a78d6;--s2:#1baf7a;--s3:#6250d6;--s4:#eb6834;
+  --who0:#127F89;--who1:#B03C78;--who2:#9A6410;
   --gothic:"Zen Kaku Gothic New","Hiragino Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mincho:"Zen Old Mincho","Hiragino Mincho ProN","Yu Mincho",Georgia,"Times New Roman",serif;
 }
@@ -49,6 +50,7 @@
     --moss-bg:#4C5940;
     --on-bg:#EDEEE9;
     --s0:#7C838A;--s1:#3987e5;--s2:#199e70;--s3:#9085e9;--s4:#d95926;
+    --who0:#1C97A2;--who1:#C2538B;--who2:#B07A22;
   }
 }
 :root[data-theme="dark"]{
@@ -66,6 +68,7 @@
   --moss-bg:#4C5940;
   --on-bg:#EDEEE9;
   --s0:#7C838A;--s1:#3987e5;--s2:#199e70;--s3:#9085e9;--s4:#d95926;
+  --who0:#1C97A2;--who1:#C2538B;--who2:#B07A22;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 [hidden]{display:none!important}
@@ -537,8 +540,8 @@ h3.wband small{font-family:var(--gothic);font-weight:400;font-size:12px;color:va
 
 /* tab bar */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--ai-bg);padding-bottom:env(safe-area-inset-bottom);z-index:20}
-nav.tabs .in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(7,1fr)}
-nav.tabs button{background:none;border:0;color:rgba(237,238,233,.6);padding:13px 1px 15px;font:500 11.5px var(--gothic);cursor:pointer;border-top:3px solid transparent}
+nav.tabs .in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(8,minmax(0,1fr))}
+nav.tabs button{background:none;border:0;color:rgba(237,238,233,.6);padding:13px 0 15px;font:500 10.5px var(--gothic);letter-spacing:-.01em;cursor:pointer;border-top:3px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 nav.tabs button .g{display:block;font-family:var(--mincho);font-size:17px;line-height:1.15;margin-bottom:2px}
 nav.tabs button[aria-selected="true"]{color:#fff;border-top-color:var(--momiji)}
 nav.tabs button:focus-visible{outline:2px solid #fff;outline-offset:-4px}
@@ -552,6 +555,131 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
   .status .big{animation:rise .5s ease-out both}
   @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 }
+/* ---- Money tab ---- */
+#p-money{padding-bottom:56px}
+#p-money .msec{scroll-margin-top:60px}
+#p-money .msec>h2.sec{margin-top:30px}
+.mjump{position:sticky;top:0;z-index:15;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:-8px -20px 14px;padding:8px 20px;background:var(--washi);-webkit-overflow-scrolling:touch}
+.mjump::-webkit-scrollbar{display:none}
+.mjump button{flex:none;border:1px solid var(--sand);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 13px;font:500 13.5px var(--gothic);cursor:pointer;white-space:nowrap}
+.mjump button.hot{background:var(--momiji-bg);border-color:var(--momiji-bg);color:#fff;font-weight:700}
+
+/* spending hero */
+.mhero{position:relative;overflow:hidden;border-radius:14px;padding:20px 20px 16px;background:linear-gradient(135deg,var(--ai-bg) 0%,#16263A 100%)}
+.mhero::after{content:"円";position:absolute;right:10px;bottom:-18px;font:700 128px/1 var(--mincho);color:#fff;opacity:.07;pointer-events:none}
+.mhero .big{font-size:46px}
+.mhero .meter{height:8px;border-radius:4px;margin:10px 0 2px}
+
+/* cards, people and categories */
+.mcard{background:var(--card);border:1px solid var(--sand);border-radius:14px;padding:16px;margin-bottom:18px}
+.av{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--k);color:#fff;font:700 11.5px/1 var(--gothic);flex:none;letter-spacing:.02em}
+.av0{--k:var(--who0)}.av1{--k:var(--who1)}.av2{--k:var(--who2)}
+.av.lg{width:46px;height:46px;font-size:17px}
+.cic{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--k);color:#fff;font:700 14px/1 var(--mincho);flex:none}
+
+/* add an expense */
+.addcard{border:2px solid var(--momiji-bg);box-shadow:0 10px 26px -16px rgba(163,55,42,.7)}
+.mc-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.mc-h h2.sec{margin:0}
+.mc-k{width:32px;height:32px;border-radius:50%;background:var(--momiji-bg);color:#fff;display:grid;place-items:center;font:700 16px/1 var(--mincho);flex:none}
+.mdesc{display:block;width:100%;font:500 16px var(--gothic);border:0;border-bottom:2px solid var(--sand);background:none;color:var(--ink);padding:8px 2px;margin-bottom:12px;border-radius:0}
+.amtbox{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.mamt{flex:1;min-width:0;width:100%;font:700 30px/1.2 var(--gothic);border:0;border-bottom:2px solid var(--sand);background:none;color:var(--ink);padding:4px 2px;border-radius:0}
+.mdesc:focus,.mamt:focus{outline:none;border-bottom-color:var(--momiji)}
+.curtog{display:flex;flex:none;background:var(--washi);border:1px solid var(--sand);border-radius:999px;padding:3px}
+.curtog button{border:0;background:none;color:var(--ink-soft);font:700 18px/1 var(--mincho);width:42px;height:38px;border-radius:999px;cursor:pointer}
+.curtog button[aria-pressed="true"]{background:var(--ai-bg);color:#fff}
+.pick{margin:0 0 14px}
+.plbl{display:block;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px}
+.chipset{display:flex;flex-wrap:wrap;gap:7px}
+.chipset button{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--sand);background:var(--field);color:var(--ink);border-radius:999px;padding:3px 12px 3px 3px;font:500 14px var(--gothic);cursor:pointer}
+.chipset button[aria-pressed="true"]{background:var(--k);border-color:var(--k);color:#fff;font-weight:700}
+.chipset button[aria-pressed="true"] .av,.chipset button[aria-pressed="true"] .cic,
+.seg.pills button[aria-pressed="true"] .av{box-shadow:0 0 0 2px #fff}
+#p-money .wtog{border-radius:999px}
+#p-money .wtog:has(input:checked){border-color:var(--ai);background:var(--card)}
+#p-money .seg:not(.pills){border-radius:999px}
+#p-money .sbox .seg button{padding:7px 10px;font-size:13.5px}
+.addcard .esplit{margin:0 0 10px}
+.addcard .sbox{margin:0 0 6px}
+.addcard .ecash{margin:4px 0 2px}
+.addcard .ecash-note{margin:4px 0 8px}
+.addbtn{display:block;width:100%;padding:14px;font:700 16px var(--gothic);border-radius:12px;background:var(--momiji-bg);margin-top:6px;letter-spacing:.02em}
+.addbtn:active{transform:translateY(1px)}
+
+/* person switches */
+.seg.pills{display:flex;flex-wrap:wrap;gap:6px;border:0;overflow:visible;margin-bottom:12px}
+.seg.pills button,.seg.pills button:last-child{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--sand);border-radius:999px;padding:4px 13px;background:var(--card);color:var(--ink);font:500 14px var(--gothic)}
+.seg.pills button:has(.av){padding-left:4px}
+.seg.pills button .av{width:22px;height:22px;font-size:9.5px}
+.seg.pills button[aria-pressed="true"]{background:var(--k,var(--ai-bg));border-color:var(--k,var(--ai-bg));color:#fff;font-weight:700}
+
+/* balances */
+.bal-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.bal-top .ttl{font-weight:700;font-variant-numeric:tabular-nums}
+.bal-top .seg{margin:0}
+.bal-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.bal{background:var(--card);border:1px solid var(--sand);border-top:4px solid var(--sand);border-radius:14px;padding:12px 6px 10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0}
+.bal.pos{border-top-color:var(--moss)}
+.bal.neg{border-top-color:var(--momiji)}
+.bal .bn{font-weight:700;font-size:14px;margin-top:5px}
+.bal .bl{font-size:12px;color:var(--ink-soft)}
+.bal .bv{font:700 clamp(14px,4.3vw,18px)/1.25 var(--gothic);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.bal.pos .bv{color:var(--moss)}
+.bal.neg .bv{color:var(--momiji)}
+.bal.sq .bv{color:var(--ink-soft)}
+.stl{margin-top:12px;background:var(--card);border:1px solid var(--sand);border-radius:14px;padding:2px 14px}
+.stl .stl-h{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);padding:10px 0 4px}
+.stl .stl-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--sand);flex-wrap:wrap}
+.stl-pair{display:flex;align-items:center;gap:3px;flex:none}
+.stl-pair i{font-style:normal;color:var(--ink-soft);font-size:15px}
+.stl-txt{flex:1;min-width:0;font-size:14px;line-height:1.35}
+.stl-txt b{display:block;font-size:17px;font-variant-numeric:tabular-nums}
+.stl-txt small{color:var(--ink-soft);font-size:12px}
+.mpaid{border:1.5px solid var(--moss);background:none;color:var(--moss);border-radius:999px;padding:6px 13px;font:700 13px var(--gothic);cursor:pointer;flex:none}
+.mpaid:disabled{opacity:.5;cursor:default}
+.stl-ok{margin-top:12px;background:var(--card);border:1px solid var(--sand);border-left:4px solid var(--moss);border-radius:14px;padding:12px 14px;color:var(--moss);font-weight:700}
+.stl .stl-note{font-size:12.5px;color:var(--ink-soft);padding:9px 0 11px;border-top:1px solid var(--sand)}
+
+/* the list */
+#expList .exp-day{display:inline-block;background:var(--ai-bg);color:#fff;border-radius:999px;padding:3px 11px;margin:16px 0 2px;font-size:11.5px}
+#expList .exp-phase{margin-top:22px}
+#expList .exp,#cashList .exp{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--sand);border-radius:12px;padding:10px 8px 10px 10px;margin:6px 0}
+#expList .exp.pay{background:none;border-style:dashed}
+#expList .exp .cic,#cashList .exp .cic{width:38px;height:38px;font-size:18px}
+#expList .emain{flex:1;min-width:0}
+#expList .exp .ed{display:block;width:100%;font-weight:700;font-size:15px;line-height:1.35}
+#expList .exp .etag{font-weight:400;margin-top:1px}
+#expList .exp .who{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:12.5px}
+#expList .exp .who .av{width:18px;height:18px;font-size:8px}
+#expList .exp .amt,#cashList .exp .amt{margin-left:auto;font-size:16px;text-align:right;align-self:center}
+#expList .exp .xdel,#cashList .exp .xdel{width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:20px;align-self:center}
+#expList .exp .xdel:hover,#cashList .exp .xdel:hover{background:var(--washi)}
+#expList .exp-edit{border:2px solid var(--ai);border-radius:12px;margin:-2px 0 12px;padding:14px}
+#cashList .exp{display:grid;grid-template-columns:38px minmax(0,1fr) auto 30px;column-gap:12px;row-gap:0}
+#cashList .exp .cic{grid-row:1/3}
+#cashList .exp .ed{grid-column:2;font-weight:600;line-height:1.35}
+#cashList .exp .dd{grid-column:2;grid-row:2}
+#cashList .exp .amt{grid-column:3;grid-row:1/3}
+#cashList .exp .xdel{grid-column:4;grid-row:1/3}
+.mtools{margin-top:16px}
+#p-money .io.mcard{margin-top:12px}
+
+/* my money and wallet cards */
+.mpcard{position:relative;border-radius:14px;background:linear-gradient(135deg,var(--k,var(--ai-bg)) 0%,var(--ai-bg) 90%)}
+.mpcard .big{padding-right:58px}
+.mpcard>.av.lg{position:absolute;right:16px;top:16px;box-shadow:0 0 0 3px rgba(255,255,255,.35)}
+.cashcard{background:linear-gradient(135deg,var(--moss-bg) 0%,#36412C 100%)}
+.cashcard>.av.lg{box-shadow:0 0 0 3px rgba(255,255,255,.35)}
+.cashadd{padding:12px}
+.cashadd .addrow{margin:0}
+#mineMore .rf{background:var(--k,var(--s1))}
+.rbar .rf.ck{background:var(--k)}
+
+/* jump-to-add button */
+.mfab{position:fixed;right:max(16px,calc(50% - 284px));bottom:calc(98px + env(safe-area-inset-bottom));z-index:30;background:var(--momiji-bg);color:#fff;border:0;border-radius:999px;padding:13px 20px;font:700 15px var(--gothic);box-shadow:0 10px 24px -8px rgba(0,0,0,.55);cursor:pointer;transition:opacity .2s,transform .2s}
+.mfab.off{opacity:0;transform:translateY(16px) scale(.92);pointer-events:none}
+body:has(.undo.on) .mfab{opacity:0;pointer-events:none}
 </style>
 </head>
 <body>
@@ -617,6 +745,118 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
 
 <!-- ============ MONEY ============ -->
 <section class="panel" id="p-money" role="tabpanel" aria-labelledby="t-money">
+  <div class="mjump" id="mJump" role="navigation" aria-label="Money sections">
+    <button type="button" class="hot" data-j="mAdd">＋ Add</button>
+    <button type="button" data-j="mBal">Balances</button>
+    <button type="button" data-j="mList">Expenses</button>
+    <button type="button" data-j="mMine">Mine</button>
+    <button type="button" data-j="mCash">Wallet</button>
+    <button type="button" data-j="mRep">Report</button>
+  </div>
+
+  <div class="tab-total mhero" id="pace"></div>
+
+  <!-- add an expense -->
+  <div class="mcard addcard msec" id="mAdd">
+    <div class="mc-h"><span class="mc-k" aria-hidden="true">新</span><h2 class="sec">Add an expense</h2></div>
+    <input class="mdesc" id="eDesc" placeholder="What was it for?" aria-label="Description" autocomplete="off">
+    <div class="amtbox">
+      <div class="curtog" id="eCurChips" role="group" aria-label="Currency"></div>
+      <input class="mamt num" id="eAmt" type="text" inputmode="decimal" placeholder="Amount" aria-label="Amount" autocomplete="off">
+    </div>
+    <select id="eCur" aria-label="Currency" hidden><option value="JPY">¥ yen</option><option value="INR">₹ rupees</option></select>
+    <select id="ePayer" aria-label="Who paid" hidden><option>Arnav</option><option>Ayush</option><option>Manan</option></select>
+    <select id="eCat" aria-label="Category" hidden></select>
+    <div class="pick"><span class="plbl">Who paid</span><div class="chipset" id="ePayerChips" role="group" aria-label="Who paid"></div></div>
+    <div class="pick"><span class="plbl">Category</span><div class="chipset cats" id="eCatChips" role="group" aria-label="Category"></div></div>
+    <div id="eSplit"></div>
+    <label class="wtog ecash"><input type="checkbox" id="eCash"> Paid in cash (¥)</label>
+    <p class="note ecash-note">Still splits like any expense — and what each payer handed over comes out of their wallet.</p>
+    <div class="flash eerr" id="eErr" role="alert"></div>
+    <button class="btn addbtn" id="eAdd">Add expense</button>
+  </div>
+
+  <!-- balances and settling up -->
+  <div class="msec" id="mBal">
+    <h2 class="sec">Balances</h2>
+    <p class="note">Everyone pays their own way, so this just tracks who covered what and evens it out at the end. Synced across all three phones. Edits merge, so nobody overwrites anyone, and anything added offline goes up when you're back online.</p>
+    <div id="settle"></div>
+  </div>
+
+  <!-- the list -->
+  <div class="msec" id="mList">
+    <h2 class="sec">Expenses</h2>
+    <div class="seg pills" id="expFilter" role="group" aria-label="Filter by who paid"></div>
+    <div id="expList"></div>
+    <div class="toolbar mtools">
+      <button type="button" class="btn" id="swOpen">Import from Splitwise</button>
+      <button id="expCopy">Copy summary</button>
+      <button id="expShare">Send to the others</button>
+      <button type="button" id="expRefresh">Refresh from cloud</button>
+      <button type="button" id="expIO">Export / backup</button>
+    </div>
+    <div class="flash" id="expFlash"></div>
+    <div class="io mcard" id="ioPanel">
+      <p><b>Spreadsheet</b> — every expense with ₹ and ¥ columns and each person's share, for Excel or Google Sheets. <b>Backup</b> — a file with everything, to keep outside the cloud.</p>
+      <div class="toolbar">
+        <button type="button" class="btn" id="ioCsv">Download spreadsheet</button>
+        <button type="button" id="ioJson">Download backup</button>
+      </div>
+      <p><b>Restore a backup</b> — pick the file (or paste its contents). This <b>replaces</b> the expense list on every phone, so use it only to undo a mistake.</p>
+      <input type="file" id="ioFile" accept=".json,application/json" aria-label="Backup file">
+      <textarea id="ioText" spellcheck="false" placeholder="…or paste a backup here" aria-label="Backup"></textarea>
+      <div class="toolbar">
+        <button type="button" id="ioCopy">Copy the backup as text</button>
+        <button type="button" id="ioLoad">Restore what is in the box</button>
+      </div>
+    </div>
+    <div class="io mcard" id="swPanel">
+      <p><b>Bring your Splitwise group in.</b> Splitwise can't convert ¥ and ₹, so this does it here. On splitwise.com open the group, then the settings gear → <b>Export as spreadsheet</b>, and pick the CSV file below (or paste its contents). Importing again later only adds what's new.</p>
+      <input type="file" id="swFile" accept=".csv,text/csv" aria-label="Splitwise CSV file">
+      <textarea id="swText" spellcheck="false" placeholder="…or paste the CSV here" aria-label="Splitwise CSV"></textarea>
+      <div class="toolbar"><button type="button" id="swPreview">Check the file</button></div>
+      <div id="swResult"></div>
+      <div id="swLog"></div>
+    </div>
+  </div>
+
+  <!-- one person's view -->
+  <div class="msec" id="mMine">
+    <h2 class="sec">My money</h2>
+    <div class="seg pills" id="mineWho" role="group" aria-label="Whose money"></div>
+    <div class="tab-total mpcard" id="mineCard"></div>
+    <div id="mineMore"></div>
+  </div>
+
+  <div class="msec" id="mCash">
+    <h2 class="sec">Cash wallet</h2>
+    <p class="note">The yen in each person's pocket — everyone starts with ¥15,000. Log ATM withdrawals, tick “Paid in cash” on expenses, and now and then count what you've got — the gap is what went on things nobody logged.</p>
+    <div class="seg pills" id="cashWho" role="group" aria-label="Whose wallet"></div>
+    <div class="tab-total mpcard cashcard" id="cashCard"></div>
+    <div class="mcard cashadd">
+      <div class="addrow">
+        <input class="amt num" id="cAmt" type="text" inputmode="numeric" placeholder="¥ amount" aria-label="Yen">
+        <input class="amt" id="cNote" type="text" placeholder="Where (optional)" aria-label="Note">
+        <button type="button" class="btn" id="cWith">Withdrew</button>
+        <button type="button" class="btn ghost" id="cCount">I counted</button>
+      </div>
+    </div>
+    <div id="cashList"></div>
+    <div class="tip"><b>Getting yen</b>7-Eleven and Japan Post ATMs take Indian Visa and Mastercard. If the ATM or a card machine offers to charge you in rupees, say no and choose yen — your zero-forex card does the conversion at a better rate. Fewer, bigger withdrawals keep ATM fees down.</div>
+  </div>
+
+  <div class="msec" id="mRep">
+    <h2 class="sec">Trip report</h2>
+    <p class="note">Where the money went — by category, before and during the trip, by city and by day, and each person's share. Uses the ₹ / ¥ choice under Balances.</p>
+    <div class="toolbar"><button type="button" id="repShow">Show the report</button><button type="button" id="repCopy">Copy the report</button></div>
+    <div id="report" hidden></div>
+  </div>
+
+  <button type="button" class="mfab" id="mFab" aria-label="Add an expense">＋ Expense</button>
+</section>
+
+<!-- ============ CONVERT ============ -->
+<section class="panel" id="p-conv" role="tabpanel" aria-labelledby="t-conv">
   <h2 class="sec">Convert</h2>
   <div class="conv">
     <div class="fx"><label for="jpy">¥</label><input id="jpy" type="text" inputmode="decimal" value="1000" aria-label="Japanese yen"></div>
@@ -629,80 +869,6 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
   </div>
   <div class="chips" id="chips"></div>
   <p class="credit">Rates from the <a href="https://frankfurter.dev" target="_blank" rel="noopener">European Central Bank via Frankfurter</a> and <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">ExchangeRate-API</a>.</p>
-
-  <h2 class="sec">Spending</h2>
-  <div class="tab-total" id="pace"></div>
-
-  <h2 class="sec">My money</h2>
-  <div class="seg" id="mineWho" role="group" aria-label="Whose money"></div>
-  <div class="tab-total" id="mineCard"></div>
-  <div id="mineMore"></div>
-
-  <h2 class="sec">Split the bill</h2>
-  <p class="note">Everyone pays their own way, so this just tracks who covered what and evens it out at the end. Synced across all three phones. Edits merge, so nobody overwrites anyone, and anything added offline goes up when you're back online.</p>
-  <div class="addrow">
-    <input class="desc" id="eDesc" placeholder="What was it for?" aria-label="Description">
-    <input class="amt num" id="eAmt" type="text" inputmode="decimal" placeholder="Amount" aria-label="Amount">
-    <select id="eCur" aria-label="Currency"><option value="JPY">¥ yen</option><option value="INR">₹ rupees</option></select>
-    <select id="ePayer" aria-label="Who paid"><option>Arnav</option><option>Ayush</option><option>Manan</option></select>
-    <select id="eCat" aria-label="Category"></select>
-    <button class="btn" id="eAdd">Add</button>
-  </div>
-  <div id="eSplit"></div>
-  <label class="wtog ecash"><input type="checkbox" id="eCash"> Paid in cash (¥)</label>
-  <p class="note ecash-note">Still splits like any expense — and what each payer handed over comes out of their wallet.</p>
-  <div class="flash eerr" id="eErr" role="alert"></div>
-  <div class="seg" id="expFilter" role="group" aria-label="Filter by who paid"></div>
-  <div id="expList"></div>
-  <div class="settle" id="settle"></div>
-  <div class="toolbar">
-    <button type="button" class="btn" id="swOpen">Import from Splitwise</button>
-    <button id="expCopy">Copy summary</button>
-    <button id="expShare">Send to the others</button>
-    <button type="button" id="expRefresh">Refresh from cloud</button>
-    <button type="button" id="expIO">Export / backup</button>
-  </div>
-  <div class="flash" id="expFlash"></div>
-  <div class="io" id="ioPanel">
-    <p><b>Spreadsheet</b> — every expense with ₹ and ¥ columns and each person's share, for Excel or Google Sheets. <b>Backup</b> — a file with everything, to keep outside the cloud.</p>
-    <div class="toolbar">
-      <button type="button" class="btn" id="ioCsv">Download spreadsheet</button>
-      <button type="button" id="ioJson">Download backup</button>
-    </div>
-    <p><b>Restore a backup</b> — pick the file (or paste its contents). This <b>replaces</b> the expense list on every phone, so use it only to undo a mistake.</p>
-    <input type="file" id="ioFile" accept=".json,application/json" aria-label="Backup file">
-    <textarea id="ioText" spellcheck="false" placeholder="…or paste a backup here" aria-label="Backup"></textarea>
-    <div class="toolbar">
-      <button type="button" id="ioCopy">Copy the backup as text</button>
-      <button type="button" id="ioLoad">Restore what is in the box</button>
-    </div>
-  </div>
-  <div class="io" id="swPanel">
-    <p><b>Bring your Splitwise group in.</b> Splitwise can't convert ¥ and ₹, so this does it here. On splitwise.com open the group, then the settings gear → <b>Export as spreadsheet</b>, and pick the CSV file below (or paste its contents). Importing again later only adds what's new.</p>
-    <input type="file" id="swFile" accept=".csv,text/csv" aria-label="Splitwise CSV file">
-    <textarea id="swText" spellcheck="false" placeholder="…or paste the CSV here" aria-label="Splitwise CSV"></textarea>
-    <div class="toolbar"><button type="button" id="swPreview">Check the file</button></div>
-    <div id="swResult"></div>
-    <div id="swLog"></div>
-  </div>
-
-  <h2 class="sec">Cash wallet</h2>
-  <p class="note">The yen in each person's pocket — everyone starts with ¥15,000. Log ATM withdrawals, tick “Paid in cash” on expenses, and now and then count what you've got — the gap is what went on things nobody logged.</p>
-  <div class="seg" id="cashWho" role="group" aria-label="Whose wallet"></div>
-  <div class="tab-total" id="cashCard"></div>
-  <div class="addrow">
-    <input class="amt num" id="cAmt" type="text" inputmode="numeric" placeholder="¥ amount" aria-label="Yen">
-    <input class="amt" id="cNote" type="text" placeholder="Where (optional)" aria-label="Note">
-    <button type="button" class="btn" id="cWith">Withdrew</button>
-    <button type="button" class="btn ghost" id="cCount">I counted</button>
-  </div>
-  <div id="cashList"></div>
-  <div class="tip"><b>Getting yen</b>7-Eleven and Japan Post ATMs take Indian Visa and Mastercard. If the ATM or a card machine offers to charge you in rupees, say no and choose yen — your zero-forex card does the conversion at a better rate. Fewer, bigger withdrawals keep ATM fees down.</div>
-
-  <h2 class="sec">Trip report</h2>
-  <p class="note">Where the money went — by category, before and during the trip, by city and by day, and each person's share. Uses the ₹ / ¥ choice above.</p>
-  <div class="toolbar"><button type="button" id="repShow">Show the report</button><button type="button" id="repCopy">Copy the report</button></div>
-  <div id="report" hidden></div>
 </section>
 
 <!-- ============ CHECKLIST ============ -->
@@ -1054,6 +1220,7 @@ footer{font-size:12.5px;color:var(--ink-soft);padding:30px 0 12px;line-height:1.
     <button role="tab" id="t-now"   aria-selected="true"  aria-controls="p-now"   data-p="now"><span class="g">今</span>Now</button>
     <button role="tab" id="t-days"  aria-selected="false" aria-controls="p-days"  data-p="days"><span class="g">程</span>Days</button>
     <button role="tab" id="t-money" aria-selected="false" aria-controls="p-money" data-p="money"><span class="g">¥</span>Money</button>
+    <button role="tab" id="t-conv"  aria-selected="false" aria-controls="p-conv"  data-p="conv"><span class="g">換</span>Convert</button>
     <button role="tab" id="t-list"  aria-selected="false" aria-controls="p-list"  data-p="list"><span class="g">要</span>To do</button>
     <button role="tab" id="t-buy"   aria-selected="false" aria-controls="p-buy"   data-p="buy"><span class="g">買</span>Buy</button>
     <button role="tab" id="t-baku"  aria-selected="false" aria-controls="p-baku"  data-p="baku"><span class="g">爆</span>Bakugai</button>
@@ -1742,13 +1909,7 @@ function expTotals(){
 }
 function renderFilter(){
   var box=$("#expFilter");if(!box)return;
-  box.innerHTML="";
-  ["All"].concat(PEOPLE).forEach(function(p){
-    var b=el("button",null,p);b.type="button";
-    b.setAttribute("aria-pressed",p===expWho?"true":"false");
-    b.addEventListener("click",function(){expWho=p;S.set("expWho",p);renderExps()});
-    box.appendChild(b);
-  });
+  whoSeg(box,expWho,function(p){expWho=p;S.set("expWho",p);renderExps()},["All"]);
 }
 var expEditing=null;
 /* a few seconds to take a delete back — it removes it on every phone */
@@ -1791,7 +1952,9 @@ function renderExps(){
     if(day&&day<first&&!preShown){box.appendChild(el("div","exp-phase","Before the trip"));preShown=true}
     var head=!day?"No date":fmtDate(day)+(dayNum(day)?" · Day "+dayNum(day):"");
     if(head!==lastHead){box.appendChild(el("div","exp-day",head));lastHead=head}
-    var r=el("div","exp");
+    var k=catKey(x),r=el("div","exp"+(k==="pay"?" pay":""));
+    r.appendChild(catIcon(k));
+    var main=el("div","emain");
     var t=el("button","ed",x.d||"Expense");t.type="button";t.title="Edit";
     t.addEventListener("click",function(){expEditing=expEditing===x.id?null:x.id;renderExps()});
     var tags=[];
@@ -1799,20 +1962,23 @@ function renderExps(){
     else{
       if(x.refund)tags.push("refund");
       if(MO)tags.push(MO.bucketOf(x));
-      if(x.owe)tags.push("split "+PEOPLE.filter(function(p){return x.owe[p]}).map(function(p){return p+" "+money(x.owe[p],x.cur||"JPY")}).join(" · "));
+      if(x.owe&&x.pct&&x.weights)tags.push("split "+PEOPLE.filter(function(p){return x.weights[p]}).map(function(p){return p+" "+x.weights[p]+"%"}).join(" · "));
+      else if(x.owe)tags.push("split "+PEOPLE.filter(function(p){return x.owe[p]}).map(function(p){return p+" "+money(x.owe[p],x.cur||"JPY")}).join(" · "));
       else if(x.split)tags.push("split: "+x.split.join(", "));
       if(x.paid)tags.push("paid "+PEOPLE.filter(function(p){return x.paid[p]}).map(function(p){return p+" "+money(x.paid[p],x.cur||"JPY")}).join(" + "));
     }
     if(x.cash)tags.push("cash");
     if(x.src==="splitwise")tags.push("Splitwise");
     if(tags.length)t.appendChild(el("small","etag",tags.join(" · ")));
-    r.appendChild(t);
-    r.appendChild(el("span","who",x.paid?x.p+" +"+(Object.keys(x.paid).length-1):x.p));
+    main.appendChild(t);
+    var who=el("span","who");who.appendChild(avatar(x.p));
+    who.appendChild(document.createTextNode(x.paid?x.p+" +"+(Object.keys(x.paid).length-1):x.p));
+    main.appendChild(who);r.appendChild(main);
     var amt=el("span","amt"+(x.refund?" refund":""),(x.refund?"−":"")+money(Math.abs(x.a),x.cur||"JPY"));
     var other=(x.cur||"JPY")==="JPY"?"INR":"JPY";
     if(MO)amt.appendChild(el("small",null,"≈ "+money(MO.convert(x.a,x.cur||"JPY",other,x.fx>0?x.fx:rate),other)));
     r.appendChild(amt);
-    var del=el("button",null,"×");del.type="button";del.setAttribute("aria-label","Remove "+(x.d||"expense"));
+    var del=el("button","xdel","×");del.type="button";del.setAttribute("aria-label","Remove "+(x.d||"expense"));
     del.addEventListener("click",function(){
       if(!confirm("Delete “"+(x.d||"this expense")+"” for everyone?"))return;
       var at=-1;exps.forEach(function(e,i){if(e===x||(x.id&&e.id===x.id))at=i});   /* by id, not where it sat when drawn */
@@ -1871,6 +2037,8 @@ function renderPace(){
   bud.appendChild(lab);bud.appendChild(inp);
   bud.appendChild(el("span",null,budget>0?("each, a day \u2014 "+yen(budget*PEOPLE.length)+" between you"):"each, a day"));
   if(budget>0&&onTrip){
+    var cap=budget*PEOPLE.length,mt=el("div","meter"+(todaySpend>cap?" full":"")),ms=el("span");
+    ms.style.width=Math.max(0,Math.min(100,todaySpend/cap*100))+"%";mt.appendChild(ms);box.insertBefore(mt,rest);
     var over=todaySpend-budget*PEOPLE.length;
     bud.appendChild(el("span","tag",over>0?("· "+yen(over)+" over today"):("· "+yen(-over)+" left today")));
   }
@@ -1912,6 +2080,68 @@ var balCur=S.get("balCur","INR");
 
 function money(n,cur){return cur==="INR"?rupees(n):yen(n)}
 
+/* ---- how the Money tab looks: avatars, category icons, pickers ---- */
+var CAT_LOOK={Food:["食","var(--s4)"],Transport:["交","var(--s1)"],Stay:["宿","var(--s3)"],Activities:["遊","var(--s2)"],
+  Shopping:["買","var(--momiji-bg)"],Other:["他","var(--s0)"],pay:["払","var(--moss-bg)"],ref:["返","var(--moss-bg)"],
+  wd:["引","var(--moss-bg)"],ct:["数","var(--s1)"],cx:["払","var(--momiji-bg)"]};
+function whoVar(p){var i=PEOPLE.indexOf(p);return "var(--who"+(i<0?0:i)+")"}
+function avatar(p,big){var i=PEOPLE.indexOf(p);var s=el("span","av av"+(i<0?0:i)+(big?" lg":""),String(p).slice(0,2));s.setAttribute("aria-hidden","true");return s}
+function catKey(x){if(MO&&MO.isPayment(x))return "pay";if(x.refund)return "ref";return MO?MO.bucketOf(x):"Other"}
+function catIcon(k){var lk=CAT_LOOK[k]||CAT_LOOK.Other,s=el("span","cic",lk[0]);s.style.setProperty("--k",lk[1]);s.setAttribute("aria-hidden","true");return s}
+/* a row of person buttons, each with its avatar */
+function whoSeg(box,on,pick,extra){
+  box.innerHTML="";
+  (extra||[]).concat(PEOPLE).forEach(function(p){
+    var b=el("button");b.type="button";b.setAttribute("aria-pressed",p===on?"true":"false");
+    if(PEOPLE.indexOf(p)>-1){b.style.setProperty("--k",whoVar(p));b.appendChild(avatar(p))}
+    b.appendChild(document.createTextNode(p));
+    b.addEventListener("click",function(){pick(p)});box.appendChild(b);
+  });
+}
+/* the add form's currency, payer and category chips drive the hidden selects */
+function syncPickers(){
+  [["#eCurChips","#eCur"],["#ePayerChips","#ePayer"],["#eCatChips","#eCat"]].forEach(function(q){
+    var box=$(q[0]),v=$(q[1]).value;if(!box)return;
+    box.querySelectorAll("button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.v===v?"true":"false")});
+  });
+}
+function initPickers(){
+  function build(boxSel,selSel,opts){
+    var box=$(boxSel),sel=$(selSel);if(!box||!sel)return;box.innerHTML="";
+    opts.forEach(function(o){
+      var b=el("button");b.type="button";b.dataset.v=o.v;
+      if(o.k)b.style.setProperty("--k",o.k);
+      if(o.icon)b.appendChild(o.icon);
+      b.appendChild(document.createTextNode(o.t));
+      if(o.label)b.setAttribute("aria-label",o.label);
+      b.addEventListener("click",function(){sel.value=o.v;sel.dispatchEvent(new Event("change"));syncPickers()});
+      box.appendChild(b);
+    });
+  }
+  build("#eCurChips","#eCur",[{v:"JPY",t:"¥",label:"Yen"},{v:"INR",t:"₹",label:"Rupees"}]);
+  build("#ePayerChips","#ePayer",PEOPLE.map(function(p){return {v:p,t:p,k:whoVar(p),icon:avatar(p)}}));
+  build("#eCatChips","#eCat",(MO?MO.CATS:[]).map(function(k){return {v:k,t:k,k:(CAT_LOOK[k]||CAT_LOOK.Other)[1],icon:catIcon(k)}}));
+  syncPickers();
+}
+/* the jump bar, and the floating button that brings the add form back */
+function initMoneyUi(){
+  var jump=$("#mJump"),fab=$("#mFab"),add=$("#mAdd");
+  if(jump)jump.addEventListener("click",function(e){
+    var b=e.target.closest&&e.target.closest("button[data-j]");if(!b)return;
+    var t=document.getElementById(b.dataset.j);if(t)t.scrollIntoView({block:"start",behavior:"smooth"});
+  });
+  if(fab&&add){
+    fab.classList.add("off");
+    fab.addEventListener("click",function(){
+      add.scrollIntoView({block:"start",behavior:"smooth"});
+      setTimeout(function(){$("#eDesc").focus({preventScroll:true})},350);
+    });
+    if("IntersectionObserver" in window){
+      new IntersectionObserver(function(es){es.forEach(function(en){fab.classList.toggle("off",en.isIntersecting)})},{threshold:0.15}).observe(add);
+    }else fab.hidden=true;
+  }
+}
+
 /* The split box: expense or refund; split equally, by amounts or by shares;
    paid by one person (the "Who paid" picker) or several. Used by the add row
    and the editor. getAmount() gives the current total; read(payer) checks it. */
@@ -1919,8 +2149,9 @@ function splitBox(init,getAmount,getCur){
   init=init||{};
   /* work on copies — nothing touches the expense itself until a save succeeds */
   function copy(m){var o={};if(m)for(var k in m)o[k]=m[k];return o}
-  var st={refund:!!init.refund,mode:init.weights?"share":init.owe?"amount":"equal",
-    who:init.split?init.split.slice():PEOPLE.slice(),owe:copy(init.owe),weights:copy(init.weights),
+  var st={refund:!!init.refund,mode:init.weights?(init.pct?"pct":"share"):init.owe?"amount":"equal",
+    who:init.split?init.split.slice():PEOPLE.slice(),owe:copy(init.owe),
+    weights:init.pct?{}:copy(init.weights),pcts:init.pct?copy(init.weights):{},
     many:!!init.paid,paid:copy(init.paid)};
   var box=el("div","sbox");
   var advanced=st.refund||st.mode!=="equal"||st.many;
@@ -1942,7 +2173,18 @@ function splitBox(init,getAmount,getCur){
     });
     return w;
   }
-  var leftOwe,leftPaid;
+  var leftOwe,leftPaid,leftPct;
+  /* percentages: must come to 100; once they do, show what that is in money */
+  function pctMap(){var w={};PEOPLE.forEach(function(p){var v=MO.parseAmount(st.pcts[p]);if(v>0)w[p]=v});return w}
+  function pctSum(w){var t=0;for(var k in w)t+=w[k];return Math.round(t*100)/100}
+  function showPct(){
+    if(!leftPct)return;
+    var w=pctMap(),t=pctSum(w),d=Math.round((100-t)*100)/100,ok=Math.abs(d)<0.01,a=getAmount(),cur=getCur();
+    leftPct.className="sb-left"+(ok||!t?"":" bad");
+    var txt=ok?"Adds up to 100%.":d>0?d+"% still to assign":(-d)+"% too much";
+    if(ok&&a>0){var ow=MO.oweFromWeights(a,w,PEOPLE);if(ow)txt+=" "+PEOPLE.filter(function(p){return ow[p]}).map(function(p){return p+" "+money(ow[p],cur)}).join(" · ")}
+    leftPct.textContent=txt;
+  }
   function sumLeft(map){
     var a=getAmount(),t={};PEOPLE.forEach(function(p){var v=MO.parseAmount(map[p]);if(v>0)t[p]=v});
     return a>0?MO.addsUp(a,t):null;
@@ -1962,9 +2204,13 @@ function splitBox(init,getAmount,getCur){
     }
     box.appendChild(seg("Type",[["exp","Expense"],["refund","Refund"]],st.refund?"refund":"exp",function(v){st.refund=v==="refund"}));
     if(st.refund)box.appendChild(el("p","note sb-hint","Money coming back — a cancelled ticket, a returned item. “Who paid” is whoever got it back; the split is whose money it was."));
-    box.appendChild(seg("Split",[["equal","Equally"],["amount","Amounts"],["share","Shares"]],st.mode,function(v){st.mode=v}));
+    box.appendChild(seg("Split",[["equal","Equally"],["amount","Amounts"],["pct","Percent"],["share","Shares"]],st.mode,function(v){st.mode=v}));
     if(st.mode==="equal")box.appendChild(equalRow());
     else if(st.mode==="amount"){box.appendChild(people(st.owe,"0",function(){showLeft(leftOwe,st.owe)}));leftOwe=el("div","sb-left");box.appendChild(leftOwe);showLeft(leftOwe,st.owe)}
+    else if(st.mode==="pct"){
+      box.appendChild(people(st.pcts,"0 %",showPct));leftPct=el("div","sb-left");box.appendChild(leftPct);showPct();
+      box.appendChild(el("p","note sb-hint","Like 50 / 30 / 20 — they need to come to 100. Leave someone blank to leave them out."));
+    }
     else{
       PEOPLE.forEach(function(p){if(st.weights[p]==null)st.weights[p]=1});
       box.appendChild(people(st.weights,"0"));
@@ -1987,15 +2233,20 @@ function splitBox(init,getAmount,getCur){
   }
   draw();
   return {el:box,
-    refresh:function(){showLeft(leftOwe,st.owe);showLeft(leftPaid,st.paid)},
+    refresh:function(){showLeft(leftOwe,st.owe);showLeft(leftPaid,st.paid);showPct()},
     /* the fields to store, or an error to show */
     read:function(payer){
-      var a=getAmount(),f={refund:st.refund||undefined,split:undefined,owe:undefined,weights:undefined,paid:undefined,p:payer};
+      var a=getAmount(),f={refund:st.refund||undefined,split:undefined,owe:undefined,weights:undefined,pct:undefined,paid:undefined,p:payer};
       if(st.mode==="equal"){if(st.who.length<PEOPLE.length)f.split=st.who.slice()}
       else if(st.mode==="amount"){
         var o={};PEOPLE.forEach(function(p){var v=MO.parseAmount(st.owe[p]);if(v>0)o[p]=v});
         var r=MO.addsUp(a,o);if(!r.ok)return {error:"The split adds up to "+money(r.sum,getCur())+", not "+money(a,getCur())+"."};
         f.owe=o;
+      }else if(st.mode==="pct"){
+        var pw=pctMap(),pt=pctSum(pw);
+        if(Math.abs(100-pt)>=0.01)return {error:"The percentages add up to "+pt+"%, not 100%."};
+        var po=MO.oweFromWeights(a,pw,PEOPLE);if(!po)return {error:"Give at least one person a percentage."};
+        f.owe=po;f.weights=pw;f.pct=true;
       }else{
         var w={};PEOPLE.forEach(function(p){var v=parseFloat(st.weights[p]);if(v>0)w[p]=v});
         var ow=MO.oweFromWeights(a,w,PEOPLE);if(!ow)return {error:"Give at least one person a share."};
@@ -2018,34 +2269,46 @@ function renderESplit(){
   mount.appendChild(eBox.el);
 }
 function applyFields(x,f){
-  ["refund","split","owe","weights","paid"].forEach(function(k){if(f[k]===undefined)delete x[k];else x[k]=f[k]});
+  ["refund","split","owe","weights","pct","paid"].forEach(function(k){if(f[k]===undefined)delete x[k];else x[k]=f[k]});
   x.p=f.p;
 }
 
 function renderSettle(){
   var s=$("#settle");if(!s)return;s.innerHTML="";
-  if(!MO){s.appendChild(el("div",null,"Couldn't load the money maths — open the app once on a connection."));return}
+  if(!MO){s.appendChild(el("div","stl-ok","Couldn't load the money maths — open the app once on a connection."));return}
+  var top=el("div","bal-top");
+  top.appendChild(el("div","ttl","Spent together "+money(MO.totalSpend(exps,balCur,rate),balCur)));
   var seg=el("div","seg balcur");
   [["INR","in ₹"],["JPY","in ¥"]].forEach(function(c){
     var b=el("button",null,c[1]);b.type="button";b.setAttribute("aria-pressed",balCur===c[0]?"true":"false");
     b.addEventListener("click",function(){balCur=c[0];S.set("balCur",balCur);renderSettle();renderReport();renderMine()});
     seg.appendChild(b);
   });
-  s.appendChild(seg);
-  s.appendChild(el("div","ttl","Spent together "+money(MO.totalSpend(exps,balCur,rate),balCur)));
-  if(!exps.length){s.appendChild(el("div",null,"Even, for now."));return}
-  var bal=balancesInr();
+  top.appendChild(seg);s.appendChild(top);
+  if(!exps.length){s.appendChild(el("div","stl-ok","Even, for now."));return}
+  var bal=balancesInr(),grid=el("div","bal-grid");
   PEOPLE.forEach(function(p){
-    var b=bal[p];
-    s.appendChild(el("div",null,Math.abs(b)<1?p+" is square":b>0?p+" is owed "+showBal(b):p+" owes "+showBal(-b)));
+    var b=bal[p],sq=Math.abs(b)<1,t=el("div","bal "+(sq?"sq":b>0?"pos":"neg"));
+    t.appendChild(avatar(p,true));
+    t.appendChild(el("div","bn",p));
+    t.appendChild(el("div","bl",sq?"is":b>0?"is owed":"owes"));
+    t.appendChild(el("div","bv",sq?"square":showBal(Math.abs(b))));
+    grid.appendChild(t);
   });
+  s.appendChild(grid);
   var moves=MO.settleUp(bal,1);
   if(!moves.length){s.appendChild(el("div","stl-ok","Everyone's square."));return}
-  s.appendChild(el("div","stl-h","To settle up"+(moves.length>1?" — "+moves.length+" payments":"")));
+  var box=el("div","stl");
+  box.appendChild(el("div","stl-h","To settle up"+(moves.length>1?" — "+moves.length+" payments":"")));
   moves.forEach(function(m){
     var r=el("div","stl-row");
-    r.appendChild(el("span",null,m.from+" pays "+m.to+" "+rupees(m.amount)+(balCur==="JPY"?" (≈ "+yen(m.amount/rate)+")":"")));
-    var b=el("button","linkbtn","Mark paid");b.type="button";
+    var pair=el("span","stl-pair");pair.appendChild(avatar(m.from));pair.appendChild(el("i",null,"→"));pair.appendChild(avatar(m.to));
+    r.appendChild(pair);
+    var tx=el("span","stl-txt",m.from+" pays "+m.to);
+    tx.appendChild(el("b",null,rupees(m.amount)));
+    if(balCur==="JPY")tx.appendChild(el("small",null,"≈ "+yen(m.amount/rate)));
+    r.appendChild(tx);
+    var b=el("button","mpaid","Mark paid");b.type="button";
     b.addEventListener("click",function(){
       if(b.disabled)return;
       var id=MO.paymentId(m.from,m.to,m.amount,todayISO());
@@ -2057,28 +2320,27 @@ function renderSettle(){
       S.set("exps",exps);renderExps();touchCloud();
       flash("#expFlash","Recorded. Balances updated on every phone.");
     });
-    r.appendChild(b);s.appendChild(r);
+    r.appendChild(b);box.appendChild(r);
   });
-  s.appendChild(el("div","stl-note",balCur==="INR"?"Pay however you like, then tap Mark paid.":
+  box.appendChild(el("div","stl-note",balCur==="INR"?"Pay however you like, then tap Mark paid.":
     "Balances are kept in rupees, since you'll settle in India; the ¥ figures are estimates at today's rate."));
+  s.appendChild(box);
 }
 /* ---- my money: one person's share, balance, wallet and allowance ---- */
 var myWho=S.get("myWho",S.get("buyWho",PEOPLE[0]));
 if(PEOPLE.indexOf(myWho)<0)myWho=PEOPLE[0];
 function renderMine(){
-  var seg=$("#mineWho");if(!seg||!MO)return;seg.innerHTML="";
-  PEOPLE.forEach(function(p){
-    var b=el("button",null,p);b.type="button";b.setAttribute("aria-pressed",p===myWho?"true":"false");
-    b.addEventListener("click",function(){myWho=p;S.set("myWho",p);renderMine()});seg.appendChild(b);
-  });
+  var seg=$("#mineWho");if(!seg||!MO)return;
+  whoSeg(seg,myWho,function(p){myWho=p;S.set("myWho",p);renderMine()});
   var cur=balCur,me=myWho,first=DAYS[0].d,last=DAYS[DAYS.length-1].d;
   var during=exps.filter(function(x){var d=expDay(x);return d&&d>=first&&d<=last});
   var before=exps.filter(function(x){var d=expDay(x);return d&&d<first});
   var all=MO.shares(exps,PEOPLE,cur,rate),trip=MO.shares(during,PEOPLE,cur,rate),pre=MO.shares(before,PEOPLE,cur,rate);
   var todays=MO.shares(exps.filter(function(x){return expDay(x)===today}),PEOPLE,cur,rate);
-  var card=$("#mineCard");card.innerHTML="";
+  var card=$("#mineCard");card.innerHTML="";card.style.setProperty("--k",whoVar(me));
+  card.appendChild(avatar(me,true));
   card.appendChild(el("div","big",money(all.share[me],cur)));
-  card.appendChild(el("div","sub",me+"'s share of everything · paid "+money(all.paid[me],cur)+" · in "+(cur==="INR"?"₹":"¥")+" (switch under Split the bill)"));
+  card.appendChild(el("div","sub",me+"'s share of everything · paid "+money(all.paid[me],cur)+" · in "+(cur==="INR"?"₹":"¥")+" (switch under Balances)"));
   var r=el("div","rest");
   r.appendChild(el("span",null,"Before the trip "+money(pre.share[me],cur)+" · on the trip "+money(trip.share[me],cur)+(idx>=0?" · today "+money(todays.share[me],cur):"")));
   var ball=balancesInr(),bal=ball[me];
@@ -2096,7 +2358,7 @@ function renderMine(){
   }
   card.appendChild(r2);
   /* my share, day by day on the trip */
-  var more=$("#mineMore");more.innerHTML="";
+  var more=$("#mineMore");more.innerHTML="";more.style.setProperty("--k",whoVar(me));
   var days=DAYS.filter(function(d){return d.d<=today}).map(function(d){return d.d});
   var vals={};days.forEach(function(d){vals[d]=MO.shares(during.filter(function(x){return expDay(x)===d}),PEOPLE,cur,rate).share[me]});
   var shown=days.filter(function(d){return vals[d]>0});
@@ -2114,12 +2376,10 @@ var cashLog=S.get("cashLog",[]);
 var cashWho=S.get("cashWho",S.get("buyWho",PEOPLE[0]));
 if(PEOPLE.indexOf(cashWho)<0)cashWho=PEOPLE[0];
 function renderCash(){
-  var seg=$("#cashWho");if(!seg||!MO)return;seg.innerHTML="";
-  PEOPLE.forEach(function(p){
-    var b=el("button",null,p);b.type="button";b.setAttribute("aria-pressed",p===cashWho?"true":"false");
-    b.addEventListener("click",function(){cashWho=p;S.set("cashWho",p);renderCash()});seg.appendChild(b);
-  });
+  var seg=$("#cashWho");if(!seg||!MO)return;
+  whoSeg(seg,cashWho,function(p){cashWho=p;S.set("cashWho",p);renderCash()});
   var w=MO.walletOf(cashWho,cashLog,exps),card=$("#cashCard");card.innerHTML="";
+  card.appendChild(avatar(cashWho,true));
   card.appendChild(el("div","big",yen(w.balance)));
   card.appendChild(el("div","sub","should be in "+cashWho+"'s wallet · ≈ "+rupees(w.balance*rate)));
   var r=el("div","rest");
@@ -2130,17 +2390,18 @@ function renderCash(){
   card.appendChild(r);
   /* recent movements: withdrawals, counts and cash expenses */
   var ev=[];
-  cashLog.forEach(function(c,i){if(c.who===cashWho)ev.push({ts:c.ts,t:c.kind==="withdraw"?"Withdrew"+(c.note?" · "+c.note:""):"Counted"+(c.note?" · "+c.note:""),v:c.kind==="withdraw"?"+"+yen(c.jpy):"= "+yen(c.jpy),i:i})});
-  exps.forEach(function(x){if(x.cash&&x.p===cashWho&&(x.cur||"JPY")==="JPY")ev.push({ts:x.ts,t:x.d||"Expense",v:"−"+yen(x.a)})});
+  cashLog.forEach(function(c,i){if(c.who===cashWho)ev.push({ts:c.ts,k:c.kind==="withdraw"?"wd":"ct",t:c.kind==="withdraw"?"Withdrew"+(c.note?" · "+c.note:""):"Counted"+(c.note?" · "+c.note:""),v:c.kind==="withdraw"?"+"+yen(c.jpy):"= "+yen(c.jpy),i:i})});
+  exps.forEach(function(x){if(x.cash&&x.p===cashWho&&(x.cur||"JPY")==="JPY")ev.push({ts:x.ts,k:"cx",t:x.d||"Expense",v:"−"+yen(x.a)})});
   ev.sort(function(a,b){return (b.ts||0)-(a.ts||0)});
   var box=$("#cashList");box.innerHTML="";
   ev.slice(0,12).forEach(function(e){
     var row=el("div","exp");
+    row.appendChild(catIcon(e.k));
     row.appendChild(el("span","ed",e.t));
     if(e.ts)row.appendChild(el("span","dd",fmtDate(MO.isoDay(e.ts))));
     row.appendChild(el("span","amt",e.v));
     if(e.i!=null){
-      var x=el("button",null,"×");x.type="button";x.setAttribute("aria-label","Remove");
+      var x=el("button","xdel","×");x.type="button";x.setAttribute("aria-label","Remove");
       x.addEventListener("click",function(){if(!confirm("Remove this?"))return;cashLog.splice(e.i,1);S.set("cashLog",cashLog);touchCloud();renderCash()});
       row.appendChild(x);
     }
@@ -2238,6 +2499,7 @@ function renderReport(){
       var row=el("div","rbar");
       row.appendChild(el("span","rl",k));
       var tr=el("span","rt"),fill=el("span","rf");fill.style.width=(obj[k]/max*100)+"%";tr.appendChild(fill);row.appendChild(tr);
+      if(CAT_LOOK[k]&&MO&&MO.CATS.indexOf(k)>-1){fill.className="rf ck";fill.style.setProperty("--k",CAT_LOOK[k][1])}
       row.appendChild(el("span","rv",money(obj[k],cur)));
       box.appendChild(row);
     });
@@ -2394,6 +2656,7 @@ function initSplit(){
     pushExp(x);
     renderESplit();   /* back to a plain equal split, so the next one isn't uneven by accident */
     $("#eCur").value=defaultCur();          /* and back to the likely currency */
+    $("#eAmt").placeholder=defaultCur()==="INR"?"₹ amount":"¥ amount";syncPickers();
     S.set("exps",exps);$("#eDesc").value="";$("#eAmt").value="";renderExps();
     touchCloud();
   });
@@ -2405,6 +2668,7 @@ function initSplit(){
   $("#eAmt").placeholder=defaultCur()==="INR"?"₹ amount":"¥ amount";
   if(MO)MO.CATS.forEach(function(k){var o=el("option",null,k);o.value=k;$("#eCat").appendChild(o)});
   $("#eCat").value="Food";
+  initPickers();initMoneyUi();
   renderSwLog();
   $("#cWith").addEventListener("click",function(){addCash("withdraw")});
   $("#cCount").addEventListener("click",function(){addCash("count")});
@@ -2530,7 +2794,7 @@ function normExp(x,amt){
     var ow=amounts(x.owe);if(ow){o.owe=ow;delete o.split}
     if(ow&&x.weights&&typeof x.weights==="object"){
       var w={};PEOPLE.forEach(function(p){var v=+x.weights[p];if(v>0)w[p]=v});
-      if(Object.keys(w).length)o.weights=w;
+      if(Object.keys(w).length){o.weights=w;if(x.pct===true)o.pct=true}
     }
   }
   return o;
@@ -2939,7 +3203,7 @@ function watchRate(){return (fx.manual||fx.ts)?rate:WG.CONFIG.jpy_to_inr}
 
 function renderWatchRate(){
   var c=WG.CONFIG, r=watchRate(), src;
-  if(fx.manual)src="your own rate from the Money tab";
+  if(fx.manual)src="your own rate from the Convert tab";
   else if(fx.ts)src="live from "+esc(fx.src)+", "+ago(fx.ts);
   else src="a placeholder until the live rate loads";
   $("#wRateNote").innerHTML="What each watch really costs you: the shelf price minus the 10% tax you get back at Haneda, at <b>₹"+
@@ -4141,7 +4405,7 @@ function initTabs(){
       window.scrollTo(0,0);
       S.set("tab",b.dataset.p);
       writePath();
-      if(b.dataset.p==="money")maybeRefresh();
+      if(b.dataset.p==="money"||b.dataset.p==="conv")maybeRefresh();
       if(!cloudDirty)cloudPull(false);
     });
   });
@@ -4310,7 +4574,7 @@ function initPlaces(){
 }
 
 /* ---------- the tab in the address bar: #bakugai/scenarios ---------- */
-var TAB_SLUG={now:"now",days:"days",money:"money",list:"todo",buy:"buy",baku:"bakugai",info:"info"};
+var TAB_SLUG={now:"now",days:"days",money:"money",conv:"convert",list:"todo",buy:"buy",baku:"bakugai",info:"info"};
 var SUB_SLUG={watches:"watches",buys:"buys",customs:"customs",calc:"calculator",scen:"scenarios"};
 function fromSlug(map,slug){for(var k in map)if(map[k]===slug)return k;return null}
 function readPath(){

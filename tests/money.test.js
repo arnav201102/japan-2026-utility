@@ -421,3 +421,12 @@ test("amounts that should add up to the total", function () {
   assert.deepEqual(M.addsUp(1000, { Arnav: 333.33, Ayush: 333.33, Manan: 333.34 }), { ok: true, sum: 1000, left: 0 });
   assert.deepEqual(M.addsUp(1000, { Arnav: 600 }), { ok: false, sum: 600, left: 400 });
 });
+
+test("a percentage split is weights that add to 100, and the amounts add to the total", function () {
+  var ow = M.oweFromWeights(2400, { Arnav: 50, Ayush: 30, Manan: 20 }, P);
+  assert.deepEqual(ow, { Arnav: 1200, Ayush: 720, Manan: 480 });
+  var odd = M.oweFromWeights(1000, { Arnav: 33.33, Ayush: 33.33, Manan: 33.34 }, P);
+  assert.ok(M.addsUp(1000, odd).ok, "rounding lands on the total");
+  var n = M.netOf({ a: 2400, cur: "JPY", p: "Manan", owe: ow, weights: { Arnav: 50, Ayush: 30, Manan: 20 }, pct: true }, P);
+  assert.deepEqual(n, { Arnav: -1200, Ayush: -720, Manan: 1920 });
+});

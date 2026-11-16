@@ -8,13 +8,14 @@ and the Fuji day swap — automatically sync across Arnav, Ayush, and Manan's ph
 through a shared cloud JSON record (JSONBin). Personal passport scans remain strictly
 private on each phone's local IndexedDB.
 
-## The seven tabs
+## The eight tabs
 
 | Tab | What's in it |
 |---|---|
 | **今 Now** | Countdown or day number, today's plan, today's weather, the Fuji go/no-go card, the next thing to book, and the before-you-leave-the-room list |
 | **程 Days** | All 13 days. Tap one for the plan, map links for each stop, places from the shared Google Maps list for that day, the thing you can't afford to miss, and the host's number. A **Places** view lists the whole Maps list by city — visit, eat, shop — with nearest-first |
-| **¥ Money** | Converter on a live rate, what you've spent and how fast, and the bill splitter — in ¥ or ₹, split between any of you, with Splitwise import and settle-up |
+| **¥ Money** | What you've spent and how fast, and the bill splitter — in ¥ or ₹, split equally, by amounts, by percent or by shares, with Splitwise import and settle-up. A floating **＋ Expense** button jumps to the add form from anywhere on the tab |
+| **換 Convert** | ¥ ↔ ₹ converter on a live rate, with quick amounts |
 | **要 To do** | Bookings sorted by deadline, documents, packing |
 | **買 Buy** | Shared shopping lists for Arnav, Ayush and Manan (synced via JSONBin), what to buy before you fly, early in Japan, and to take home |
 | **爆 Bakugai** | The shopping-spree tab: watch guide, other buys, India customs, duty calculator, spending scenarios |
@@ -202,7 +203,7 @@ for dark.
 
 Everything lives in `bakugai.js`: one `CONFIG`, the data (`WATCHES`, `SHOP_ITEMS`, `SHOP_PRODUCTS`), and the maths. No
 rupee figure is stored — they're worked out from yen at the live rate from the
-Money tab (no card markup; your cards are zero-forex). Change a rate in
+Convert tab (no card markup; your cards are zero-forex). Change a rate in
 `CONFIG` and every screen follows.
 
 The rules it uses, and where they come from:
@@ -228,7 +229,7 @@ nothing to install).
 
 ## The exchange rate
 
-Fetched automatically on load, and again whenever you open the Money tab if the
+Fetched automatically on load, and again whenever you open the Money or Convert tab if the
 saved rate is more than six hours old. It tries four free no-key sources in
 turn — ECB via Frankfurter, then ExchangeRate-API, then two mirrors of Currency
 API — and takes the first that answers with a sane number.
@@ -238,7 +239,7 @@ rather than silently showing something wrong. Type your own rate into the field
 and it stops auto-updating until you tap "Use the live rate".
 
 The number shown is the mid-market rate. A forex card or ATM will give you a
-couple of percent less, which the Money tab says out loud.
+couple of percent less, which the Convert tab says out loud.
 
 ## The weather and the Fuji day
 

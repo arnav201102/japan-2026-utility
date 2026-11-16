@@ -4,7 +4,7 @@
    split (who shares it; missing = everyone), fx (₹ per ¥ when it was added),
    ts, src, cat, net}. Optional: paid {person: amount} when several people paid,
    owe {person: amount} for an uneven split (weights {person: n} remembers a
-   "by shares" split), refund: true for money coming back — it runs the other way. net, when present, is each person's paid-minus-owed in
+   "by shares" split; with pct: true they are percentages adding up to 100), refund: true for money coming back — it runs the other way. net, when present, is each person's paid-minus-owed in
    the expense's own currency — that's what a Splitwise export gives, and it
    copes with any split and any number of payers. Everything else is worked out
    from p and split. Converting always uses the expense's own fx, so a balance

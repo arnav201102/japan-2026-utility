@@ -4,7 +4,7 @@
    tests/bakugai.test.js loads it with require(). Edit prices and rates here.
 
    Every rupee figure is worked out from jp_tag_jpy at run time, so a new
-   exchange rate (the live one from the Money tab) moves everything at once. */
+   exchange rate (the live one from the Convert tab) moves everything at once. */
 (function (root) {
 
 var CONFIG = {
