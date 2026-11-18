@@ -5,7 +5,7 @@ Trip utility for Arnav, Ayush and Manan. 24 Nov – 6 Dec 2026.
 Static site, no build step, no dependencies, no backend. Shared trip data —
 the Buy shopping lists, Split-the-bill expenses, booking deadlines, checklists,
 and the Fuji day swap — automatically sync across Arnav, Ayush, and Manan's phones
-through a shared cloud JSON record (JSONBin). Personal passport scans remain strictly
+through a shared cloud JSON record (a free Firebase Realtime Database). Personal passport scans remain strictly
 private on each phone's local IndexedDB.
 
 ## The eight tabs
@@ -17,7 +17,7 @@ private on each phone's local IndexedDB.
 | **¥ Money** | What you've spent and how fast, and the bill splitter — in ¥ or ₹, split equally, by amounts, by percent or by shares, with Splitwise import and settle-up. A floating **＋ Expense** button jumps to the add form from anywhere on the tab |
 | **換 Convert** | ¥ ↔ ₹ converter on a live rate, with quick amounts |
 | **要 To do** | Bookings sorted by deadline, documents, packing |
-| **買 Buy** | Shared shopping lists for Arnav, Ayush and Manan (synced via JSONBin), what to buy before you fly, early in Japan, and to take home |
+| **買 Buy** | Shared shopping lists for Arnav, Ayush and Manan (synced via the cloud), what to buy before you fly, early in Japan, and to take home |
 | **爆 Bakugai** | The shopping-spree tab: watch guide, other buys, India customs, duty calculator, spending scenarios |
 | **報 Info** | Emergency numbers, your passport copies, flights, passes, phrases you can hold up, addresses in Japanese for a taxi driver |
 
@@ -139,7 +139,7 @@ Three lists, in the order you'll need them:
 - **Taking things home** — where to buy it cheaper than the airport.
 
 The curated lists are tick-only. At the top of Buy, each of you has a shared
-list (Arnav / Ayush / Manan) kept in one JSONBin record — any of you can add,
+list (Arnav / Ayush / Manan) kept in one shared cloud record — any of you can add,
 tick or delete, and it syncs when there's a connection. Ticked items count as
 spent on that person's running tab.
 
@@ -163,7 +163,7 @@ spent on that person's running tab.
 
 Everything you add — expenses, the budget, the three shopping lists, every
 checklist and booking, the Fuji swap, and each person's Bakugai cart — is
-saved on the phone first and then merged into one shared JSONBin record.
+saved on the phone first and then merged into one shared cloud record (Firebase Realtime Database, free Spark plan).
 
 Every save is **pull → merge → push** (`sync.js`), so two of you editing at
 once never wipes the other's changes:
@@ -177,14 +177,20 @@ once never wipes the other's changes:
   retries on its own, and again the moment the phone reconnects).
 
 The pill under the dates shows the state — *Synced 14:32*, *Saving…*,
-*Not synced · retrying*, or *Sync stopped · JSONBin limit*. Tap it to sync now.
+*Not synced · retrying*, or *Sync stopped · cloud limit*. Tap it to sync now.
 
-JSONBin counts every request against the account's allowance, and it has run
-out once. To spare it, the app checks the cloud in the background every 2
-minutes (and when it's opened or a tab is switched, at most every 30 s); edits
-still go up straight away. If the pill says *JSONBin limit*, nothing syncs
-until more requests are bought on the account. Edits stay on each phone
-meanwhile and go up once it works again.
+The app used to sync through JSONBin, until its request allowance ran out.
+Firebase's free plan has no request count, but it does cap downloads (about
+10 GB a month), so the app still checks the cloud in the background only every
+2 minutes (and when it's opened or a tab is switched, at most every 30 s);
+edits still go up straight away. If sync ever stops, edits stay on each phone
+and go up once it works again.
+
+**The database**: Firebase project `japan-2026-3c30b`, Realtime Database in
+Singapore. Its rules lock everything except one path, `trip/<random id>`; the
+id is in `index.html` (`CLOUD_PATH`). Stay on the free Spark plan. To start
+afresh, delete that path in the Firebase console; the phones refill it on their
+next sync.
 
 Not synced, on purpose: passport copies (private to each phone, see above),
 and per-phone settings like theme, filters and your own exchange rate.

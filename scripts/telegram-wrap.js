@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /* Evening wrap-up → Telegram, during the trip only (dates in Japan time; run
    it with TZ=Asia/Tokyo so expense dates match).
-   Reads the shared cloud record (the same JSONBin the app syncs to) and posts
+   Reads the shared cloud record (the Firebase database the app syncs to) and posts
    today's spending, the trip so far, everyone's cash wallet, who owes whom and
    tomorrow's plan. The maths is money.js, the same as the app.
    Env: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
-   Optional: JSONBIN_BIN / JSONBIN_KEY (otherwise read from index.html, where the
-   app keeps them), FORCE=1 to send outside the trip dates, DRY_RUN=1 to print
+   Optional: CLOUD_URL, the record's full .json address (otherwise built from
+   CLOUD_DB and CLOUD_PATH in index.html, where the app keeps them), FORCE=1 to send outside the trip dates, DRY_RUN=1 to print
    instead of sending. */
 
 var fs = require("fs");
@@ -22,9 +22,16 @@ function fromIndex() {
   var html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
   var days = [], re = /\{d:"(\d{4}-\d\d-\d\d)",dow:"(\w+)",city:"([^"]*)",t:"([^"]*)"/g, m;
   while ((m = re.exec(html))) days.push({ d: m[1], dow: m[2], city: m[3], t: m[4] });
-  var bin = (html.match(/CLOUD_BIN="([^"]+)"/) || [])[1];
-  var key = (html.match(/CLOUD_KEY="([^"]+)"/) || [])[1];
-  return { days: days, bin: bin, key: key };
+  var db = (html.match(/CLOUD_DB="([^"]+)"/) || [])[1];
+  var p = (html.match(/CLOUD_PATH="([^"]+)"/) || [])[1];
+  return { days: days, cloudUrl: db && p ? db + "/" + p + ".json" : null };
+}
+
+/* the app stores the record as one JSON string (see cloudDecode in index.html) */
+function decodeRecord(d) {
+  if (typeof d === "string") d = JSON.parse(d);
+  if (d && typeof d === "object" && d.record && typeof d.record === "object") d = d.record;
+  return d && typeof d === "object" ? d : {};
 }
 
 function yen(n) { return "¥" + Math.round(n).toLocaleString("en-US"); }
@@ -125,11 +132,10 @@ async function main() {
   var idx = fromIndex(), today = jstToday(Date.now());
   var inTrip = idx.days.length && today >= idx.days[0].d && today <= idx.days[idx.days.length - 1].d;
   if (!inTrip && !force) { console.log("Not a trip day (" + today + "). Skipping."); return; }
-  var bin = process.env.JSONBIN_BIN || idx.bin, key = process.env.JSONBIN_KEY || idx.key;
-  var d = await getJSON("https://api.jsonbin.io/v3/b/" + bin + "/latest", { "X-Access-Key": key });
+  var d = decodeRecord(await getJSON(process.env.CLOUD_URL || idx.cloudUrl));
   var rate = 0.6;
   try { var fx = await getJSON("https://api.frankfurter.dev/v2/rate/JPY/INR"); if (fx && fx.rate > 0) rate = fx.rate; } catch (e) {}
-  var msg = buildWrap(d.record || d, idx.days, today, rate);
+  var msg = buildWrap(d, idx.days, today, rate);
   if (dry) { console.log(msg); return; }
   await postTelegram(token, chatId, msg);
   console.log("Sent:\n" + msg);
@@ -138,4 +144,4 @@ async function main() {
 if (require.main === module) {
   main().catch(function (e) { console.error(e.message || e); process.exit(1); });
 }
-module.exports = { buildWrap: buildWrap, fromIndex: fromIndex, jstToday: jstToday };
+module.exports = { buildWrap: buildWrap, fromIndex: fromIndex, jstToday: jstToday, decodeRecord: decodeRecord };

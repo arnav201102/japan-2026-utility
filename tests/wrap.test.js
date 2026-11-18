@@ -24,7 +24,13 @@ test("the itinerary and cloud details are read from index.html", function () {
   var idx = W.fromIndex();
   assert.equal(idx.days.length, 13);
   assert.equal(idx.days[0].d, "2026-11-24");
-  assert.ok(idx.bin && idx.key);
+  assert.match(idx.cloudUrl, /^https:\/\/[^/]+\.firebasedatabase\.app\/trip\/[0-9a-f]{32}\.json$/);
+});
+
+test("the cloud record is read back from the string the app stores", function () {
+  assert.deepEqual(W.decodeRecord(JSON.stringify(REC)), REC);
+  assert.deepEqual(W.decodeRecord(null), {}, "an empty database");
+  assert.deepEqual(W.decodeRecord({ record: REC }), REC, "the old JSONBin shape");
 });
 
 test("Japan date", function () {

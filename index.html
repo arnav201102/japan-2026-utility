@@ -3002,11 +3002,21 @@ function initSplit(){
   renderExps();
 }
 
-/* ---------- shared cloud sync (via JSONBin) ---------- */
-var CLOUD_BIN="6abeafc0ffd5d1605343bce8";
-var CLOUD_KEY="$2a$10$NzE3zw6Cmlj2MnQr/Q5HQeJRKS.1xQTXVgw7h8sJT328Fu9GXg0Aa";
-var CLOUD_URL="https://api.jsonbin.io/v3/b/"+CLOUD_BIN;
-var BUY_BIN=CLOUD_BIN,BUY_KEY=CLOUD_KEY,BUY_URL=CLOUD_URL;
+/* ---------- shared cloud sync (Firebase Realtime Database, REST) ----------
+   One value at CLOUD_PATH, read with GET and replaced with PUT. The database
+   rules allow only that path; the random name is the only "key", and it's in
+   this page, so treat it as shared, not secret. The record is stored as one
+   JSON string, because Firebase rejects object keys containing . # $ [ ] /
+   (item ids can have #), drops empty arrays and objects, and may hand arrays
+   back as objects. A string comes back exactly as it went in. */
+var CLOUD_DB="https://japan-2026-3c30b-default-rtdb.asia-southeast1.firebasedatabase.app";
+var CLOUD_PATH="trip/d7e97801ab149efb94e40033ab20e318";
+var CLOUD_URL=CLOUD_DB+"/"+CLOUD_PATH+".json";
+function cloudDecode(d){
+  if(typeof d==="string"){try{d=JSON.parse(d)}catch(e){throw new Error("bad json")}}
+  if(d&&typeof d==="object"&&d.record&&typeof d.record==="object")d=d.record;
+  return (d&&typeof d==="object")?d:{};
+}
 
 var CHECK_KEYS=["ck_book","ck_docs","ck_pack","ck_daily","ck_before","ck_need","ck_gift"];
 function getChecksMap(){
@@ -3295,7 +3305,7 @@ function renderSyncPill(){
   var cls="ok",txt;
   if(!TS){cls="err";txt="Sync off"}
   else if(syncBusy)txt="Syncing…";
-  else if(syncErr==="quota"){cls="err";txt="Sync stopped · JSONBin limit"}
+  else if(syncErr==="quota"){cls="err";txt="Sync stopped · cloud limit"}
   else if(syncMeta.pending&&syncFails){cls="err";txt="Not synced · retrying"}
   else if(syncMeta.pending){cls="wait";txt="Saving…"}
   else if(syncMeta.last){
@@ -3304,7 +3314,7 @@ function renderSyncPill(){
   }
   else{cls="wait";txt="Not synced yet"}
   b.className="syncpill "+cls;b.textContent=txt;
-  b.title=syncErr==="quota"?"JSONBin has run out of requests for this account. Nothing syncs until more are bought; edits stay on this phone meanwhile.":syncMeta.pending?"Changes are saved on this phone and will go up as soon as there's a connection. Tap to try now.":"Everything is in the cloud. Tap to check for changes.";
+  b.title=syncErr==="quota"?"The cloud database has hit its free limit. Nothing syncs until that clears; edits stay on this phone meanwhile.":syncErr==="key"?"The cloud refused access: check the Firebase database rules. Edits stay on this phone meanwhile.":syncMeta.pending?"Changes are saved on this phone and will go up as soon as there's a connection. Tap to try now.":"Everything is in the cloud. Tap to check for changes.";
 }
 
 function touchCloud(){
@@ -3319,12 +3329,6 @@ function touchBuys(){touchCloud()}
 function scheduleCloudPush(){clearTimeout(cloudPushTimer);cloudPushTimer=setTimeout(function(){cloudSync()},400)}
 function scheduleBuyPush(){scheduleCloudPush()}
 
-function cloudHeaders(write){
-  var h={"X-Access-Key":CLOUD_KEY};
-  if(write)h["Content-Type"]="application/json";
-  return h;
-}
-function buyHeaders(write){return cloudHeaders(write)}
 
 function scheduleRetry(){
   clearTimeout(syncRetry);
@@ -3339,21 +3343,22 @@ function cloudSync(cb,quiet){
   var gen=cloudGen,remote=null,merged=null;
   syncBusy=true;cloudBusy=true;renderSyncPill();
   if(!quiet&&syncMeta.pending)setCloudStatus("Saving…");
-  fetch(CLOUD_URL+"/latest",{headers:cloudHeaders(false),cache:"no-store"})
+  fetch(CLOUD_URL,{cache:"no-store"})
     .then(function(r){
       return r.text().then(function(t){
         if(!r.ok)throw new Error(r.status+(t?" "+t.slice(0,120):""));
-        try{return JSON.parse(t)}catch(e){throw new Error("bad json")}
+        var d;try{d=JSON.parse(t)}catch(e){throw new Error("bad json")}
+        return cloudDecode(d);
       });
     })
     .then(function(d){
-      remote=remoteState((d&&d.record)?d.record:d);
+      remote=remoteState(d);
       var local=stampLocal();              /* picks up edits made while fetching */
       gen=cloudGen;
       merged=TS.merge(local,remote,Date.now());
       if(!TS.same(merged,local))applyState(merged);
       if(TS.same(merged,remote))return;
-      return fetch(CLOUD_URL,{method:"PUT",headers:cloudHeaders(true),body:JSON.stringify(recordOf(merged)),cache:"no-store"})
+      return fetch(CLOUD_URL,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(JSON.stringify(recordOf(merged))),cache:"no-store"})
         .then(function(r){
           return r.text().then(function(t){if(!r.ok)throw new Error(r.status+(t?" "+t.slice(0,120):""))});
         });
@@ -3368,10 +3373,10 @@ function cloudSync(cb,quiet){
       var m=String(err&&err.message||err||"");
       syncFails++;
       finish(false);
-      syncErr=/exhausted/i.test(m)?"quota":/^429/.test(m)?"busy":/^(401|403)/.test(m)?"key":"net";
-      if(syncErr==="quota")setCloudStatus("JSONBin is out of requests, so nothing can sync until more are bought on the account. Your changes are kept on this phone and will go up once it works again.");
-      else if(syncErr==="busy")setCloudStatus("JSONBin says too many requests right now. Your changes are kept on this phone; it will try again shortly.");
-      else if(syncErr==="key")setCloudStatus("Cloud refused the save — the JSONBin Access Key needs update permission. Your changes are kept on this phone.");
+      syncErr=/exhausted|quota|limit exceeded|^402/i.test(m)?"quota":/^(429|503)/.test(m)?"busy":/^(401|403)/.test(m)?"key":"net";
+      if(syncErr==="quota")setCloudStatus("The cloud database has hit its free limit, so nothing can sync for now. Your changes are kept on this phone and will go up once it works again.");
+      else if(syncErr==="busy")setCloudStatus("The cloud is busy right now. Your changes are kept on this phone; it will try again shortly.");
+      else if(syncErr==="key")setCloudStatus("The cloud refused access: the Firebase database rules need to allow this trip's path. Your changes are kept on this phone.");
       else setCloudStatus("Couldn't reach the cloud — your changes are kept on this phone and will sync when you're back online.");
       scheduleRetry();
     });
@@ -3395,9 +3400,9 @@ function buyPull(force,cb){cloudPull(force,cb)}
 window.addEventListener("online",function(){if(syncMeta.pending)cloudSync()});
 
 var cloudPollTimer=null;
-/* JSONBin counts every request against a fixed allowance (it ran out once, with
-   a 15 s poll on three phones), so background checks are every 2 minutes and
-   other non-forced pulls at most every 30 s. Edits still push straight away. */
+/* Background checks every 2 minutes, other non-forced pulls at most every 30 s:
+   the old JSONBin allowance ran out with a 15 s poll on three phones, and
+   Firebase's free plan caps downloads, so stay frugal. Edits push straight away. */
 function startCloudPoll(){
   stopCloudPoll();
   cloudPollTimer=setInterval(function(){

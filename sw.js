@@ -3,7 +3,7 @@
    and the weather are never cached here; they have their own saved values in
    local storage and say how old they are. */
 
-var VERSION = "jp2026-v21";
+var VERSION = "jp2026-v22";
 var SHELL = ["./", "./index.html", "./bakugai.js", "./sync.js", "./places.js", "./money.js", "./manifest.json", "./icon-192.png", "./icon-512.png", "./favicon.svg"];
 
 self.addEventListener("install", function (e) {
@@ -29,7 +29,7 @@ self.addEventListener("activate", function (e) {
 });
 
 function isLiveData(url) {
-  return /api\.open-meteo\.com|frankfurter|exchangerate-api|er-api\.com|currency-api|jsdelivr|api\.jsonbin\.io/.test(url);
+  return /api\.open-meteo\.com|frankfurter|exchangerate-api|er-api\.com|currency-api|jsdelivr|firebasedatabase\.app|api\.jsonbin\.io/.test(url);
 }
 
 self.addEventListener("fetch", function (e) {
