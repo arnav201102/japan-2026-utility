@@ -143,6 +143,22 @@ list (Arnav / Ayush / Manan) kept in one JSONBin record — any of you can add,
 tick or delete, and it syncs when there's a connection. Ticked items count as
 spent on that person's running tab.
 
+- **Add** a thing with a quantity (starts at 1) and a rough price *each*; the
+  row shows the total.
+- **Edit**: tap the name or ✎ to change the name, quantity or price. You can
+  also tick *Laptop* (it's guessed from names like "MacBook") or *No tax
+  refund* (bought online, or under ¥5,000 at that shop), and move it with ↑ ↓.
+- **Reorder**: drag the ⠿ grip (the page scrolls near the edges), or focus it
+  and use the arrow keys. The order syncs.
+- **Duty**: the card at the top works out India customs on the whole list,
+  bought or not, at the after-refund price. The ₹75,000 allowance fills **from
+  the top of the list down**, so put what matters most first. Anything that
+  doesn't fit is tagged with its share of the 35% duty. One laptop is
+  duty-free and left out. If your Bakugai cart has things in it too, the card
+  says what the two together come to, since the allowance covers everything you
+  bring back. It's an estimate: the refund is judged per item, while the real
+  ¥5,000 rule is per shop per day.
+
 ## Sync, and not losing anything
 
 Everything you add — expenses, the budget, the three shopping lists, every
@@ -160,8 +176,15 @@ once never wipes the other's changes:
   signal survives closing the app and syncs when you're back online (it
   retries on its own, and again the moment the phone reconnects).
 
-The pill under the dates shows the state — *Synced 14:32*, *Saving…*, or
-*Not synced · retrying*. Tap it to sync now.
+The pill under the dates shows the state — *Synced 14:32*, *Saving…*,
+*Not synced · retrying*, or *Sync stopped · JSONBin limit*. Tap it to sync now.
+
+JSONBin counts every request against the account's allowance, and it has run
+out once. To spare it, the app checks the cloud in the background every 2
+minutes (and when it's opened or a tab is switched, at most every 30 s); edits
+still go up straight away. If the pill says *JSONBin limit*, nothing syncs
+until more requests are bought on the account. Edits stay on each phone
+meanwhile and go up once it works again.
 
 Not synced, on purpose: passport copies (private to each phone, see above),
 and per-phone settings like theme, filters and your own exchange rate.

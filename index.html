@@ -731,6 +731,20 @@ details.more p.note{margin:6px 0 0}
 .buy .qn{font-weight:400;color:var(--ink-soft);font-variant-numeric:tabular-nums}
 #p-list .addrow .btn,#p-buy .addrow .btn{border-radius:999px;padding:8px 18px;flex:none;font-weight:700}
 #p-buy .buy .txt{cursor:pointer}
+#p-buy .buy .grip{flex:none;align-self:center;background:none;border:0;border-radius:6px;color:var(--ink-soft);font-size:18px;line-height:1;padding:6px 2px;margin:-6px -4px -6px -4px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+#p-buy .buy .grip:focus-visible{outline:2px solid var(--ai);outline-offset:1px}
+.buy-edit .be-ticks{display:flex;flex-direction:column;gap:4px;margin:8px 6px 0;font-size:13.5px;color:var(--ink-soft)}
+.buy-edit .be-tick{display:flex;align-items:center;gap:6px;cursor:pointer}
+.buy-edit .be-tick input{width:16px;height:16px;padding:0;accent-color:var(--ai)}
+.buy-edit .be-act .mv{padding:7px 13px}
+.buy-edit .be-act .mv.up{margin-left:auto}
+.buy-edit .be-act .mv:disabled{opacity:.4;cursor:default}
+#p-buy .buy.drag{opacity:.9;border-color:var(--ai);box-shadow:0 6px 18px rgba(0,0,0,.25);position:relative;z-index:2}
+#p-buy .buy.drag .grip{cursor:grabbing}
+.buy .dtag,.buy .etag{display:inline-block;width:100%}
+.buy .dtag{font-size:11.5px;font-weight:600;color:var(--moss);text-decoration:none}
+.buy .dtag.over{color:var(--momiji)}
+.tab-total .hint{opacity:.82;font-size:13px;margin-top:4px}
 #p-buy .buy .x.ed{font-size:15px}
 .buy-edit{padding:10px 0 12px;border-bottom:1px solid var(--sand)}
 .buy-edit .be-row{display:flex;gap:0;background:var(--field);border:1.5px solid var(--ai);border-radius:999px;padding:4px}
@@ -3065,6 +3079,8 @@ function normalizeBuyMap(raw){
       var t=String(b.t||"").trim(); if(!t)continue;
       var it={t:t,a:num(b.a),k:!!b.k};
       var q=Math.floor(num(b.q));if(q>1)it.q=q;   /* quantity; absent means 1, a is the price of one */
+      if(typeof b.lap==="boolean")it.lap=b.lap;    /* laptop yes/no, set by hand; absent means guess from the name */
+      if(b.nr===true)it.nr=true;                   /* no tax refund (bought online, or the shop doesn't do it) */
       if(typeof b.id==="string")it.id=b.id;
       if(typeof b.e==="string")it.e=b.e;   /* id of the shared expense it became, if any */
       if(typeof b.m==="number")it.m=b.m;
@@ -3095,6 +3111,41 @@ var cloudPullQueued=null;
 
 function buyQty(b){var q=Math.floor(num(b.q));return q>1?q:1}
 function buyCost(b){return (b.a||0)*buyQty(b)}
+/* List order is one synced value per person, buyOrder[p]: the item ids top to
+   bottom, written only by a drag. Keeping it off the items means a reorder never
+   marks every item as edited (which could overwrite a tick made on another
+   phone). Items not in it (added since) go after, in the order they came; ids
+   of deleted items are just skipped. Sorted in place; sync ignores array order. */
+var buyOrder=S.get("buyOrder",{});
+if(!buyOrder||typeof buyOrder!=="object")buyOrder={};
+function sortBuys(list,who){
+  var ord=buyOrder[who||buyWho],pos={};
+  if(ord&&ord.length)for(var j=0;j<ord.length;j++)if(!(ord[j] in pos))pos[ord[j]]=j;
+  var k=list.map(function(b,i){return {b:b,k:(b.id&&b.id in pos)?pos[b.id]:1e9+i}});
+  k.sort(function(x,y){return x.k-y.k});
+  for(var i=0;i<k.length;i++)list[i]=k[i].b;
+  return list;
+}
+/* Who uses the ₹75,000 first: the list is walked top to bottom, the first
+   laptop is exempt, each priced item takes what's left of the allowance and
+   whatever doesn't fit pays duty. Returns {item: {inr, free, duty}} by index. */
+function buyAlloc(list,dr){
+  var left=WG.CONFIG.india_duty_free_inr,lap=false;
+  return list.map(function(b){
+    if(!(b.a>0))return null;
+    var v=buyInr(b);
+    if(WG.CONFIG.laptop_exempt&&!lap&&buyIsLaptop(b)){lap=true;return {inr:v,laptop:true,over:0,duty:0}}
+    var fit=Math.min(v,left);left-=fit;
+    return {inr:v,over:v-fit,duty:(v-fit)*dr};
+  });
+}
+/* the live copy of an item: a sync replaces the arrays, so an object captured
+   at render time may no longer be in the list */
+function buyFind(b){
+  var l=buys();if(l.indexOf(b)>=0)return b;
+  if(b&&b.id)for(var i=0;i<l.length;i++)if(l[i].id===b.id)return l[i];
+  return null;
+}
 function buys(){return buyMap[buyWho]||(buyMap[buyWho]=[])}
 function saveBuysLocal(){S.set("buyMap",buyMap);S.set("buyTs",cloudTs);S.set("cloudTs",cloudTs);S.set("buyWho",buyWho)}
 
@@ -3107,7 +3158,7 @@ var TS=window.TripSync||null;
 var SYNC_LISTS=["docs","pack","daily","before","need","gift","book"];
 var syncMeta=S.get("syncMeta",{snap:null,del:{},sm:{},pending:false,last:0});
 cloudDirty=!!syncMeta.pending;
-var syncBusy=false,syncAgain=false,syncRetry=null,syncFails=0;
+var syncBusy=false,syncAgain=false,syncRetry=null,syncFails=0,syncErr="";
 
 function saveSyncMeta(){S.set("syncMeta",syncMeta)}
 
@@ -3124,6 +3175,7 @@ function localState(){
   TS.ensureIds("cash",cashLog,["who","kind","jpy","ts"]);s.colls.cash=cashLog;
   s.scal.budget={v:budget,m:syncMeta.sm.budget||0};
   s.scal.fujiSwap={v:!!fujiSwapped,m:syncMeta.sm.fujiSwap||0};
+  PEOPLE.forEach(function(p){if(buyOrder[p])s.scal["buyOrder:"+p]={v:buyOrder[p],m:syncMeta.sm["buyOrder:"+p]||0}});
   return s;
 }
 
@@ -3152,6 +3204,10 @@ function remoteState(rec){
   /* an old record's 0 budget means "never set", not "set to nothing" */
   if(typeof rec.budget==="number"&&!isNaN(rec.budget)&&(rec.budget>0||rec.budgetM))s.scal.budget={v:rec.budget,m:rec.budgetM||0};
   if(typeof rec.fujiSwap==="boolean")s.scal.fujiSwap={v:rec.fujiSwap,m:rec.fujiSwapM||0};
+  if(rec.buyOrder&&typeof rec.buyOrder==="object")PEOPLE.forEach(function(p){
+    var a=rec.buyOrder[p];if(!Array.isArray(a))return;
+    s.scal["buyOrder:"+p]={v:a.filter(function(x){return typeof x==="string"}),m:(rec.buyOrderM&&rec.buyOrderM[p])||0};
+  });
   return s;
 }
 
@@ -3163,6 +3219,10 @@ function recordOf(s){
     del:s.del||{},checks:getChecksMap()};
   SYNC_LISTS.forEach(function(n){o.lists[n]=s.colls["list:"+n]||getList(n)});
   PEOPLE.forEach(function(p){o[p]=s.colls["buy:"+p]||[];o.cart[p]=s.colls["cart:"+p]||[]});
+  PEOPLE.forEach(function(p){
+    var b=s.scal["buyOrder:"+p];if(!b)return;
+    (o.buyOrder=o.buyOrder||{})[p]=b.v;(o.buyOrderM=o.buyOrderM||{})[p]=b.m;
+  });
   return o;
 }
 
@@ -3173,13 +3233,17 @@ function persistLocal(){
   S.set("cartMap",cartMap);
   S.set("importLog",importLog);
   S.set("cashLog",cashLog);
+  S.set("buyOrder",buyOrder);
 }
+
+/* each synced value's last-edit time, by key */
+function scalTimes(s){var o={};Object.keys(s.scal).forEach(function(k){o[k]=s.scal[k]?s.scal[k].m||0:0});return o}
 
 /* notice and stamp whatever changed since the last snapshot */
 function stampLocal(){
   var s=localState();
   if(TS.stamp(s,syncMeta.snap,Date.now()))syncMeta.pending=true;
-  syncMeta.sm={budget:s.scal.budget.m,fujiSwap:s.scal.fujiSwap.m};
+  syncMeta.sm=scalTimes(s);
   syncMeta.del=s.del;
   syncMeta.snap=TS.snapshot(s);
   persistLocal();saveSyncMeta();
@@ -3194,7 +3258,8 @@ function applyState(s){
   if(s.colls.imports)importLog=s.colls.imports;
   if(s.colls.cash)cashLog=s.colls.cash;
   syncMeta.del=s.del;
-  syncMeta.sm={budget:s.scal.budget?s.scal.budget.m:0,fujiSwap:s.scal.fujiSwap?s.scal.fujiSwap.m:0};
+  syncMeta.sm=scalTimes(s);
+  PEOPLE.forEach(function(p){var b=s.scal["buyOrder:"+p];if(b)buyOrder[p]=b.v});
   var swap=s.scal.fujiSwap?!!s.scal.fujiSwap.v:fujiSwapped;
   if(swap!==fujiSwapped){
     fujiSwapped=swap;doSwap();
@@ -3230,6 +3295,7 @@ function renderSyncPill(){
   var cls="ok",txt;
   if(!TS){cls="err";txt="Sync off"}
   else if(syncBusy)txt="Syncing…";
+  else if(syncErr==="quota"){cls="err";txt="Sync stopped · JSONBin limit"}
   else if(syncMeta.pending&&syncFails){cls="err";txt="Not synced · retrying"}
   else if(syncMeta.pending){cls="wait";txt="Saving…"}
   else if(syncMeta.last){
@@ -3238,7 +3304,7 @@ function renderSyncPill(){
   }
   else{cls="wait";txt="Not synced yet"}
   b.className="syncpill "+cls;b.textContent=txt;
-  b.title=syncMeta.pending?"Changes are saved on this phone and will go up as soon as there's a connection. Tap to try now.":"Everything is in the cloud. Tap to check for changes.";
+  b.title=syncErr==="quota"?"JSONBin has run out of requests for this account. Nothing syncs until more are bought; edits stay on this phone meanwhile.":syncMeta.pending?"Changes are saved on this phone and will go up as soon as there's a connection. Tap to try now.":"Everything is in the cloud. Tap to check for changes.";
 }
 
 function touchCloud(){
@@ -3276,7 +3342,7 @@ function cloudSync(cb,quiet){
   fetch(CLOUD_URL+"/latest",{headers:cloudHeaders(false),cache:"no-store"})
     .then(function(r){
       return r.text().then(function(t){
-        if(!r.ok)throw new Error(r.status);
+        if(!r.ok)throw new Error(r.status+(t?" "+t.slice(0,120):""));
         try{return JSON.parse(t)}catch(e){throw new Error("bad json")}
       });
     })
@@ -3302,13 +3368,16 @@ function cloudSync(cb,quiet){
       var m=String(err&&err.message||err||"");
       syncFails++;
       finish(false);
-      if(/401|403/.test(m))setCloudStatus("Cloud refused the save — the JSONBin Access Key needs update permission. Your changes are kept on this phone.");
+      syncErr=/exhausted/i.test(m)?"quota":/^429/.test(m)?"busy":/^(401|403)/.test(m)?"key":"net";
+      if(syncErr==="quota")setCloudStatus("JSONBin is out of requests, so nothing can sync until more are bought on the account. Your changes are kept on this phone and will go up once it works again.");
+      else if(syncErr==="busy")setCloudStatus("JSONBin says too many requests right now. Your changes are kept on this phone; it will try again shortly.");
+      else if(syncErr==="key")setCloudStatus("Cloud refused the save — the JSONBin Access Key needs update permission. Your changes are kept on this phone.");
       else setCloudStatus("Couldn't reach the cloud — your changes are kept on this phone and will sync when you're back online.");
       scheduleRetry();
     });
   function finish(ok){
     syncBusy=false;cloudBusy=false;cloudLastPull=Date.now();
-    if(ok)syncFails=0;
+    if(ok){syncFails=0;syncErr=""}
     cloudDirty=!!syncMeta.pending;
     renderSyncPill();
     if(cb)cb(ok);
@@ -3319,19 +3388,22 @@ function cloudSync(cb,quiet){
 function cloudPush(cb){cloudSync(cb)}
 function buyPush(cb){cloudSync(cb)}
 function cloudPull(force,cb){
-  if(!force&&cloudLastPull&&Date.now()-cloudLastPull<8000){if(cb)cb(true);return}
+  if(!force&&cloudLastPull&&Date.now()-cloudLastPull<30000){if(cb)cb(true);return}
   cloudSync(cb,!force);
 }
 function buyPull(force,cb){cloudPull(force,cb)}
 window.addEventListener("online",function(){if(syncMeta.pending)cloudSync()});
 
 var cloudPollTimer=null;
+/* JSONBin counts every request against a fixed allowance (it ran out once, with
+   a 15 s poll on three phones), so background checks are every 2 minutes and
+   other non-forced pulls at most every 30 s. Edits still push straight away. */
 function startCloudPoll(){
   stopCloudPoll();
   cloudPollTimer=setInterval(function(){
     if(document.visibilityState==="hidden"||cloudDirty||cloudBusy)return;
     cloudPull(false);
-  },15000);
+  },120000);
 }
 function stopCloudPoll(){
   if(cloudPollTimer){clearInterval(cloudPollTimer);cloudPollTimer=null}
@@ -3363,16 +3435,20 @@ function renderBuyTotal(){
    Haneda refund, how much of the ₹75,000 allowance it uses, and the duty past it.
    Each item's refund is judged on its own total (the ¥5,000 rule is really per
    shop per day, so it's an estimate). One laptop is exempt; it's spotted by name. */
-function buyIsLaptop(b){return /\b(laptop|macbook|notebook ?pc)\b/i.test(b.t||"")}
+function buyLaptopGuess(b){return /\b(laptop|macbook|notebook ?pc)\b/i.test(b.t||"")}
+function buyIsLaptop(b){return typeof b.lap==="boolean"?b.lap:buyLaptopGuess(b)}
+function buyInr(b){return WG.effectiveInr(buyCost(b),watchRate(),WG.CONFIG,b.nr)}
+/* the real baggage rate, not whatever the Bakugai calculator is comparing */
+function buyDutyRate(){return WG.dutyRate("std",WG.CONFIG)}
 function buyDutyItems(list){
   return list.filter(function(b){return b.a>0}).map(function(b){
-    return {inr:WG.effectiveInr(buyCost(b),watchRate(),WG.CONFIG),is_laptop:buyIsLaptop(b)};
+    return {inr:buyInr(b),is_laptop:buyIsLaptop(b)};
   });
 }
 function buyDutyBlock(list,plan){
-  var c=WG.CONFIG,dr=curRate(),d=WG.dutyCalc({items:buyDutyItems(list)},dr,c),allow=c.india_duty_free_inr;
+  var c=WG.CONFIG,dr=buyDutyRate(),d=WG.dutyCalc({items:buyDutyItems(list)},dr,c),allow=c.india_duty_free_inr;
   var w=el("div","rest duty");
-  w.appendChild(el("span",null,"Whole list "+yen(plan)+" · ≈ "+rupees(d.total)+" after the tax refund"));
+  w.appendChild(el("span",null,"Whole list "+yen(plan)+" · ≈ "+rupees(d.total)+" after tax refunds"));
   var m=el("div","meter"+(d.excess>0?" full":"")),f=document.createElement("span");
   f.style.width=Math.min(100,d.dutiable_base/allow*100)+"%";m.appendChild(f);w.appendChild(m);
   if(d.excess>0){
@@ -3382,6 +3458,7 @@ function buyDutyBlock(list,plan){
   }else{
     w.appendChild(el("span",null,"No duty: "+rupees(d.dutiable_base)+" of "+rupees(allow)+" duty-free used, "+rupees(allow-d.dutiable_base)+" left"));
   }
+  if(d.excess>0)w.appendChild(el("span","hint","The allowance fills from the top of the list down. Drag ⠿ to put what matters most first."));
   if(d.laptop_value)w.appendChild(el("span",null,"Laptop "+rupees(d.laptop_value)+" not counted (one per adult is duty-free)"));
   var np=list.filter(function(b){return !(b.a>0)}).length;
   if(np)w.appendChild(el("span",null,np+(np>1?" things have":" thing has")+" no price yet, so not counted"));
@@ -3392,18 +3469,34 @@ function buyDutyBlock(list,plan){
   }
   return w;
 }
+var buyDrag=null;
 function renderBuys(){
+  if(buyDrag)return;   /* the drop re-renders */
   renderBuyWho();
   var box=$("#buyList"); if(!box)return;
-  var list=buys();
+  var list=sortBuys(buys());
+  var alloc=WG?buyAlloc(list,buyDutyRate()):[];
   box.innerHTML="";
   if(!list.length)box.appendChild(el("p","note","Empty. Add the first thing "+buyWho+" wants."));
-  list.forEach(function(b){
+  list.forEach(function(b,idx){
     if(buyEdit&&buyEdit.who===buyWho&&(b.id?b.id===buyEdit.id:b===buyEdit.ref)){box.appendChild(buyEditor(b));return}
-    var r=el("div","buy"+(b.k?" got":""));
+    var r=el("div","buy"+(b.k?" got":""));r._b=b;
+    if(list.length>1){
+      var g=el("button","grip","⠿");g.type="button";g.title="Drag to reorder (or arrow keys)";
+      g.setAttribute("aria-label","Move "+(b.t||"item")+", position "+(idx+1)+" of "+list.length+". Arrow keys move it.");
+      g.addEventListener("pointerdown",function(e){startBuyDrag(e,r,g)});
+      g.addEventListener("keydown",function(e){
+        var d=e.key==="ArrowUp"?-1:e.key==="ArrowDown"?1:0;if(!d)return;
+        e.preventDefault();var id=b.id;
+        if(moveBuy(b,idx+d))focusBuyGrip(id);
+      });
+      r.appendChild(g);
+    }
     var cb=document.createElement("input");cb.type="checkbox";cb.checked=!!b.k;
     cb.setAttribute("aria-label","Bought "+(b.t||"item"));
     cb.addEventListener("change",function(){
+      var live=buyFind(b);if(!live){renderBuys();return}
+      if(live!==b){live.k=cb.checked;touchCloud();renderBuys();return}
       b.k=cb.checked;
       r.className="buy"+(b.k?" got":"");
       touchCloud();
@@ -3415,6 +3508,10 @@ function renderBuys(){
     var bt=el("span","txt",b.t||"Item");
     if(buyQty(b)>1)bt.appendChild(el("span","qn"," ×"+buyQty(b)));
     if(b.e)bt.appendChild(el("small","etag","on the shared bill"));
+    if(b.nr)bt.appendChild(el("small","etag","no tax refund"));
+    var al=alloc[idx];
+    if(al&&al.laptop)bt.appendChild(el("small","dtag","laptop · duty-free"));
+    else if(al&&al.over>0)bt.appendChild(el("small","dtag over",(al.over<al.inr?"partly over the allowance · ":"over the allowance · ")+"duty ≈ "+rupees(al.duty)));
     bt.title="Tap to edit";bt.addEventListener("click",function(){openBuyEdit(b)});
     r.appendChild(bt);
     if(b.a>0){
@@ -3426,11 +3523,68 @@ function renderBuys(){
     ed.addEventListener("click",function(){openBuyEdit(b)});
     r.appendChild(ed);
     var x=el("button","x","×");x.type="button";x.setAttribute("aria-label","Remove "+(b.t||"item"));
-    x.addEventListener("click",function(){var l=buys(),j=l.indexOf(b);if(j<0)return;l.splice(j,1);touchCloud();renderBuys()});
+    x.addEventListener("click",function(){var l=buys(),j=l.indexOf(buyFind(b));if(j<0){renderBuys();return}l.splice(j,1);touchCloud();renderBuys()});
     r.appendChild(x);
     box.appendChild(r);
   });
   renderBuyTotal();
+}
+
+/* Drag the ⠿ grip to reorder; the new order goes into buyOrder (see sortBuys). */
+function startBuyDrag(e,row,grip){
+  if(e.button>0)return;
+  e.preventDefault();
+  var box=$("#buyList");
+  [].slice.call(box.querySelectorAll(".buy-ask")).forEach(function(n){n.remove()});
+  try{grip.setPointerCapture(e.pointerId)}catch(_){}
+  buyDrag=true;row.classList.add("drag");
+  var lastY=e.clientY;
+  /* near the top or the tab bar, scroll so a long list can be dragged end to end */
+  var auto=setInterval(function(){
+    var h=window.innerHeight,step=lastY<90?-(90-lastY)/4:lastY>h-120?(lastY-(h-120))/4:0;
+    if(step){window.scrollBy(0,Math.max(-24,Math.min(24,step)));place(lastY)}
+  },16);
+  function move(ev){lastY=ev.clientY;place(lastY)}
+  function place(y){
+    var rows=[].slice.call(box.querySelectorAll(".buy,.buy-edit")).filter(function(n){return n!==row});
+    for(var i=0;i<rows.length;i++){
+      var rc=rows[i].getBoundingClientRect();
+      if(y<rc.top+rc.height/2){if(rows[i].previousSibling!==row)box.insertBefore(row,rows[i]);return}
+    }
+    if(rows.length&&rows[rows.length-1].nextSibling!==row)box.insertBefore(row,rows[rows.length-1].nextSibling);
+  }
+  function end(){
+    clearInterval(auto);
+    grip.removeEventListener("pointermove",move);grip.removeEventListener("pointerup",end);grip.removeEventListener("pointercancel",end);
+    row.classList.remove("drag");
+    var list=sortBuys(buys()),order=[].slice.call(box.children).map(function(n){return n._b?buyFind(n._b):null});
+    buyDrag=null;
+    var b=buyFind(row._b),j=order.indexOf(b),was=list.indexOf(b);
+    var pos=order.slice(0,j).filter(function(x){return x&&x!==b}).length;
+    if(!(b&&j>=0&&was>=0&&moveBuy(b,pos)))renderBuys();
+  }
+  grip.addEventListener("pointermove",move);grip.addEventListener("pointerup",end);grip.addEventListener("pointercancel",end);
+}
+
+/* Put item b at position pos in the current list and save the order. Returns
+   false when nothing moved (already there, gone, or out of range). */
+function moveBuy(b,pos){
+  var list=sortBuys(buys());b=buyFind(b);
+  var was=list.indexOf(b);
+  if(!b||was<0||pos<0||pos>=list.length||pos===was)return false;
+  list.splice(was,1);list.splice(pos,0,b);
+  if(TS)TS.ensureIds("buy:"+buyWho,list,["t","a"]);
+  buyOrder[buyWho]=list.map(function(x){return x.id}).filter(Boolean);
+  /* stamp it here: a value this phone has never synced counts as "not freshly
+     edited" (m 0), and would lose to an older order already in the cloud */
+  syncMeta.sm["buyOrder:"+buyWho]=Date.now();
+  S.set("buyOrder",buyOrder);
+  touchCloud();renderBuys();
+  return true;
+}
+function focusBuyGrip(id){
+  var rows=$("#buyList").querySelectorAll(".buy");
+  for(var i=0;i<rows.length;i++)if(rows[i]._b&&rows[i]._b.id===id){var g=rows[i].querySelector(".grip");if(g)g.focus();return}
 }
 
 /* Editing a list item in place. The draft lives in buyEdit, so a background
@@ -3438,12 +3592,12 @@ function renderBuys(){
    id, not by the object captured when the editor opened. */
 var buyEdit=null;
 function openBuyEdit(b){
-  buyEdit={who:buyWho,id:b.id||null,ref:b,t:b.t||"",q:String(buyQty(b)),a:b.a>0?String(b.a):""};
+  buyEdit={who:buyWho,id:b.id||null,ref:b,t:b.t||"",q:String(buyQty(b)),a:b.a>0?String(b.a):"",lap:buyIsLaptop(b),nr:!!b.nr};
   renderBuys();
   var f=$("#buyList .buy-edit input");if(f){f.focus();f.select()}
 }
 function buyEditor(b){
-  var w=el("div","buy-edit");
+  var w=el("div","buy-edit");w._b=b;
   function field(cls,key,ph,label,mode){
     var f=document.createElement("input");f.className=cls;f.type="text";f.value=buyEdit[key];f.placeholder=ph;
     f.setAttribute("aria-label",label);if(mode)f.inputMode=mode;
@@ -3456,14 +3610,33 @@ function buyEditor(b){
   var q=field("qty num","q","Qty","Quantity","numeric");q.addEventListener("focus",function(){q.select()});row.appendChild(q);
   row.appendChild(field("amt num","a","¥ each","Rough price in yen, each","decimal"));
   w.appendChild(row);
+  function tick(key,label){
+    var l=el("label","be-tick"),c=document.createElement("input");c.type="checkbox";c.checked=!!buyEdit[key];
+    c.addEventListener("change",function(){buyEdit[key]=c.checked});
+    l.appendChild(c);l.appendChild(document.createTextNode(" "+label));return l;
+  }
+  var ticks=el("div","be-ticks");
+  ticks.appendChild(tick("lap","Laptop (one per adult comes in duty-free)"));
+  ticks.appendChild(tick("nr","No tax refund (online, or under ¥5,000 at that shop)"));
+  w.appendChild(ticks);
   if(b.e)w.appendChild(el("small","note","Already on the shared bill: changing it here doesn't change that expense."));
   var act=el("div","be-act");
   var sv=el("button","btn","Save");sv.type="button";sv.addEventListener("click",save);act.appendChild(sv);
   var cn=el("button","btn ghost","Cancel");cn.type="button";cn.addEventListener("click",cancel);act.appendChild(cn);
+  var list=sortBuys(buys()),at=list.indexOf(buyFind(b));
+  [["↑","Move up",-1,"up"],["↓","Move down",1,"down"]].forEach(function(o){
+    var mb=el("button","btn ghost mv "+o[3],o[0]);mb.type="button";mb.setAttribute("aria-label",o[1]);mb.title=o[1];
+    mb.disabled=at<0||at+o[2]<0||at+o[2]>=list.length;
+    mb.addEventListener("click",function(){
+      if(moveBuy(b,at+o[2])){var m=$("#buyList .buy-edit .mv."+o[3]);if(m&&!m.disabled)m.focus()}
+    });
+    act.appendChild(mb);
+  });
   w.appendChild(act);
   function cancel(){buyEdit=null;renderBuys()}
   function save(){
     var t=String(buyEdit.t||"").trim();if(!t){w.querySelector("input").focus();return}
+    var ed=buyEdit;
     var l=buyMap[buyEdit.who]||[],it=null;
     for(var i=0;i<l.length;i++)if(buyEdit.id?l[i].id===buyEdit.id:l[i]===buyEdit.ref){it=l[i];break}
     buyEdit=null;
@@ -3471,6 +3644,9 @@ function buyEditor(b){
     var qn=Math.floor(num(q.value));
     it.t=t;it.a=num(w.querySelector("input.amt").value);
     if(qn>1)it.q=qn;else delete it.q;
+    /* store laptop only when it differs from the guess from the name */
+    if(ed.lap!==buyLaptopGuess(it))it.lap=ed.lap;else delete it.lap;
+    if(ed.nr)it.nr=true;else delete it.nr;
     touchCloud();renderBuys();
   }
   return w;
@@ -3487,7 +3663,8 @@ function buyAsk(b){
     var a=buyCost(b)||(amt?MO.parseAmount(amt.value):0);if(!(a>0)){if(amt)amt.focus();return}
     var x={id:TS?TS.uid():undefined,d:b.t+(buyQty(b)>1?" ×"+buyQty(b):""),a:a,cur:"JPY",fx:rate,p:buyWho,cat:"Shopping",ts:Date.now()};
     if(cash)x.cash=true;
-    pushExp(x);b.e=x.id||"x";
+    var live=buyFind(b);if(!live){w.remove();return}
+    pushExp(x);live.e=x.id||"x";
     S.set("exps",exps);renderExps();touchCloud();renderBuys();
     flash("#buyFlash","Added to the shared bill"+(cash?", paid in cash from "+buyWho+"'s wallet":"")+".");
   }
@@ -4990,7 +5167,7 @@ document.addEventListener("visibilitychange",function(){
     return;
   }
   renderWxToday();renderFuji();
-  if(!cloudDirty)cloudPull(true);
+  if(!cloudDirty)cloudPull(false);
   startCloudPoll();
 });
 
