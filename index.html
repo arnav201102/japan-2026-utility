@@ -727,6 +727,8 @@ details.more p.note{margin:6px 0 0}
 #p-list .addrow input:focus,#p-buy .addrow input:focus{outline:none}
 #p-list .addrow input.desc,#p-buy .addrow input.desc{flex:1 1 auto}
 #p-buy .addrow input.amt{flex:0 0 96px;padding:8px 10px;border-left:1px solid var(--sand);border-radius:0}
+#p-buy .addrow input.qty{flex:0 0 52px;padding:8px 6px;border-left:1px solid var(--sand);border-radius:0;text-align:center;font-variant-numeric:tabular-nums}
+.buy .qn{font-weight:400;color:var(--ink-soft);font-variant-numeric:tabular-nums}
 #p-list .addrow .btn,#p-buy .addrow .btn{border-radius:999px;padding:8px 18px;flex:none;font-weight:700}
 #p-buy .buy-ask{border-radius:12px;border-left:4px solid var(--momiji-bg);margin:-2px 0 10px;padding:10px 14px}
 #p-buy .buy-ask .linkbtn{border:1.5px solid var(--ai);border-radius:999px;padding:4px 11px;text-decoration:none;font-weight:700;font-size:13px}
@@ -1074,7 +1076,8 @@ details.tip[open] summary{margin-bottom:6px}
   <div class="tab-total mpcard" id="buyTotal"></div>
   <div class="addrow">
     <input class="desc" id="bDesc" placeholder="What are you buying?" aria-label="Item">
-    <input class="amt num" id="bAmt" type="text" inputmode="decimal" placeholder="¥ guess" aria-label="Rough price in yen">
+    <input class="qty num" id="bQty" type="text" inputmode="numeric" value="1" placeholder="Qty" aria-label="Quantity">
+    <input class="amt num" id="bAmt" type="text" inputmode="decimal" placeholder="¥ each" aria-label="Rough price in yen, each">
     <button class="btn" id="bAdd">Add</button>
   </div>
   <div id="buyList"></div>
@@ -3049,6 +3052,7 @@ function normalizeBuyMap(raw){
       var b=arr[i]; if(!b)continue;
       var t=String(b.t||"").trim(); if(!t)continue;
       var it={t:t,a:num(b.a),k:!!b.k};
+      var q=Math.floor(num(b.q));if(q>1)it.q=q;   /* quantity; absent means 1, a is the price of one */
       if(typeof b.id==="string")it.id=b.id;
       if(typeof b.e==="string")it.e=b.e;   /* id of the shared expense it became, if any */
       if(typeof b.m==="number")it.m=b.m;
@@ -3077,6 +3081,8 @@ var cloudPullQueued=null;
   S.set("buyMap",buyMap);S.del("buy");cloudDirty=true;cloudGen++;
 })();
 
+function buyQty(b){var q=Math.floor(num(b.q));return q>1?q:1}
+function buyCost(b){return (b.a||0)*buyQty(b)}
 function buys(){return buyMap[buyWho]||(buyMap[buyWho]=[])}
 function saveBuysLocal(){S.set("buyMap",buyMap);S.set("buyTs",cloudTs);S.set("cloudTs",cloudTs);S.set("buyWho",buyWho)}
 
@@ -3328,7 +3334,7 @@ function renderBuyWho(){
 function renderBuyTotal(){
   var box=$("#buyTotal"); if(!box)return;
   var list=buys(),got=0,plan=0;
-  list.forEach(function(b){plan+=b.a||0;if(b.k)got+=b.a||0});
+  list.forEach(function(b){var c=buyCost(b);plan+=c;if(b.k)got+=c});
   box.innerHTML="";box.style.setProperty("--k",whoVar(buyWho));
   box.appendChild(avatar(buyWho,true));
   box.appendChild(el("div","big",yen(got)));
@@ -3339,6 +3345,40 @@ function renderBuyTotal(){
   else if(left>0)r.textContent="Still to buy: "+yen(left)+" across "+list.filter(function(b){return !b.k}).length+" things";
   else r.textContent="Everything on "+buyWho+"'s list is bought.";
   box.appendChild(r);
+  if(list.length&&WG)box.appendChild(buyDutyBlock(list,plan));
+}
+/* India customs on the whole list, bought or not: what it's worth after the
+   Haneda refund, how much of the ₹75,000 allowance it uses, and the duty past it.
+   Each item's refund is judged on its own total (the ¥5,000 rule is really per
+   shop per day, so it's an estimate). One laptop is exempt; it's spotted by name. */
+function buyIsLaptop(b){return /\b(laptop|macbook|notebook ?pc)\b/i.test(b.t||"")}
+function buyDutyItems(list){
+  return list.filter(function(b){return b.a>0}).map(function(b){
+    return {inr:WG.effectiveInr(buyCost(b),watchRate(),WG.CONFIG),is_laptop:buyIsLaptop(b)};
+  });
+}
+function buyDutyBlock(list,plan){
+  var c=WG.CONFIG,dr=curRate(),d=WG.dutyCalc({items:buyDutyItems(list)},dr,c),allow=c.india_duty_free_inr;
+  var w=el("div","rest duty");
+  w.appendChild(el("span",null,"Whole list "+yen(plan)+" · ≈ "+rupees(d.total)+" after the tax refund"));
+  var m=el("div","meter"+(d.excess>0?" full":"")),f=document.createElement("span");
+  f.style.width=Math.min(100,d.dutiable_base/allow*100)+"%";m.appendChild(f);w.appendChild(m);
+  if(d.excess>0){
+    w.appendChild(el("span",null,"Over the "+rupees(allow)+" duty-free allowance by "+rupees(d.excess)));
+    var b=el("b",null,"Customs duty ≈ "+rupees(d.duty)+" ("+ratePct(dr)+"% of the excess)");b.style.display="block";w.appendChild(b);
+    w.appendChild(el("span",null,"All in: ≈ "+rupees(d.landed)));
+  }else{
+    w.appendChild(el("span",null,"No duty: "+rupees(d.dutiable_base)+" of "+rupees(allow)+" duty-free used, "+rupees(allow-d.dutiable_base)+" left"));
+  }
+  if(d.laptop_value)w.appendChild(el("span",null,"Laptop "+rupees(d.laptop_value)+" not counted (one per adult is duty-free)"));
+  var np=list.filter(function(b){return !(b.a>0)}).length;
+  if(np)w.appendChild(el("span",null,np+(np>1?" things have":" thing has")+" no price yet, so not counted"));
+  var cart=cartMap[buyWho]||[];
+  if(cart.length){
+    var all=WG.dutyCalc({items:buyDutyItems(list).concat(cart.map(function(it){return {inr:cartInr(it),is_laptop:it.is_laptop}}))},dr,c);
+    w.appendChild(el("span",null,"With "+buyWho+"'s Bakugai cart too: "+(all.excess>0?"duty ≈ "+rupees(all.duty):"still no duty, "+rupees(allow-all.dutiable_base)+" left")));
+  }
+  return w;
 }
 function renderBuys(){
   renderBuyWho();
@@ -3360,11 +3400,12 @@ function renderBuys(){
     });
     r.appendChild(cb);
     var bt=el("span","txt",b.t||"Item");
+    if(buyQty(b)>1)bt.appendChild(el("span","qn"," ×"+buyQty(b)));
     if(b.e)bt.appendChild(el("small","etag","on the shared bill"));
     r.appendChild(bt);
     if(b.a>0){
-      var a=el("span","amt",yen(b.a));
-      a.appendChild(el("small",null,"≈ ₹"+Math.round(b.a*rate).toLocaleString("en-IN")));
+      var a=el("span","amt",yen(buyCost(b)));
+      a.appendChild(el("small",null,(buyQty(b)>1?yen(b.a)+" each · ":"")+"≈ ₹"+Math.round(buyCost(b)*rate).toLocaleString("en-IN")));
       r.appendChild(a);
     }
     var x=el("button","x","×");x.type="button";x.setAttribute("aria-label","Remove "+(b.t||"item"));
@@ -3379,12 +3420,12 @@ function renderBuys(){
    shopping, so nothing happens unless they say so. */
 function buyAsk(b){
   var w=el("div","buy-ask");
-  w.appendChild(el("span",null,"Bought"+(b.a?" for "+yen(b.a):"")+". Shared?"));
+  w.appendChild(el("span",null,"Bought"+(b.a?" for "+yen(buyCost(b)):"")+". Shared?"));
   var amt=null;
   if(!b.a){amt=document.createElement("input");amt.className="num";amt.type="text";amt.inputMode="numeric";amt.placeholder="¥ paid";w.appendChild(amt)}
   function add(cash){
-    var a=b.a||(amt?MO.parseAmount(amt.value):0);if(!(a>0)){if(amt)amt.focus();return}
-    var x={id:TS?TS.uid():undefined,d:b.t,a:a,cur:"JPY",fx:rate,p:buyWho,cat:"Shopping",ts:Date.now()};
+    var a=buyCost(b)||(amt?MO.parseAmount(amt.value):0);if(!(a>0)){if(amt)amt.focus();return}
+    var x={id:TS?TS.uid():undefined,d:b.t+(buyQty(b)>1?" ×"+buyQty(b):""),a:a,cur:"JPY",fx:rate,p:buyWho,cat:"Shopping",ts:Date.now()};
     if(cash)x.cash=true;
     pushExp(x);b.e=x.id||"x";
     S.set("exps",exps);renderExps();touchCloud();renderBuys();
@@ -3400,10 +3441,13 @@ function buyAsk(b){
 function initBuy(){
   $("#bAdd").addEventListener("click",function(){
     var t=$("#bDesc").value.trim(); if(!t){$("#bDesc").focus();return}
-    buys().push({id:TS?TS.uid():undefined,t:t,a:num($("#bAmt").value),k:false});
-    touchCloud();$("#bDesc").value="";$("#bAmt").value="";renderBuys();$("#bDesc").focus();
+    var it={id:TS?TS.uid():undefined,t:t,a:num($("#bAmt").value),k:false};
+    var q=Math.floor(num($("#bQty").value));if(q>1)it.q=q;
+    buys().push(it);
+    touchCloud();$("#bDesc").value="";$("#bQty").value="1";$("#bAmt").value="";renderBuys();$("#bDesc").focus();
   });
-  [$("#bDesc"),$("#bAmt")].forEach(function(f){
+  $("#bQty").addEventListener("focus",function(){this.select()});
+  [$("#bDesc"),$("#bQty"),$("#bAmt")].forEach(function(f){
     f.addEventListener("keydown",function(e){if(e.key==="Enter")$("#bAdd").click()});
   });
   $("#buyRefresh").addEventListener("click",function(){
