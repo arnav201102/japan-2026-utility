@@ -730,6 +730,18 @@ details.more p.note{margin:6px 0 0}
 #p-buy .addrow input.qty{flex:0 0 52px;padding:8px 6px;border-left:1px solid var(--sand);border-radius:0;text-align:center;font-variant-numeric:tabular-nums}
 .buy .qn{font-weight:400;color:var(--ink-soft);font-variant-numeric:tabular-nums}
 #p-list .addrow .btn,#p-buy .addrow .btn{border-radius:999px;padding:8px 18px;flex:none;font-weight:700}
+#p-buy .buy .txt{cursor:pointer}
+#p-buy .buy .x.ed{font-size:15px}
+.buy-edit{padding:10px 0 12px;border-bottom:1px solid var(--sand)}
+.buy-edit .be-row{display:flex;gap:0;background:var(--field);border:1.5px solid var(--ai);border-radius:999px;padding:4px}
+.buy-edit input{font:400 16px var(--gothic);border:0;background:none;color:var(--ink);padding:8px 12px;min-width:0}
+.buy-edit input:focus{outline:none}
+.buy-edit input.desc{flex:1 1 auto}
+.buy-edit input.qty{flex:0 0 52px;padding:8px 6px;border-left:1px solid var(--sand);text-align:center;font-variant-numeric:tabular-nums}
+.buy-edit input.amt{flex:0 0 96px;padding:8px 10px;border-left:1px solid var(--sand);font-variant-numeric:tabular-nums}
+.buy-edit .note{display:block;margin:6px 4px 0}
+.buy-edit .be-act{display:flex;gap:8px;margin-top:8px}
+.buy-edit .be-act .btn{border-radius:999px;padding:7px 18px;font-weight:700}
 #p-buy .buy-ask{border-radius:12px;border-left:4px solid var(--momiji-bg);margin:-2px 0 10px;padding:10px 14px}
 #p-buy .buy-ask .linkbtn{border:1.5px solid var(--ai);border-radius:999px;padding:4px 11px;text-decoration:none;font-weight:700;font-size:13px}
 #p-buy .buy-ask .linkbtn:last-child{border-color:var(--sand);color:var(--ink-soft)}
@@ -3386,7 +3398,8 @@ function renderBuys(){
   var list=buys();
   box.innerHTML="";
   if(!list.length)box.appendChild(el("p","note","Empty. Add the first thing "+buyWho+" wants."));
-  list.forEach(function(b,i){
+  list.forEach(function(b){
+    if(buyEdit&&buyEdit.who===buyWho&&(b.id?b.id===buyEdit.id:b===buyEdit.ref)){box.appendChild(buyEditor(b));return}
     var r=el("div","buy"+(b.k?" got":""));
     var cb=document.createElement("input");cb.type="checkbox";cb.checked=!!b.k;
     cb.setAttribute("aria-label","Bought "+(b.t||"item"));
@@ -3402,18 +3415,65 @@ function renderBuys(){
     var bt=el("span","txt",b.t||"Item");
     if(buyQty(b)>1)bt.appendChild(el("span","qn"," ×"+buyQty(b)));
     if(b.e)bt.appendChild(el("small","etag","on the shared bill"));
+    bt.title="Tap to edit";bt.addEventListener("click",function(){openBuyEdit(b)});
     r.appendChild(bt);
     if(b.a>0){
       var a=el("span","amt",yen(buyCost(b)));
       a.appendChild(el("small",null,(buyQty(b)>1?yen(b.a)+" each · ":"")+"≈ ₹"+Math.round(buyCost(b)*rate).toLocaleString("en-IN")));
       r.appendChild(a);
     }
+    var ed=el("button","x ed","✎");ed.type="button";ed.setAttribute("aria-label","Edit "+(b.t||"item"));
+    ed.addEventListener("click",function(){openBuyEdit(b)});
+    r.appendChild(ed);
     var x=el("button","x","×");x.type="button";x.setAttribute("aria-label","Remove "+(b.t||"item"));
-    x.addEventListener("click",function(){buys().splice(i,1);touchCloud();renderBuys()});
+    x.addEventListener("click",function(){var l=buys(),j=l.indexOf(b);if(j<0)return;l.splice(j,1);touchCloud();renderBuys()});
     r.appendChild(x);
     box.appendChild(r);
   });
   renderBuyTotal();
+}
+
+/* Editing a list item in place. The draft lives in buyEdit, so a background
+   sync that re-renders the list keeps what's been typed; Save finds the item by
+   id, not by the object captured when the editor opened. */
+var buyEdit=null;
+function openBuyEdit(b){
+  buyEdit={who:buyWho,id:b.id||null,ref:b,t:b.t||"",q:String(buyQty(b)),a:b.a>0?String(b.a):""};
+  renderBuys();
+  var f=$("#buyList .buy-edit input");if(f){f.focus();f.select()}
+}
+function buyEditor(b){
+  var w=el("div","buy-edit");
+  function field(cls,key,ph,label,mode){
+    var f=document.createElement("input");f.className=cls;f.type="text";f.value=buyEdit[key];f.placeholder=ph;
+    f.setAttribute("aria-label",label);if(mode)f.inputMode=mode;
+    f.addEventListener("input",function(){buyEdit[key]=f.value});
+    f.addEventListener("keydown",function(e){if(e.key==="Enter")save();if(e.key==="Escape")cancel()});
+    return f;
+  }
+  var row=el("div","be-row");
+  row.appendChild(field("desc","t","Item","Item"));
+  var q=field("qty num","q","Qty","Quantity","numeric");q.addEventListener("focus",function(){q.select()});row.appendChild(q);
+  row.appendChild(field("amt num","a","¥ each","Rough price in yen, each","decimal"));
+  w.appendChild(row);
+  if(b.e)w.appendChild(el("small","note","Already on the shared bill: changing it here doesn't change that expense."));
+  var act=el("div","be-act");
+  var sv=el("button","btn","Save");sv.type="button";sv.addEventListener("click",save);act.appendChild(sv);
+  var cn=el("button","btn ghost","Cancel");cn.type="button";cn.addEventListener("click",cancel);act.appendChild(cn);
+  w.appendChild(act);
+  function cancel(){buyEdit=null;renderBuys()}
+  function save(){
+    var t=String(buyEdit.t||"").trim();if(!t){w.querySelector("input").focus();return}
+    var l=buyMap[buyEdit.who]||[],it=null;
+    for(var i=0;i<l.length;i++)if(buyEdit.id?l[i].id===buyEdit.id:l[i]===buyEdit.ref){it=l[i];break}
+    buyEdit=null;
+    if(!it){renderBuys();flash("#buyFlash","That item was removed on another phone.");return}
+    var qn=Math.floor(num(q.value));
+    it.t=t;it.a=num(w.querySelector("input.amt").value);
+    if(qn>1)it.q=qn;else delete it.q;
+    touchCloud();renderBuys();
+  }
+  return w;
 }
 
 /* "Bought it — add it to the shared bill?" Most of a person's list is their own
